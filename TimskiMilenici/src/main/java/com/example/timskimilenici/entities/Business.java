@@ -1,6 +1,4 @@
 package com.example.timskimilenici.entities;
-
-import com.example.timskimilenici.entities.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
