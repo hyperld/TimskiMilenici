@@ -2,8 +2,10 @@ package com.example.timskimilenici.controllers;
 
 import com.example.timskimilenici.entities.Booking;
 import com.example.timskimilenici.services.BookingService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -19,6 +21,14 @@ public class BookingController {
     @PostMapping
     public Booking create(@RequestBody Booking booking) {
         return bookingService.createBooking(booking);
+    }
+
+    @GetMapping("/full-dates/{serviceId}")
+    public List<LocalDate> getFullDates(
+            @PathVariable Long serviceId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+        return bookingService.getFullDates(serviceId, start, end);
     }
 
     @GetMapping("/user/{userId}")

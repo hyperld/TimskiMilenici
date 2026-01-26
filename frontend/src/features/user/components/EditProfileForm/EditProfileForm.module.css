@@ -1,0 +1,138 @@
+.editProfileCard {
+  background: white;
+  padding: 2.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+}
+
+.editProfileCard h2 {
+  margin-bottom: 2rem;
+  color: var(--color-text);
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formSection {
+  margin-bottom: 1rem;
+}
+
+.formSection h3 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-light);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.formGroup input {
+  padding: 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.formGroup input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.formGroup input:disabled {
+  background-color: var(--color-background-light);
+  cursor: not-allowed;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.saveBtn, .cancelBtn {
+  flex: 1;
+  padding: 0.8rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.saveBtn {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.saveBtn:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.saveBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.cancelBtn {
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-light);
+}
+
+.cancelBtn:hover {
+  background-color: var(--color-background-light);
+}
+
+.errorMsg {
+  background-color: #fee2e2;
+  color: #ef4444;
+  padding: 0.8rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #fecaca;
+}
+
+.successMsg {
+  background-color: #dcfce7;
+  color: #16a34a;
+  padding: 0.8rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #bbf7d0;
+}
+
+@media (max-width: 600px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+}

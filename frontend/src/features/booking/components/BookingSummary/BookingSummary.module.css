@@ -1,0 +1,72 @@
+.serviceSummarySection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.serviceSummarySection h3 {
+  margin: 0;
+  color: var(--color-text);
+}
+
+.serviceSummaryCard {
+  background: var(--color-background);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.serviceIconLarge {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.summaryInfo h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.4rem;
+  color: var(--color-text);
+}
+
+.serviceStore {
+  color: var(--color-text-light);
+  margin-bottom: 1rem;
+}
+
+.servicePriceLarge {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 1rem 0;
+}
+
+.summaryFooter {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.statusPending {
+  color: #f39c12;
+  font-weight: 600;
+}
+
+.bookingInfoBox {
+  background: #e0f7fa;
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  color: #006064;
+}
+
+.bookingInfoBox h4 {
+  margin: 0 0 1rem 0;
+}
+
+.bookingInfoBox ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.bookingInfoBox li {
+  margin-bottom: 0.5rem;
+}

@@ -34,4 +34,8 @@ public class BusinessService {
     public List<Business> searchByLocation(String location) {
         return businessRepository.findByLocationContainingIgnoreCase(location);
     }
+
+    public List<Business> getBusinessByOwnerId(Long ownerId) {
+        return businessRepository.findByOwnerId(ownerId);
+    }
 }

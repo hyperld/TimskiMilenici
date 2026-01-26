@@ -3,9 +3,11 @@ package com.example.timskimilenici.controllers;
 import com.example.timskimilenici.entities.Business;
 import com.example.timskimilenici.services.BusinessService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/businesses")
@@ -30,8 +32,15 @@ public class BusinessController {
     }
 
     @PostMapping
-    public Business create(@RequestBody Business business) {
-        return businessService.saveBusiness(business);
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<?> create(@RequestBody Business business) {
+        return ResponseEntity.ok(businessService.saveBusiness(business));
+    }
+
+    @GetMapping("/my-business/{ownerId}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<List<Business>> getByOwnerId(@PathVariable Long ownerId) {
+        return ResponseEntity.ok(businessService.getBusinessByOwnerId(ownerId));
     }
 
     @GetMapping("/search")

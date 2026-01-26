@@ -1,0 +1,153 @@
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background-color: var(--color-cream);
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  cursor: pointer;
+}
+
+.logoPlaceholder {
+  font-size: 2rem;
+}
+
+.topBar h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--color-text);
+}
+
+.userNav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.userNav span {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.ownerDashboardBtnNav {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ownerDashboardBtnNav:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.ownerDashboardBtnNav:active {
+  transform: translateY(0);
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-circle);
+  background-color: var(--color-background-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  border: 2px solid var(--color-primary);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.userAvatar:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
+}
+
+.userMenuContainer {
+  position: relative;
+}
+
+.userDropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background-color: var(--color-background);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  min-width: 160px;
+  padding: 0.5rem 0;
+  z-index: 100;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.dropdownItem:hover {
+  background-color: var(--color-background-light);
+}
+
+.dropdownItem.logout {
+  color: var(--color-error);
+}
+
+.dropdownItem.logout:hover {
+  background-color: #fff5f5;
+}
+
+.dropdownIcon {
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.dropdownDivider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 0.5rem 0;
+}
+
+.userAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  font-size: 1.2rem;
+}

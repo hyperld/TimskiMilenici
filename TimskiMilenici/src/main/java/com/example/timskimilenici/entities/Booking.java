@@ -1,4 +1,5 @@
 package com.example.timskimilenici.entities;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -16,6 +17,7 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "service_id", nullable = false)
+    @JsonIgnoreProperties({"business", "services", "products"})
     private PetService service;
 
     @Column(nullable = false)

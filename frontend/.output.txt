@@ -1,0 +1,225 @@
+
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:51                app
+d-----        26/01/2026     16:45                features
+d-----        26/01/2026     16:41                shared
+d-----        26/01/2026     16:45                styles
+-a----        26/01/2026     16:51            271 index.tsx
+-a----        05/01/2026     18:00           2632 logo.svg
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\app
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:41                providers
+d-----        26/01/2026     16:41                routes
+-a----        26/01/2026     16:51           2735 App.tsx
+    Directory:
+    C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\features
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:45                auth
+d-----        26/01/2026     16:45                booking
+d-----        26/01/2026     16:45                business
+d-----        26/01/2026     16:45                cart
+d-----        26/01/2026     16:45                user
+d-----        26/01/2026     16:45                welcome
+    Directory:
+    C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\features\auth
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:44                components
+d-----        26/01/2026     16:42                context
+d-----        26/01/2026     16:42                hooks
+d-----        26/01/2026     16:47                pages
+d-----        26/01/2026     16:42                services
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\auth\components
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:43                AuthCard
+d-----        26/01/2026     16:44                ProtectedRoute
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\auth\components\AuthCard
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:43           1309 AuthCard.module.css
+-a----        26/01/2026     16:43            788 AuthCard.tsx
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\auth\components\ProtectedRoute
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:44            890 ProtectedRoute.tsx
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\auth\context
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:42           2598 AuthContext.tsx
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\auth\hooks
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:42            299 useAuth.ts
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\auth\pages
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:45           2740 AuthForm.module.css
+-a----        26/01/2026     16:47           3006 LoginPage.tsx
+-a----        26/01/2026     16:47           4325 RegisterPage.tsx
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\auth\services
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:42           3208 authService.ts
+    Directory:
+    C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\features\booking
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:45                components
+d-----        26/01/2026     16:49                pages
+d-----        26/01/2026     16:43                services
+-a----        26/01/2026     16:42            349 types.ts
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\booking\components
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:45                Calendar
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\booking\components\Calendar
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:45           2475 Calendar.module.css
+-a----        26/01/2026     16:45           3147 Calendar.tsx
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\booking\pages
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:49           4717 BookingPage.module.css
+-a----        26/01/2026     16:49           7352 BookingPage.tsx
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\booking\services
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:43           1987 bookingService.ts
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\business
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:44                components
+d-----        26/01/2026     16:51                pages
+d-----        26/01/2026     16:42                services
+-a----        26/01/2026     16:42            555 types.ts
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\business\components
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:44                StoreCard
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\business\components\StoreCard
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:44           1733 StoreCard.module.css
+-a----        26/01/2026     16:44           1502 StoreCard.tsx
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\business\pages
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:47           2170 HomePage.module.css
+-a----        26/01/2026     16:47           3676 HomePage.tsx
+-a----        26/01/2026     16:51           6103 OwnerDashboard.module.css
+-a----        26/01/2026     16:51          16610 OwnerDashboard.tsx
+-a----        26/01/2026     16:48           7666 StoreDetailsPage.module.css
+-a----        26/01/2026     16:48           8321 StoreDetailsPage.tsx
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\business\services
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:42           8487 businessService.ts
+    Directory:
+    C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\features\cart
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:44                components
+d-----        26/01/2026     16:43                context
+d-----        26/01/2026     16:43                hooks
+d-----        26/01/2026     16:49                pages
+-a----        26/01/2026     16:42            182 types.ts
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\cart\components
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:44                FloatingCartIcon
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\cart\components\FloatingCartIcon
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:44            882 FloatingCartIcon.module.css
+-a----        26/01/2026     16:44            616 FloatingCartIcon.tsx
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\cart\context
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:43           2304 CartContext.tsx
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\cart\hooks
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:43            298 useCart.ts
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\cart\pages
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:49           4193 CartPage.module.css
+-a----        26/01/2026     16:49           3451 CartPage.tsx
+    Directory:
+    C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\features\user
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:42                components
+d-----        26/01/2026     16:50                pages
+-a----        26/01/2026     16:41            193 types.ts
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\user\pages
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:50           3251 EditProfilePage.module.css
+-a----        26/01/2026     16:50          10776 EditProfilePage.tsx
+-a----        26/01/2026     16:50           2352 UserAccountPage.module.css
+-a----        26/01/2026     16:50           2337 UserAccountPage.tsx
+    Directory:
+    C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\features\welcome
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:45                components
+d-----        26/01/2026     16:45                pages
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\featu
+    res\welcome\pages
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:45            506 WelcomePage.module.css
+-a----        26/01/2026     16:45            971 WelcomePage.tsx
+    Directory:
+    C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\shared
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:43                components
+d-----        26/01/2026     16:41                hooks
+d-----        26/01/2026     16:41                utils
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\share
+    d\components
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        26/01/2026     16:43                TopBar
+    Directory: C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\share
+    d\components\TopBar
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:43           2895 TopBar.module.css
+-a----        26/01/2026     16:43           2927 TopBar.tsx
+    Directory:
+    C:\Users\Nikola\Desktop\operativni\PetsTimski\frontend\src\styles
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        26/01/2026     16:45           1239 index.css
+-a----        26/01/2026     16:41            967 tokens.css

@@ -9,4 +9,5 @@ import java.util.List;
 public interface BusinessRepository extends JpaRepository<Business, Long> {
     List<Business> findByCategory(String category);
     List<Business> findByLocationContainingIgnoreCase(String location);
+    List<Business> findByOwnerId(Long ownerId);
 }

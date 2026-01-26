@@ -1,0 +1,35 @@
+.storeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding-bottom: 2rem;
+}
+
+.loadingContainer {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem;
+  color: var(--color-text-light);
+  font-size: 1.2rem;
+}
+
+.errorMessage {
+  grid-column: 1 / -1;
+  background-color: #fee2e2;
+  color: var(--color-error);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  font-weight: 500;
+}
+
+.noResults {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem;
+  color: var(--color-text-light);
+  font-size: 1.1rem;
+  background: var(--color-background);
+  border-radius: var(--radius-lg);
+  border: 2px dashed var(--color-border);
+}

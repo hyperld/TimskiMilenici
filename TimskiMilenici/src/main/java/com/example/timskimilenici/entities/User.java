@@ -21,6 +21,9 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false, unique = true)
+    private String username;
+
     @Column(nullable = false)
     private String fullName;
 
@@ -36,16 +39,20 @@ public class User {
     // Default constructor required by JPA
     protected User() {}
 
-    public User(String email, String passwordHash, Role role, String fullName) {
+    public User(String email, String passwordHash, Role role, String fullName, String username) {
         this.email = email;
         this.passwordHash = passwordHash;
         this.role = role;
         this.fullName = fullName;
+        this.username = username;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Getters and Setters
+    public String getUsername() { return username; }
+
+    public void setUsername(String username) { this.username = username; }
+
     public Long getId() {
         return id;
     }

@@ -1,0 +1,103 @@
+.bookingFormSection {
+  background: var(--color-background);
+  padding: 2.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.bookingFormSection h2 {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-text);
+}
+
+.subtitle {
+  color: var(--color-text-light);
+  margin-bottom: 2rem;
+}
+
+.bookingForm .formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.bookingForm label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.bookingForm input,
+.bookingForm textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.bookingForm input:focus,
+.bookingForm textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.timeSlotsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.timeSlotBtn {
+  padding: 0.6rem;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.timeSlotBtn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background-color: var(--color-background-light);
+}
+
+.timeSlotBtn.selected {
+  background-color: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+  font-weight: 600;
+}
+
+.confirmBookingBtn {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 1rem;
+}
+
+.confirmBookingBtn:disabled {
+  background-color: var(--color-border);
+  cursor: not-allowed;
+}
+
+.errorBanner {
+  background-color: #ffebee;
+  color: var(--color-error);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--color-error);
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
