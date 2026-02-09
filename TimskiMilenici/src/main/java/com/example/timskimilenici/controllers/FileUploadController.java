@@ -17,35 +17,59 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/uploads")
 public class FileUploadController {
 
-    private final Path root = Paths.get("uploads");
+    private static final Pattern UNSAFE_FILENAME = Pattern.compile(".*[\\\\/:*?\"<>|].*");
 
-    public FileUploadController() {
-        try {
-            if (!Files.exists(root)) {
-                Files.createDirectories(root);
-            }
-        } catch (IOException e) {
-            System.err.println("Could not initialize upload folder: " + e.getMessage());
-        }
-    }
+    private final Path root;
 
-    @PostMapping
-    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
+    public FileUploadController(@Value("${app.upload-dir:uploads}") String uploadDir) {
+        Path base = Paths.get(uploadDir);
+        this.root = base.isAbsolute() ? base : Paths.get(System.getProperty("user.dir")).resolve(base);
         try {
             if (!Files.exists(this.root)) {
                 Files.createDirectories(this.root);
             }
-            String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-            Files.copy(file.getInputStream(), this.root.resolve(filename));
-            
+        } catch (IOException e) {
+            throw new RuntimeException("Could not initialize upload folder: " + this.root, e);
+        }
+    }
+
+    /**
+     * Upload a file (e.g. image from laptop). Accepts multipart form with "file".
+     * Returns JSON with "url" pointing to the served file.
+     */
+    @PostMapping
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            Map<String, String> err = new HashMap<>();
+            err.put("message", "Please select a file to upload.");
+            return ResponseEntity.badRequest().body(err);
+        }
+        try {
+            if (!Files.exists(this.root)) {
+                Files.createDirectories(this.root);
+            }
+            String original = file.getOriginalFilename();
+            if (original == null) original = "file";
+            // Sanitize: keep only last path segment and strip unsafe chars
+            String safeName = original;
+            if (original.contains("/") || original.contains("\\")) {
+                safeName = original.substring(Math.max(original.lastIndexOf('/'), original.lastIndexOf('\\')) + 1);
+            }
+            if (UNSAFE_FILENAME.matcher(safeName).matches()) {
+                safeName = safeName.replaceAll("[\\\\/:*?\"<>|]", "_");
+            }
+            String filename = UUID.randomUUID().toString() + "_" + safeName;
+            Path target = this.root.resolve(filename);
+            Files.copy(file.getInputStream(), target);
+
             Map<String, String> response = new HashMap<>();
             response.put("url", "http://localhost:8080/api/uploads/" + filename);
-            
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
@@ -57,7 +81,10 @@ public class FileUploadController {
     @GetMapping("/{filename:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String filename) {
         try {
-            Path file = root.resolve(filename);
+            Path file = root.resolve(filename).normalize();
+            if (!file.startsWith(root)) {
+                throw new RuntimeException("Invalid file path");
+            }
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {

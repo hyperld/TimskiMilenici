@@ -13,6 +13,7 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByUserId(Long userId);
     List<Booking> findByServiceBusinessId(Long businessId);
+    List<Booking> findByService_Business_IdAndBookingTimeBetween(Long businessId, LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT COUNT(b) FROM Booking b WHERE b.service.id = :serviceId AND b.bookingTime >= :start AND b.bookingTime < :end AND b.status != 'CANCELLED'")
     long countByServiceIdAndBookingTimeBetween(@Param("serviceId") Long serviceId, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);

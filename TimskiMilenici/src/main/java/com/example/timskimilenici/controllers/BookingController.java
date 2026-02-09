@@ -41,8 +41,37 @@ public class BookingController {
         return bookingService.getBookingsByBusiness(businessId);
     }
 
+    /**
+     * Get bookings for a store (business). Optional: single date or date range.
+     * GET /api/bookings/store/{storeId}?date=YYYY-MM-DD
+     * GET /api/bookings/store/{storeId}?start=YYYY-MM-DD&end=YYYY-MM-DD
+     */
+    @GetMapping("/store/{storeId}")
+    public List<Booking> getByStore(
+            @PathVariable Long storeId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+        if (date != null) {
+            return bookingService.getBookingsByStoreAndDate(storeId, date);
+        }
+        if (start != null && end != null) {
+            return bookingService.getBookingsByStoreInRange(storeId, start, end);
+        }
+        return bookingService.getBookingsByBusiness(storeId);
+    }
+
     @PatchMapping("/{id}/status")
     public void updateStatus(@PathVariable Long id, @RequestParam Booking.BookingStatus status) {
         bookingService.updateBookingStatus(id, status);
+    }
+
+    /**
+     * Delete a booking (e.g. when store owner dismisses it).
+     * DELETE /api/bookings/{id}
+     */
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        bookingService.deleteBooking(id);
     }
 }

@@ -59,10 +59,32 @@ public class BookingService {
         return bookingRepository.findByServiceBusinessId(businessId);
     }
 
+    public List<Booking> getBookingsByStoreAndDate(Long businessId, LocalDate date) {
+        LocalDateTime start = date.atStartOfDay();
+        LocalDateTime end = date.atTime(LocalTime.MAX);
+        return bookingRepository.findByService_Business_IdAndBookingTimeBetween(businessId, start, end);
+    }
+
+    public List<Booking> getBookingsByStoreInRange(Long businessId, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime start = startDate.atStartOfDay();
+        LocalDateTime end = endDate.atTime(LocalTime.MAX);
+        return bookingRepository.findByService_Business_IdAndBookingTimeBetween(businessId, start, end);
+    }
+
     public void updateBookingStatus(Long bookingId, Booking.BookingStatus status) {
         bookingRepository.findById(bookingId).ifPresent(booking -> {
             booking.setStatus(status);
             bookingRepository.save(booking);
         });
+    }
+
+    /**
+     * Delete a booking (e.g. when store owner dismisses it).
+     */
+    public void deleteBooking(Long bookingId) {
+        if (!bookingRepository.existsById(bookingId)) {
+            throw new RuntimeException("Booking not found");
+        }
+        bookingRepository.deleteById(bookingId);
     }
 }

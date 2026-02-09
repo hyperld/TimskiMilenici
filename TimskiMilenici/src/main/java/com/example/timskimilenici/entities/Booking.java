@@ -1,4 +1,5 @@
 package com.example.timskimilenici.entities;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"passwordHash", "email"})
     private User user;
 
     @ManyToOne
@@ -21,6 +23,7 @@ public class Booking {
     private PetService service;
 
     @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime bookingTime;
 
     @Enumerated(EnumType.STRING)
