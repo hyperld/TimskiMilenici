@@ -73,6 +73,14 @@
   font-weight: 600;
 }
 
+.timeSlotReserved {
+  background-color: #b0bec5 !important;
+  color: #fff !important;
+  cursor: not-allowed !important;
+  text-decoration: line-through;
+  opacity: 0.9;
+}
+
 .confirmBookingBtn {
   width: 100%;
   padding: 1rem;

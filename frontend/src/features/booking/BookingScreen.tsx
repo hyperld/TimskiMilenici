@@ -1,11 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import TopBar from '../../shared/components/TopBar/TopBar';
-import { bookingService } from './services/bookingService';
+import { bookingService, buildBookedTimesByDate, buildFullDates } from './services/bookingService';
 import { useAuth } from '../../features/auth/hooks/useAuth';
 import BookingForm from './components/BookingForm/BookingForm';
 import BookingSummary from './components/BookingSummary/BookingSummary';
 import BookingSuccess from './components/BookingSuccess/BookingSuccess';
+
+const TIME_SLOTS: string[] = (() => {
+  const slots: string[] = [];
+  for (let hour = 9; hour < 20; hour++) {
+    for (const min of ['00', '30']) {
+      slots.push(`${hour.toString().padStart(2, '0')}:${min}`);
+    }
+  }
+  return slots;
+})();
 
 const BookingScreen: React.FC = () => {
   const { serviceId } = useParams<{ serviceId: string }>();
@@ -13,6 +23,7 @@ const BookingScreen: React.FC = () => {
   const location = useLocation();
   const { user } = useAuth();
   const serviceData = location.state?.service;
+  const storeId = location.state?.storeId ?? location.state?.service?.businessId ?? location.state?.store?.id;
 
   const [bookingData, setBookingData] = useState({
     date: '',
@@ -23,39 +34,47 @@ const BookingScreen: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [unavailableDates, setUnavailableDates] = useState<string[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
   const [error, setError] = useState('');
 
+  const bookedTimesByDate = useMemo(() => buildBookedTimesByDate(bookings), [bookings]);
+  const fullDatesFromBookings = useMemo(
+    () => buildFullDates(bookedTimesByDate, TIME_SLOTS.length),
+    [bookedTimesByDate]
+  );
+  const datesWithBookings = useMemo(() => Object.keys(bookedTimesByDate), [bookedTimesByDate]);
+
   useEffect(() => {
-    const fetchAvailability = async () => {
-      try {
-        if (!serviceId) return;
-        const fullDates = await bookingService.getFullDates(parseInt(serviceId));
-        setUnavailableDates(fullDates);
-      } catch (err) {
-        console.error("Failed to fetch availability:", err);
-      }
-    };
-
-    fetchAvailability();
-  }, [serviceId]);
-
-  const generateTimeSlots = () => {
-    const slots = [];
-    const start = 9;
-    const end = 20;
-    
-    for (let hour = start; hour < end; hour++) {
-      for (let min of ['00', '30']) {
-        slots.push(`${hour.toString().padStart(2, '0')}:${min}`);
-      }
+    if (storeId != null && (typeof storeId === 'number' || typeof storeId === 'string')) {
+      const sid = typeof storeId === 'string' ? parseInt(storeId, 10) : storeId;
+      if (isNaN(sid)) return;
+      const start = new Date();
+      const end = new Date();
+      end.setDate(end.getDate() + 60);
+      const startStr = start.toISOString().split('T')[0];
+      const endStr = end.toISOString().split('T')[0];
+      bookingService
+        .getBookingsByStoreInRange(sid, startStr, endStr)
+        .then((data) => setBookings(Array.isArray(data) ? data : []))
+        .catch(() => setBookings([]));
+    } else {
+      if (!serviceId) return;
+      bookingService.getFullDates(parseInt(serviceId)).then(setUnavailableDates).catch(() => setUnavailableDates([]));
     }
-    return slots;
-  };
+  }, [storeId, serviceId]);
 
-  const timeSlots = generateTimeSlots();
+  const effectiveUnavailableDates = useMemo(() => {
+    if (storeId != null && (typeof storeId === 'number' || typeof storeId === 'string')) return fullDatesFromBookings;
+    return unavailableDates;
+  }, [storeId, fullDatesFromBookings, unavailableDates]);
+
+  const reservedTimeSlots = useMemo(
+    () => (bookingData.date ? (bookedTimesByDate[bookingData.date] || []) : []),
+    [bookingData.date, bookedTimesByDate]
+  );
 
   const handleDateSelect = (date: string) => {
-    setBookingData(prev => ({ ...prev, date }));
+    setBookingData(prev => ({ ...prev, date, time: '' }));
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -121,8 +140,10 @@ const BookingScreen: React.FC = () => {
             date={bookingData.date}
             time={bookingData.time}
             notes={bookingData.notes}
-            unavailableDates={unavailableDates}
-            timeSlots={timeSlots}
+            unavailableDates={effectiveUnavailableDates}
+            timeSlots={TIME_SLOTS}
+            reservedTimeSlots={reservedTimeSlots}
+            datesWithBookings={datesWithBookings}
             error={error}
             loading={loading}
             onDateSelect={handleDateSelect}

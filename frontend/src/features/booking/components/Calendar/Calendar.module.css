@@ -96,6 +96,26 @@
   box-shadow: 0 2px 5px rgba(0, 188, 212, 0.4);
 }
 
+.calendarDay.hasBookings {
+  position: relative;
+}
+
+.bookingDot {
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  pointer-events: none;
+}
+
+.calendarDay.selected .bookingDot {
+  background: white;
+}
+
 .calendarLegend {
   display: flex;
   gap: 1.5rem;

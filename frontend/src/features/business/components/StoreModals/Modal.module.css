@@ -13,6 +13,7 @@
 }
 
 .modalContent {
+  position: relative;
   background: white;
   border-radius: var(--radius-lg);
   width: 100%;
@@ -47,6 +48,97 @@
 
 .modalForm {
   padding: 1.5rem;
+}
+
+/* Main image – above Store Name, centered, hover to add/update/remove */
+.mainImageWrap {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 1.5rem 0;
+}
+
+.mainImageBox {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 2px solid var(--color-border);
+  background: #f0f0f0;
+}
+
+.mainImageImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mainImagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.mainImageOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.mainImageBox:hover .mainImageOverlay {
+  opacity: 1;
+}
+
+.mainImageLabel {
+  cursor: pointer;
+}
+
+.mainImageLabel .addImageInput {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.mainImageBtn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: white;
+  color: var(--color-text);
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.mainImageBtn:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+.mainImageRemoveBtn {
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+}
+
+.mainImageRemoveBtn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
 }
 
 .formGroup {
@@ -130,6 +222,81 @@
   color: var(--color-primary);
 }
 
+/* Store images */
+.addImageLabel {
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.addImageInput {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.addImageBtn {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-background);
+  color: var(--color-text);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.addImageBtn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-background-light);
+}
+
+.noImages {
+  margin: 0;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+}
+
+.imagesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.imageCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #f8f9fa;
+}
+
+.imageThumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.imageActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  align-items: center;
+}
+
+.mainBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  padding: 0.25rem 0.5rem;
+  background: var(--color-primary-light);
+  border-radius: var(--radius-sm);
+}
+
 .addItemBtn {
   background: var(--color-primary-light);
   color: var(--color-primary);
@@ -180,4 +347,213 @@
 
 .deleteItemBtn {
   color: var(--color-error);
+}
+
+/* Bookings & availability */
+.bookingsLoading,
+.noBookings {
+  margin: 0;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+}
+
+.bookingsListWrap {
+  margin-bottom: 1.5rem;
+}
+
+.bookingsListHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.bookingsListHeaderRight {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bookingsCounter {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.bookingsCounterFiltered {
+  font-weight: 500;
+  color: var(--color-text-light);
+}
+
+.dayNav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.dayNavBtn {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: #f8f9fa;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.dayNavBtn:hover {
+  background: #e9ecef;
+  border-color: var(--color-text-light);
+}
+
+.dayNavBtnActive {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.bookingsSubtitle {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.bookingsListHeader .bookingsSubtitle {
+  margin-bottom: 0;
+}
+
+.bookingsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.bookingItem {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: #f8f9fa;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+}
+
+.bookingItemClickable {
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.bookingItemClickable:hover {
+  background: #e9ecef;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.bookingItemHint {
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  margin-left: auto;
+}
+
+.bookingDate { color: var(--color-text); }
+.bookingTime { font-weight: 600; color: var(--color-primary); }
+.bookingUser { color: var(--color-text-light); }
+.bookingService { color: var(--color-text); }
+
+.calendarSection {
+  margin-bottom: 1rem;
+}
+
+.timeSlotsSection {
+  margin-top: 1rem;
+}
+
+.timeSlotsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 0.5rem;
+}
+
+.timeSlotChip {
+  padding: 0.4rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  text-align: center;
+  background: #e8f5e9;
+  color: var(--color-text);
+  border: 1px solid transparent;
+  cursor: default;
+}
+
+.timeSlotInformative {
+  background: #fff8e1 !important;
+  color: #f57f17 !important;
+  border: 1px solid #ffca28 !important;
+  cursor: pointer !important;
+  font-weight: 500;
+}
+
+.timeSlotInformative:hover {
+  background: #ffecb3 !important;
+  border-color: #ffa000 !important;
+}
+
+/* BookingInfo overlay (when clicking a slot or list item) - fixed so it's not clipped by modal scroll */
+.bookingInfoOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 1rem;
+}
+
+.bookingInfoPanel {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 420px;
+  width: 100%;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.bookingInfoHeader {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bookingInfoHeader h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--color-text);
+}
+
+.bookingInfoList {
+  padding: 1rem 1.25rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }

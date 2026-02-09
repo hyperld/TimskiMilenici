@@ -6,9 +6,11 @@ interface CalendarProps {
   selectedDate: string;
   onDateSelect: (date: string) => void;
   unavailableDates?: string[];
+  /** Dates that have at least one booking (show a dot indicator). */
+  datesWithBookings?: string[];
 }
 
-const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, unavailableDates = [] }) => {
+const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, unavailableDates = [], datesWithBookings = [] }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const daysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
@@ -37,6 +39,7 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, unavail
   for (let d = 1; d <= totalDays; d++) {
     const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
     const isUnavailable = unavailableDates.includes(dateStr);
+    const hasBookings = datesWithBookings.includes(dateStr);
     const dateObj = new Date(year, month, d);
     const isPast = dateObj < today;
     const isSelected = selectedDate === dateStr;
@@ -45,7 +48,7 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, unavail
     if (isPast) dayClasses.push(styles.past);
     else if (isUnavailable) dayClasses.push(styles.unavailable);
     else dayClasses.push(styles.available);
-    
+    if (hasBookings && !isUnavailable && !isPast) dayClasses.push(styles.hasBookings);
     if (isSelected) dayClasses.push(styles.selected);
 
     days.push(
@@ -55,6 +58,7 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, unavail
         onClick={() => !isPast && !isUnavailable && onDateSelect(dateStr)}
       >
         {d}
+        {hasBookings && !isUnavailable && !isPast && <span className={styles.bookingDot} title="Has bookings" />}
       </div>
     );
   }

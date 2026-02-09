@@ -71,6 +71,28 @@ export const businessService = {
     }
   },
 
+  /**
+   * Upload an image file. Returns the public URL of the uploaded file.
+   * POST /api/uploads with multipart form "file"
+   */
+  uploadImage: async (file: File): Promise<{ url: string }> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await fetch(`${API_URL}/uploads`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${getAuthToken()}`
+      },
+      body: formData
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Failed to upload image');
+    }
+    const data = await response.json();
+    return { url: data.url };
+  },
+
   // Update business details
   updateBusiness: async (id: number, businessData: any): Promise<Business> => {
     try {
@@ -82,7 +104,7 @@ export const businessService = {
         category: businessData.type || businessData.category,
         address: businessData.address,
         owner: businessData.owner,
-        imageUrls: businessData.imageUrls,
+        imageUrls: businessData.imageUrls ?? businessData.images,
         mainImageUrl: businessData.mainImageUrl,
         contactPhone: businessData.contactPhone,
         contactEmail: businessData.contactEmail

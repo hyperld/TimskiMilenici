@@ -98,7 +98,10 @@ const StoreDetailsScreen: React.FC = () => {
         onNextImage={handleNextImage}
         onPrevImage={handlePrevImage}
         onDotClick={handleDotClick}
-        onBookService={(id) => navigate(`/booking/${id}`)}
+        onBookService={(serviceId) => {
+          const service = store.services?.find((s: any) => s.id === Number(serviceId) || s.id === serviceId);
+          navigate(`/booking/${serviceId}`, { state: { service, storeId: store.id } });
+        }}
         onBack={() => navigate('/home')}
       />
     </div>
