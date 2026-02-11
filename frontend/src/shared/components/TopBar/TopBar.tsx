@@ -40,6 +40,7 @@ const TopBar: React.FC<TopBarProps> = ({ userName = 'User', profilePic = '' }) =
 
   const userRole = user?.role;
   const isOwner = userRole === 'OWNER' || userRole === 'BUSINESS_OWNER';
+  const profilePicture = user?.profilePictureUrl ?? user?.profileImageUrl ?? profilePic;
 
   return (
     <nav className={styles.topBar}>
@@ -60,8 +61,8 @@ const TopBar: React.FC<TopBarProps> = ({ userName = 'User', profilePic = '' }) =
         <span>Welcome, {user?.fullName || userName}</span>
         <div className={styles.userMenuContainer} ref={dropdownRef}>
           <div className={styles.userAvatar} onClick={toggleDropdown}>
-            {profilePic ? (
-              <img src={profilePic} alt="User Avatar" />
+            {profilePicture ? (
+              <img src={profilePicture} alt="User Avatar" />
             ) : (
               <div className={styles.avatarPlaceholder}>👤</div>
             )}

@@ -100,7 +100,6 @@ export const businessService = {
         id: id,
         name: businessData.name,
         description: businessData.description,
-        location: businessData.location,
         category: businessData.type || businessData.category,
         address: businessData.address,
         owner: businessData.owner,
@@ -142,7 +141,6 @@ export const businessService = {
       const payload = {
         name: businessData.name,
         description: businessData.description,
-        location: businessData.location,
         address: businessData.address,
         category: businessData.type,
         owner: { id: businessData.ownerId },
@@ -175,6 +173,19 @@ export const businessService = {
     } catch (error) {
       console.error("createBusiness error:", error);
       throw error;
+    }
+  },
+
+  deleteBusiness: async (id: number): Promise<void> => {
+    const response = await fetch(`${API_URL}/businesses/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${getAuthToken()}`
+      }
+    });
+    if (!response.ok && response.status !== 204) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Failed to delete store');
     }
   },
 

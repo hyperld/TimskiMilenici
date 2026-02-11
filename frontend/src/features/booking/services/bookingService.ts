@@ -137,6 +137,21 @@ export const bookingService = {
   },
 
   /**
+   * Returns all bookings for a user (e.g. for "My bookings" / pending list).
+   * GET /api/bookings/user/{userId}
+   */
+  getBookingsByUser: async (userId: number): Promise<any[]> => {
+    const user = getAuthUser();
+    const response = await fetch(`${API_URL}/user/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${user?.token}`
+      }
+    });
+    if (!response.ok) return [];
+    return await response.json();
+  },
+
+  /**
    * Saves a new booking.
    */
   createBooking: async (bookingData: { serviceId: number; date: string; time: string; notes?: string }): Promise<{ success: boolean; [key: string]: any }> => {

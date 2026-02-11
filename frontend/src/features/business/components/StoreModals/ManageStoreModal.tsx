@@ -12,20 +12,24 @@ import {
   parseBookingDateTime
 } from '../../../booking/services/bookingService';
 import { businessService } from '../../services/businessService';
+import { parseAddress, buildAddress } from '../../utils/addressUtils';
 
 interface ManageStoreModalProps {
   editingStore: any;
   onUpdate: (updatedStore: any, itemsToSave: any[], itemsToDelete: {id: number, type: string}[]) => Promise<void>;
+  onDelete?: (storeId: number) => Promise<void>;
   onClose: () => void;
 }
 
 const ManageStoreModal: React.FC<ManageStoreModalProps> = ({ 
   editingStore, 
   onUpdate, 
+  onDelete,
   onClose
 }) => {
   const [localStore, setLocalStore] = useState(() => ({
     ...editingStore,
+    ...parseAddress(editingStore.address ?? ''),
     imageUrls: editingStore.imageUrls ?? editingStore.images ?? [],
     images: editingStore.images ?? editingStore.imageUrls ?? []
   }));
@@ -308,9 +312,32 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
     e.preventDefault();
     setLoading(true);
     try {
-      await onUpdate(localStore, itemsToSave, itemsToDelete);
+      const address = buildAddress(
+        localStore.street ?? '',
+        localStore.city ?? '',
+        localStore.postalCode ?? '',
+        localStore.country ?? ''
+      );
+      await onUpdate({ ...localStore, address }, itemsToSave, itemsToDelete);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteStore = async () => {
+    if (!onDelete) return;
+    const storeId = localStore.id ?? editingStore?.id;
+    if (storeId == null) return;
+    if (!window.confirm(`Delete store "${localStore.name}"? This cannot be undone.`)) return;
+    setLoading(true);
+    try {
+      await onDelete(storeId);
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert('Failed to delete store.');
     } finally {
       setLoading(false);
     }
@@ -361,8 +388,22 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
             <input name="name" value={localStore.name} onChange={handleChange} required />
           </div>
           <div className={styles.formGroup}>
-            <label>Address</label>
-            <input name="address" value={localStore.address} onChange={handleChange} required />
+            <label>Street address</label>
+            <input name="street" value={localStore.street ?? ''} onChange={handleChange} placeholder="e.g. 123 Main St" required />
+          </div>
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label>City</label>
+              <input name="city" value={localStore.city ?? ''} onChange={handleChange} required />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Postal code</label>
+              <input name="postalCode" value={localStore.postalCode ?? ''} onChange={handleChange} placeholder="e.g. 11000" />
+            </div>
+          </div>
+          <div className={styles.formGroup}>
+            <label>Country</label>
+            <input name="country" value={localStore.country ?? ''} onChange={handleChange} placeholder="e.g. Serbia" required />
           </div>
         </div>
 
@@ -460,7 +501,8 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
             </div>
           </div>
 
-          {/* Bookings & availability - fetched by store id */}
+          {/* Bookings & availability - only show when store has services */}
+          {(localStore?.services?.length ?? 0) > 0 && (
           <div className={styles.manageSection}>
             <div className={styles.sectionHeader}>
               <h3>Bookings & availability</h3>
@@ -584,13 +626,28 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
               </>
             )}
           </div>
+          )}
+
         </div>
 
-        <div className={styles.formActions} style={{ padding: '1.5rem', borderTop: '1px solid var(--color-border)' }}>
-          <Button variant="secondary" onClick={onClose} disabled={loading}>Cancel</Button>
-          <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? 'Updating...' : 'Update Store Info'}
-          </Button>
+        <div className={styles.formActions} style={{ padding: '1.5rem', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <Button variant="secondary" onClick={onClose} disabled={loading}>Cancel</Button>
+            <Button onClick={handleSubmit} disabled={loading}>
+              {loading ? 'Updating...' : 'Update Store Info'}
+            </Button>
+          </div>
+          {onDelete && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleDeleteStore}
+              disabled={loading}
+              style={{ color: 'var(--color-error, #c00)' }}
+            >
+              Delete Store
+            </Button>
+          )}
         </div>
 
         {showItemModal && (

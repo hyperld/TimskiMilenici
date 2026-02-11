@@ -5,7 +5,7 @@ import styles from './StoreCard.module.css';
 import Button from '../../../../shared/components/Button/Button';
 
 interface StoreCardProps {
-  store: Business & { type?: string; location?: string };
+  store: Business & { type?: string };
 }
 
 const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
@@ -27,7 +27,7 @@ const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
         <h3 className={styles.storeName}>{store.name}</h3>
         <p className={styles.storeDescription}>{store.description}</p>
         <div className={styles.storeFooter}>
-          <span className={styles.storeLocation}>📍 {store.location || store.address}</span>
+          <span className={styles.storeLocation}>📍 {store.address}</span>
           <Button 
             size="sm"
             onClick={(e) => {

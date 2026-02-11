@@ -11,6 +11,10 @@ const EditProfileScreen: React.FC = () => {
 
   if (!user) return null;
 
+  const isOwner = user.role === 'OWNER' || user.role === 'BUSINESS_OWNER';
+  const backLabel = isOwner ? '← Back to Dashboard' : '← Back to Home';
+  const backPath = isOwner ? '/owner-dashboard' : '/home';
+
   const containerStyle: React.CSSProperties = {
     minHeight: '100vh',
   };
@@ -29,10 +33,17 @@ const EditProfileScreen: React.FC = () => {
           <Button 
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/account')}
-            style={{ marginBottom: '1.5rem' }}
+            onClick={() => navigate(backPath)}
+            style={{
+              marginBottom: '1.5rem',
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              color: 'var(--color-text)',
+              border: '1px solid var(--color-border)',
+              boxShadow: 'var(--shadow-sm)',
+              padding: '0.5rem 1rem',
+            }}
           >
-            ← Back to Account
+            {backLabel}
           </Button>
           <EditProfileForm />
         </div>

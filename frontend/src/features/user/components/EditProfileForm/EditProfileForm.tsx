@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../features/auth/hooks/useAuth';
 import styles from './EditProfileForm.module.css';
 import Button from '../../../../shared/components/Button/Button';
+import { businessService } from '../../../business/services/businessService';
 
 const EditProfileForm: React.FC = () => {
   const { user, updateProfile, changePassword } = useAuth();
-  const navigate = useNavigate();
-  
+  const profilePictureUrl = user?.profilePictureUrl ?? user?.profileImageUrl ?? '';
   const [profileData, setProfileData] = useState({
     fullName: user?.fullName || '',
     email: user?.email || '',
     phoneNumber: user?.phoneNumber || '',
     address: user?.address || '',
+    profilePictureUrl: profilePictureUrl || '',
   });
+  const [profilePictureUploading, setProfilePictureUploading] = useState(false);
 
   const [passwordData, setPasswordData] = useState({
     oldPassword: '',
@@ -28,6 +29,25 @@ const EditProfileForm: React.FC = () => {
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setProfileData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleProfilePictureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    e.target.value = '';
+    setProfilePictureUploading(true);
+    try {
+      const { url } = await businessService.uploadImage(file);
+      setProfileData(prev => ({ ...prev, profilePictureUrl: url }));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setProfilePictureUploading(false);
+    }
+  };
+
+  const handleRemoveProfilePicture = () => {
+    setProfileData(prev => ({ ...prev, profilePictureUrl: '' }));
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,6 +105,35 @@ const EditProfileForm: React.FC = () => {
 
       <form className={styles.editForm} onSubmit={handleUpdateProfile}>
         <div className={styles.formSection}>
+          <h3>Profile picture</h3>
+          <div className={styles.profilePictureWrap}>
+            <div className={styles.profilePictureBox}>
+              {profileData.profilePictureUrl ? (
+                <img src={profileData.profilePictureUrl} alt="Profile" className={styles.profilePictureImg} />
+              ) : (
+                <div className={styles.profilePicturePlaceholder}>👤</div>
+              )}
+              <div className={styles.profilePictureOverlay}>
+                <label className={styles.profilePictureLabel}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleProfilePictureUpload}
+                    disabled={profilePictureUploading}
+                    className={styles.profilePictureInput}
+                  />
+                  <span className={styles.profilePictureBtn}>
+                    {profilePictureUploading ? 'Uploading…' : profileData.profilePictureUrl ? 'Change' : 'Add photo'}
+                  </span>
+                </label>
+                {profileData.profilePictureUrl && (
+                  <Button variant="ghost" size="sm" onClick={handleRemoveProfilePicture} className={styles.profilePictureRemoveBtn}>
+                    Remove
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
           <h3>Personal Information</h3>
           <div className={styles.formGrid}>
             <div className={styles.formGroup}>

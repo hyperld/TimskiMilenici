@@ -13,6 +13,90 @@
   text-align: center;
 }
 
+/* Profile picture */
+.profilePictureWrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.profilePictureBox {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--color-border);
+  background: var(--color-background-light);
+}
+
+.profilePictureImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profilePicturePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-light);
+  font-size: 2.5rem;
+}
+
+.profilePictureOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.profilePictureBox:hover .profilePictureOverlay {
+  opacity: 1;
+}
+
+.profilePictureLabel {
+  cursor: pointer;
+}
+
+.profilePictureLabel .profilePictureInput {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.profilePictureBtn {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: white;
+  color: var(--color-text);
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+}
+
+.profilePictureBtn:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+.profilePictureRemoveBtn {
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+}
+
 .editForm {
   display: flex;
   flex-direction: column;

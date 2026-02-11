@@ -5,14 +5,22 @@
   box-shadow: var(--shadow-md);
   width: 100%;
   max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .accountHeader {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   text-align: center;
+}
+
+.accountCard .editProfileBtnWrap {
+  margin-top: auto;
+  padding-top: 1rem;
 }
 
 .avatar {

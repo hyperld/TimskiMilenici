@@ -6,9 +6,13 @@ import { businessService } from './services/businessService';
 import { Business } from './types';
 import BusinessList from './components/OwnerDashboard/BusinessList';
 import DashboardHeader from './components/DashboardHeader/DashboardHeader';
+import AccountCard from '../user/components/AccountCard/AccountCard';
+import AnalyticsPlaceholder from './components/OwnerDashboard/AnalyticsPlaceholder/AnalyticsPlaceholder';
+import NotificationTab from '../../shared/components/NotificationTab/NotificationTab';
 import CreateStoreModal from './components/StoreModals/CreateStoreModal';
 import ManageStoreModal from './components/StoreModals/ManageStoreModal';
 import ItemModal from './components/StoreModals/ItemModal';
+import styles from './OwnerDashboardScreen.module.css';
 
 const OwnerDashboardScreen: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
@@ -45,8 +49,10 @@ const OwnerDashboardScreen: React.FC = () => {
   const [newStore, setNewStore] = useState({
     name: '',
     type: 'Supplies',
-    location: '',
-    address: '',
+    street: '',
+    city: '',
+    postalCode: '',
+    country: '',
     description: '',
     contactPhone: '',
     contactEmail: '',
@@ -80,27 +86,38 @@ const OwnerDashboardScreen: React.FC = () => {
   const handleCreateStore = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const { buildAddress } = await import('./utils/addressUtils');
+      const address = buildAddress(newStore.street, newStore.city, newStore.postalCode, newStore.country);
       const result = await businessService.createBusiness({
         ...newStore,
+        address,
         ownerId: userId
       });
-      
       setOwnerStores(prev => [...prev, result]);
       setShowCreateModal(false);
-      setNewStore({ 
-        name: '', 
-        type: 'Supplies', 
-        location: '', 
-        address: '', 
-        description: '', 
-        contactPhone: '', 
-        contactEmail: '', 
+      setNewStore({
+        name: '',
+        type: 'Supplies',
+        street: '',
+        city: '',
+        postalCode: '',
+        country: '',
+        description: '',
+        contactPhone: '',
+        contactEmail: '',
         mainImageUrl: '',
-        imageUrls: [] 
+        imageUrls: []
       });
     } catch (error) {
       alert("Failed to create store");
     }
+  };
+
+  const handleDeleteStore = async (storeId: number) => {
+    await businessService.deleteBusiness(storeId);
+    setOwnerStores(prev => prev.filter(s => s.id !== storeId));
+    setShowEditModal(false);
+    setEditingStore(null);
   };
 
   const handleUpdateStore = async (updatedStore: any, itemsToSave: any[], itemsToDelete: {id: number, type: string}[]) => {
@@ -152,6 +169,19 @@ const OwnerDashboardScreen: React.FC = () => {
     <div style={{ minHeight: '100vh' }}>
       <TopBar userName={userName} />
       <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
+        <div className={styles.topRow}>
+          {user && (
+            <AccountCard
+              userData={user}
+              onEdit={() => navigate('/edit-profile')}
+            />
+          )}
+          <div className={styles.rightColumn}>
+            <AnalyticsPlaceholder />
+            <NotificationTab />
+          </div>
+        </div>
+
         <DashboardHeader 
           title="Owner Dashboard" 
           description="Manage your pet businesses and services." 
@@ -178,6 +208,7 @@ const OwnerDashboardScreen: React.FC = () => {
           <ManageStoreModal 
             editingStore={editingStore}
             onUpdate={handleUpdateStore}
+            onDelete={handleDeleteStore}
             onClose={() => setShowEditModal(false)}
           />
         )}

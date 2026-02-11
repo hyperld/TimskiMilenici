@@ -45,12 +45,23 @@ public class BusinessController {
 
     @GetMapping("/search")
     public List<Business> search(@RequestParam(required = false) String category,
-                                 @RequestParam(required = false) String location) {
+                                 @RequestParam(required = false) String address) {
         if (category != null) {
             return businessService.findByCategory(category);
-        } else if (location != null) {
-            return businessService.searchByLocation(location);
+        } else if (address != null) {
+            return businessService.searchByAddress(address);
         }
         return businessService.getAllBusinesses();
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        try {
+            businessService.deleteBusiness(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

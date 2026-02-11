@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TopBar from '../../shared/components/TopBar/TopBar';
 import { useAuth } from '../../features/auth/hooks/useAuth';
 import { businessService } from './services/businessService';
 import { Business } from './types';
 import StoreFilters from './components/StoreFilters/StoreFilters';
 import StoreGrid from './components/StoreGrid/StoreGrid';
+import AccountCard from '../user/components/AccountCard/AccountCard';
+import PendingBookings from '../user/components/PendingBookings/PendingBookings';
+import NotificationTab from '../../shared/components/NotificationTab/NotificationTab';
+import styles from './HomeScreen.module.css';
 
 const HomeScreen: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('All');
   const [stores, setStores] = useState<Business[]>([]);
@@ -44,7 +50,20 @@ const HomeScreen: React.FC = () => {
       <TopBar userName={user?.fullName || 'User'} />
 
       <div style={{ display: 'flex', flex: 1 }}>
-        <main style={{ flex: 1, padding: '2rem 3rem' }}>
+        <main style={{ flex: 1, padding: '2rem 3rem', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+          {isAuthenticated && user && (
+            <div className={styles.topRow}>
+              <AccountCard
+                userData={user}
+                onEdit={() => navigate('/edit-profile')}
+              />
+              <div className={styles.rightColumn}>
+                {user.userId != null && <PendingBookings userId={user.userId} />}
+                <NotificationTab />
+              </div>
+            </div>
+          )}
+
           <div style={{ 
             display: 'flex', 
             flexDirection: 'column', 
@@ -54,7 +73,7 @@ const HomeScreen: React.FC = () => {
             gap: '1.5rem' 
           }}>
             <div style={{ 
-              backgroundColor: 'var(--color-primary)', 
+              backgroundColor: 'var(--color-primary)',
               padding: '1.5rem 2.5rem', 
               borderRadius: '50px', 
               boxShadow: 'var(--shadow-md)', 

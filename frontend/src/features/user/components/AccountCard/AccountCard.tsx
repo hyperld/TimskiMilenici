@@ -13,8 +13,8 @@ const AccountCard: React.FC<AccountCardProps> = ({ userData, onEdit }) => {
     <div className={styles.accountCard}>
       <div className={styles.accountHeader}>
         <div className={styles.avatar}>
-          {userData.profileImageUrl ? (
-            <img src={userData.profileImageUrl} alt={userData.fullName} />
+          {(userData.profilePictureUrl ?? userData.profileImageUrl) ? (
+            <img src={userData.profilePictureUrl ?? userData.profileImageUrl} alt={userData.fullName} />
           ) : (
             '👤'
           )}
@@ -23,30 +23,11 @@ const AccountCard: React.FC<AccountCardProps> = ({ userData, onEdit }) => {
         <div className={styles.roleBadge}>{userData.role}</div>
       </div>
 
-      <div className={styles.accountDetails}>
-        <div className={styles.detailRow}>
-          <span className={styles.detailLabel}>Email</span>
-          <span className={styles.detailValue}>{userData.email}</span>
-        </div>
-        
-        {userData.phoneNumber && (
-          <div className={styles.detailRow}>
-            <span className={styles.detailLabel}>Phone</span>
-            <span className={styles.detailValue}>{userData.phoneNumber}</span>
-          </div>
-        )}
-
-        {userData.address && (
-          <div className={styles.detailRow}>
-            <span className={styles.detailLabel}>Address</span>
-            <span className={styles.detailValue}>{userData.address}</span>
-          </div>
-        )}
+      <div className={styles.editProfileBtnWrap}>
+        <Button fullWidth onClick={onEdit}>
+          ⚙️ Edit Profile
+        </Button>
       </div>
-
-      <Button fullWidth onClick={onEdit}>
-        ⚙️ Edit Profile
-      </Button>
     </div>
   );
 };

@@ -342,26 +342,7 @@
   padding: 1rem;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  display: flex;
-}
-
-.mapPlaceholder {
-  width: 100%;
-  height: 100%;
-  min-height: 250px;
-  background-color: var(--color-background-light);
-  border-radius: var(--radius-sm);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-light);
-  border: 1px solid var(--color-border);
-}
-
-.mapPin {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
+  min-height: 280px;
 }
 
 @media (max-width: 900px) {

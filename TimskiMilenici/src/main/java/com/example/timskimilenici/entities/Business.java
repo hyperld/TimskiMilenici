@@ -20,11 +20,9 @@ public class Business {
     private String description;
 
     @Column
-    private String location;
-
-    @Column
     private String category;
 
+    /** Full address (street, city, postal code, country) for display and map geocoding */
     @Column
     private String address;
 
@@ -62,10 +60,9 @@ public class Business {
 
     protected Business() {}
 
-    public Business(String name, String description, String location, String category, User owner) {
+    public Business(String name, String description, String category, User owner) {
         this.name = name;
         this.description = description;
-        this.location = location;
         this.category = category;
         this.owner = owner;
         this.createdAt = LocalDateTime.now();
@@ -78,8 +75,6 @@ public class Business {
     public void setName(String name) { this.name = name; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
     public String getAddress() { return address; }

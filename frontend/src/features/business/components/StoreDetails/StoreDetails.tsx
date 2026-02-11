@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './StoreDetails.module.css';
 import Button from '../../../../shared/components/Button/Button';
+import StoreMap from './StoreMap/StoreMap';
 
 interface StoreDetailsProps {
   store: any;
@@ -134,10 +135,7 @@ const StoreDetails: React.FC<StoreDetailsProps> = ({
         </div>
         
         <div className={styles.storeMapSection}>
-          <div className={styles.mapPlaceholder}>
-            <span className={styles.mapPin}>📍</span>
-            <p>Map View of {store.address}</p>
-          </div>
+          <StoreMap address={store.address || ''} storeName={store.name} />
         </div>
       </section>
     </div>

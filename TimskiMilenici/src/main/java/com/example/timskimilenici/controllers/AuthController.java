@@ -40,7 +40,8 @@ public class AuthController {
                     request.getPassword(),
                     request.getRole(),
                     request.getFullName(),
-                    request.getUsername()
+                    request.getUsername(),
+                    request.getProfilePictureUrl()
             );
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
@@ -63,6 +64,7 @@ public class AuthController {
         response.put("fullName", user.getFullName());
         response.put("username", user.getUsername());
         response.put("role", user.getRole());
+        response.put("profilePictureUrl", user.getProfilePictureUrl());
         
         return ResponseEntity.ok(response);
     }
@@ -84,6 +86,7 @@ public class AuthController {
         response.put("email", user.getEmail());
         response.put("fullName", user.getFullName());
         response.put("username", user.getUsername());
+        response.put("profilePictureUrl", user.getProfilePictureUrl());
         
         return ResponseEntity.ok(response);
     }
@@ -96,7 +99,8 @@ public class AuthController {
                     request.getFullName(),
                     request.getUsername(),
                     request.getEmail(),
-                    request.getPhoneNumber()
+                    request.getPhoneNumber(),
+                    request.getProfilePictureUrl()
             );
             
             Map<String, Object> response = new HashMap<>();
@@ -105,6 +109,7 @@ public class AuthController {
             response.put("fullName", updatedUser.getFullName());
             response.put("username", updatedUser.getUsername());
             response.put("role", updatedUser.getRole());
+            response.put("profilePictureUrl", updatedUser.getProfilePictureUrl());
             
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
@@ -138,6 +143,7 @@ public class AuthController {
         private String username;
         private String email;
         private String phoneNumber;
+        private String profilePictureUrl;
 
         // Getters and Setters
         public Long getUserId() { return userId; }
@@ -150,6 +156,8 @@ public class AuthController {
         public void setEmail(String email) { this.email = email; }
         public String getPhoneNumber() { return phoneNumber; }
         public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+        public String getProfilePictureUrl() { return profilePictureUrl; }
+        public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
     }
 
     public static class ChangePasswordRequest {
@@ -172,6 +180,7 @@ public class AuthController {
         private Role role;
         private String fullName;
         private String username;
+        private String profilePictureUrl;
 
         // Getters and Setters
         public String getEmail() { return email; }
@@ -184,6 +193,8 @@ public class AuthController {
         public void setFullName(String fullName) { this.fullName = fullName; }
         public String getUsername() { return username; }
         public void setUsername(String username) { this.username = username; }
+        public String getProfilePictureUrl() { return profilePictureUrl; }
+        public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
     }
 
     public static class LoginRequest {

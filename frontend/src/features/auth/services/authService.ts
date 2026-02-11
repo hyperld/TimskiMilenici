@@ -12,6 +12,7 @@ export interface AuthResponse {
   phoneNumber?: string;
   address?: string;
   profileImageUrl?: string;
+  profilePictureUrl?: string;
 }
 
 export interface SignupData {
@@ -20,6 +21,7 @@ export interface SignupData {
   role: string;
   fullName: string;
   username: string;
+  profilePictureUrl?: string;
 }
 
 export interface PasswordData {
@@ -57,7 +59,8 @@ export const authService = {
       password: userData.password,
       role: roleMapping[userData.role] || 'USER',
       fullName: userData.fullName,
-      username: userData.username
+      username: userData.username,
+      profilePictureUrl: userData.profilePictureUrl
     };
 
     const response = await fetch(`${API_URL}/signup`, {

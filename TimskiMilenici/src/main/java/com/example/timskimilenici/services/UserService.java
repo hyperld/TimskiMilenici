@@ -20,7 +20,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User createUser(String email, String rawPassword, Role role, String fullName, String username) {
+    public User createUser(String email, String rawPassword, Role role, String fullName, String username, String profilePictureUrl) {
         if (userRepository.existsByUsername(username)) {
             throw new RuntimeException("Username already exists");
         }
@@ -30,6 +30,9 @@ public class UserService {
         // Hash the password — NEVER store raw!
         String hashedPassword = passwordEncoder.encode(rawPassword);
         User user = new User(email, hashedPassword, role, fullName, username);
+        if (profilePictureUrl != null && !profilePictureUrl.isBlank()) {
+            user.setProfilePictureUrl(profilePictureUrl);
+        }
         return userRepository.save(user);
     }
 
@@ -57,7 +60,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with email or username: " + identifier));
     }
 
-    public User updateUserProfile(Long id, String fullName, String username, String email, String phoneNumber) {
+    public User updateUserProfile(Long id, String fullName, String username, String email, String phoneNumber, String profilePictureUrl) {
         User user = getUserById(id);
         
         // Check if new username/email already exists for another user
@@ -72,6 +75,7 @@ public class UserService {
         if (username != null) user.setUsername(username);
         if (email != null) user.setEmail(email);
         if (phoneNumber != null) user.setPhoneNumber(phoneNumber);
+        if (profilePictureUrl != null) user.setProfilePictureUrl(profilePictureUrl.isBlank() ? null : profilePictureUrl);
         
         return userRepository.save(user);
     }

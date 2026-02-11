@@ -9,7 +9,6 @@ import RegisterScreen from '../../features/auth/RegisterScreen';
 import HomeScreen from '../../features/business/HomeScreen';
 import StoreDetailsScreen from '../../features/business/StoreDetailsScreen';
 import BookingScreen from '../../features/booking/BookingScreen';
-import UserAccountScreen from '../../features/user/UserAccountScreen';
 import EditProfileScreen from '../../features/user/EditProfileScreen';
 import OwnerDashboardScreen from '../../features/business/OwnerDashboardScreen';
 
@@ -29,11 +28,7 @@ const AppRoutes: React.FC = () => {
         </ProtectedRoute>
       } />
       
-      <Route path="/account" element={
-        <ProtectedRoute>
-          <UserAccountScreen />
-        </ProtectedRoute>
-      } />
+      <Route path="/account" element={<Navigate to="/owner-dashboard" replace />} />
       
       <Route path="/edit-profile" element={
         <ProtectedRoute>
