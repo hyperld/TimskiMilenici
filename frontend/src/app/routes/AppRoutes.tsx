@@ -9,6 +9,7 @@ import RegisterScreen from '../../features/auth/RegisterScreen';
 import HomeScreen from '../../features/business/HomeScreen';
 import StoreDetailsScreen from '../../features/business/StoreDetailsScreen';
 import BookingScreen from '../../features/booking/BookingScreen';
+import CartScreen from '../../features/cart/screens/CartScreen';
 import EditProfileScreen from '../../features/user/EditProfileScreen';
 import OwnerDashboardScreen from '../../features/business/OwnerDashboardScreen';
 
@@ -21,6 +22,12 @@ const AppRoutes: React.FC = () => {
       
       <Route path="/home" element={<HomeScreen />} />
       <Route path="/store/:id" element={<StoreDetailsScreen />} />
+
+      <Route path="/cart" element={
+        <ProtectedRoute>
+          <CartScreen />
+        </ProtectedRoute>
+      } />
       
       <Route path="/booking/:serviceId" element={
         <ProtectedRoute>

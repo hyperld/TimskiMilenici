@@ -11,7 +11,6 @@ import AnalyticsPlaceholder from './components/OwnerDashboard/AnalyticsPlacehold
 import NotificationTab from '../../shared/components/NotificationTab/NotificationTab';
 import CreateStoreModal from './components/StoreModals/CreateStoreModal';
 import ManageStoreModal from './components/StoreModals/ManageStoreModal';
-import ItemModal from './components/StoreModals/ItemModal';
 import styles from './OwnerDashboardScreen.module.css';
 
 const OwnerDashboardScreen: React.FC = () => {
@@ -29,22 +28,10 @@ const OwnerDashboardScreen: React.FC = () => {
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showItemModal, setShowItemModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [ownerStores, setOwnerStores] = useState<Business[]>([]);
   const [editingStore, setEditingStore] = useState<any | null>(null);
   const [managingStore, setManagingStore] = useState<any | null>(null);
-  
-  const [itemFormData, setItemFormData] = useState({
-    name: '',
-    price: '',
-    description: '',
-    type: 'product',
-    stockQuantity: '',
-    capacity: '',
-    durationMinutes: '',
-    id: null as number | null
-  });
 
   const [newStore, setNewStore] = useState({
     name: '',

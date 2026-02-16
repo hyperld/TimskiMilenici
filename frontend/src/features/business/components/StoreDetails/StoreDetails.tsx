@@ -10,6 +10,7 @@ interface StoreDetailsProps {
   onPrevImage: () => void;
   onDotClick: (index: number) => void;
   onBookService: (id: string) => void;
+  onAddToCart?: (product: { id: number }) => void;
   onBack: () => void;
 }
 
@@ -20,6 +21,7 @@ const StoreDetails: React.FC<StoreDetailsProps> = ({
   onPrevImage,
   onDotClick,
   onBookService,
+  onAddToCart,
   onBack
 }) => {
   const services = store.services || [];
@@ -116,6 +118,14 @@ const StoreDetails: React.FC<StoreDetailsProps> = ({
                     <h4>{product.name}</h4>
                     <p className={styles.itemStock}>Stock: {product.stockQuantity}</p>
                     <p className={styles.itemPrice}>${product.price}</p>
+                    {onAddToCart && (
+                      <Button
+                        fullWidth
+                        onClick={() => onAddToCart({ id: product.id })}
+                      >
+                        Add to cart
+                      </Button>
+                    )}
                   </div>
                 </div>
               ))}

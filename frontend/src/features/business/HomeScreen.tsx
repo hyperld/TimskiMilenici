@@ -38,7 +38,7 @@ const HomeScreen: React.FC = () => {
     fetchStores();
   }, []);
 
-  const filteredStores = stores.filter(store => {
+    const filteredStores = stores.filter(store => {
     const matchesSearch = store.name.toLowerCase().includes(searchTerm.toLowerCase());
     const storeType = (store as any).type || (store as any).category;
     const matchesType = filterType === 'All' || storeType === filterType;

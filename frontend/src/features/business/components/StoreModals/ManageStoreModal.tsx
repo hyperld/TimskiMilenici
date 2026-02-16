@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import styles from './Modal.module.css';
 import Button from '../../../../shared/components/Button/Button';
-import ItemModal from "./ItemModal";
+import ProductModal from "./ProductModal";
+import ServiceModal from "./ServiceModal";
 import Calendar from '../../../booking/components/Calendar/Calendar';
 import BookingInfo from '../../../booking/components/BookingInfo/BookingInfo';
 import {
@@ -12,6 +13,7 @@ import {
   parseBookingDateTime
 } from '../../../booking/services/bookingService';
 import { businessService } from '../../services/businessService';
+import { orderService, OrderForBusiness } from '../../services/orderService';
 import { parseAddress, buildAddress } from '../../utils/addressUtils';
 
 interface ManageStoreModalProps {
@@ -66,6 +68,11 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
   const [selectedSlotTime, setSelectedSlotTime] = useState<string | null>(null);
   const [filterByDate, setFilterByDate] = useState<string | null>(null);
 
+  // Orders (product purchases) for this store
+  const [orders, setOrders] = useState<OrderForBusiness[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<OrderForBusiness | null>(null);
+
   const serviceIds = useMemo(() => (localStore?.services || [])
     .map((s: any) => s?.id)
     .filter((id: any) => typeof id === 'number'), [localStore?.services]);
@@ -105,6 +112,21 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
       .catch(() => setBookings([]))
       .finally(() => setBookingsLoading(false));
   }, [editingStore?.id, localStore?.id, visibleYear, visibleMonth]);
+
+  // Fetch orders for this store
+  useEffect(() => {
+    const storeId = editingStore?.id ?? localStore?.id;
+    if (storeId == null) return;
+    const sid = typeof storeId === 'string' ? parseInt(storeId, 10) : Number(storeId);
+    if (isNaN(sid)) return;
+    setOrdersLoading(true);
+    setSelectedOrder(null);
+    orderService
+      .getOrdersByBusiness(sid)
+      .then(setOrders)
+      .catch(() => setOrders([]))
+      .finally(() => setOrdersLoading(false));
+  }, [editingStore?.id, localStore?.id]);
 
   const bookedTimesByDate = useMemo(() => buildBookedTimesByDate(bookings), [bookings]);
   const storeFullDates = useMemo(
@@ -501,6 +523,41 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
             </div>
           </div>
 
+          {/* Orders (product purchases) for this store */}
+          <div className={styles.manageSection}>
+            <div className={styles.sectionHeader}>
+              <h3>Orders</h3>
+            </div>
+            {ordersLoading ? (
+              <p className={styles.bookingsLoading}>Loading orders…</p>
+            ) : orders.length === 0 ? (
+              <p className={styles.noBookings}>No orders yet.</p>
+            ) : (
+              <ul className={styles.bookingsList}>
+                {orders.map((ord) => {
+                  const dateStr = ord.createdAt?.slice(0, 10) ?? '—';
+                  const itemCount = ord.items?.length ?? 0;
+                  const userName = ord.user?.fullName ?? 'Customer';
+                  return (
+                    <li
+                      key={ord.orderId}
+                      className={`${styles.bookingItem} ${styles.bookingItemClickable}`}
+                      onClick={() => setSelectedOrder(ord)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => e.key === 'Enter' && setSelectedOrder(ord)}
+                    >
+                      <span className={styles.bookingDate}>{dateStr}</span>
+                      <span className={styles.bookingUser}>{userName}</span>
+                      <span className={styles.bookingService}>{itemCount} item{itemCount !== 1 ? 's' : ''} from this store</span>
+                      <span className={styles.bookingItemHint}>Click for details</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
           {/* Bookings & availability - only show when store has services */}
           {(localStore?.services?.length ?? 0) > 0 && (
           <div className={styles.manageSection}>
@@ -650,8 +707,16 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
           )}
         </div>
 
-        {showItemModal && (
-          <ItemModal 
+        {showItemModal && itemFormData?.type === 'product' && (
+          <ProductModal
+            itemFormData={itemFormData}
+            setItemFormData={setItemFormData}
+            onSave={handleLocalSaveItem}
+            onClose={() => setShowItemModal(false)}
+          />
+        )}
+        {showItemModal && itemFormData?.type === 'service' && (
+          <ServiceModal
             itemFormData={itemFormData}
             setItemFormData={setItemFormData}
             onSave={handleLocalSaveItem}
@@ -659,6 +724,38 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
           />
         )}
       </div>
+
+      {/* Order detail overlay */}
+      {selectedOrder && (
+        <div className={styles.bookingInfoOverlay} onClick={() => setSelectedOrder(null)} role="dialog" aria-modal="true" aria-label="Order details">
+          <div className={styles.bookingInfoPanel} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.bookingInfoHeader}>
+              <h4>Order #{selectedOrder.orderId} — {selectedOrder.createdAt?.slice(0, 10)}</h4>
+              <Button variant="ghost" size="sm" onClick={() => setSelectedOrder(null)} className={styles.closeBtn}>
+                ×
+              </Button>
+            </div>
+            <div className={styles.bookingInfoList}>
+              <div className={styles.orderDetailSection}>
+                <h5 className={styles.orderDetailSubtitle}>Customer</h5>
+                <p><strong>{selectedOrder.user?.fullName ?? '—'}</strong></p>
+                <p>Phone: {selectedOrder.user?.phoneNumber ?? '—'}</p>
+                <p>Address: {selectedOrder.user?.address ?? '—'}</p>
+              </div>
+              <div className={styles.orderDetailSection}>
+                <h5 className={styles.orderDetailSubtitle}>Items from this store</h5>
+                <ul className={styles.orderItemsList}>
+                  {(selectedOrder.items ?? []).map((it, idx) => (
+                    <li key={idx}>
+                      {it.productName} × {it.quantity} — ${Number(it.priceAtOrder).toFixed(2)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* BookingInfo overlay: sibling of modalContent so it's not clipped by scroll; fixed to viewport */}
       {selectedSlotBookings.length > 0 && (

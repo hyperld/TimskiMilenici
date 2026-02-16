@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import TopBar from '../../shared/components/TopBar/TopBar';
 import { useAuth } from '../../features/auth/hooks/useAuth';
+import { useCart } from '../../features/cart/context/CartContext';
 import { businessService } from './services/businessService';
 import { Business } from './types';
 import StoreDetails from './components/StoreDetails/StoreDetails';
@@ -15,6 +16,7 @@ const StoreDetailsScreen: React.FC = () => {
   const [error, setError] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { user } = useAuth();
+  const { addItem } = useCart();
 
   useEffect(() => {
     const fetchStore = async () => {
@@ -102,6 +104,7 @@ const StoreDetailsScreen: React.FC = () => {
           const service = store.services?.find((s: any) => s.id === Number(serviceId) || s.id === serviceId);
           navigate(`/booking/${serviceId}`, { state: { service, storeId: store.id } });
         }}
+        onAddToCart={user ? (product) => addItem(product.id).catch(() => alert('Failed to add to cart')) : undefined}
         onBack={() => navigate('/home')}
       />
     </div>

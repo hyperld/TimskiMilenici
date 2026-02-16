@@ -30,7 +30,7 @@
 
 .item {
   display: grid;
-  grid-template-columns: 1fr auto auto auto;
+  grid-template-columns: 1fr auto auto auto auto;
   gap: 0.75rem;
   align-items: center;
   padding: 0.5rem 0;
@@ -66,4 +66,29 @@
   margin: 0.5rem 0 0 0;
   font-size: 0.85rem;
   color: var(--color-text-light);
+}
+
+.error {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--color-error, #c00);
+}
+
+.cancelBtn {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.8rem;
+  border-radius: var(--radius-md, 6px);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg, #fff);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.cancelBtn:hover:not(:disabled) {
+  background: var(--color-border);
+}
+
+.cancelBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
