@@ -4,7 +4,10 @@ import com.example.timskimilenici.entities.Booking;
 import com.example.timskimilenici.entities.PetService;
 import com.example.timskimilenici.repositories.BookingRepository;
 import com.example.timskimilenici.repositories.PetServiceRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,14 +18,19 @@ import java.util.List;
 @Service
 public class BookingService {
 
+    private static final Logger log = LoggerFactory.getLogger(BookingService.class);
     private final BookingRepository bookingRepository;
     private final PetServiceRepository petServiceRepository;
+    private final NotificationService notificationService;
 
-    public BookingService(BookingRepository bookingRepository, PetServiceRepository petServiceRepository) {
+    public BookingService(BookingRepository bookingRepository, PetServiceRepository petServiceRepository,
+                          NotificationService notificationService) {
         this.bookingRepository = bookingRepository;
         this.petServiceRepository = petServiceRepository;
+        this.notificationService = notificationService;
     }
 
+    @Transactional
     public Booking createBooking(Booking booking) {
         if (!isAvailable(booking.getService().getId(), booking.getBookingTime().toLocalDate())) {
             throw new RuntimeException("Service is full for the selected date");
@@ -71,19 +79,32 @@ public class BookingService {
         return bookingRepository.findByService_Business_IdAndBookingTimeBetween(businessId, start, end);
     }
 
+    @Transactional
     public void updateBookingStatus(Long bookingId, Booking.BookingStatus status) {
         bookingRepository.findById(bookingId).ifPresent(booking -> {
             booking.setStatus(status);
             bookingRepository.save(booking);
+            if (status == Booking.BookingStatus.CANCELLED) {
+                try {
+                    notificationService.notifyBookingCancelledByUser(bookingId);
+                } catch (Exception e) {
+                    // do not fail status update if notification fails
+                }
+            }
         });
     }
 
     /**
-     * Delete a booking (e.g. when store owner dismisses it).
+     * Delete a booking (e.g. when store owner dismisses it). Notifies the user that the business cancelled.
      */
+    @Transactional
     public void deleteBooking(Long bookingId) {
-        if (!bookingRepository.existsById(bookingId)) {
-            throw new RuntimeException("Booking not found");
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+        try {
+            notificationService.notifyBookingCancelledByBusiness(bookingId);
+        } catch (Exception e) {
+            // do not fail delete if notification fails
         }
         bookingRepository.deleteById(bookingId);
     }

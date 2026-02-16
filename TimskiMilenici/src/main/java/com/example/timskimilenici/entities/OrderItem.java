@@ -2,19 +2,20 @@ package com.example.timskimilenici.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
-@Table(name = "cart_items")
-public class CartItem {
+@Table(name = "order_items")
+public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "cart_id", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false)
     @JsonIgnore
-    private Cart cart;
+    private Order order;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
@@ -23,20 +24,25 @@ public class CartItem {
     @Column(nullable = false)
     private Integer quantity;
 
-    protected CartItem() {}
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal priceAtOrder;
 
-    public CartItem(Cart cart, Product product, Integer quantity) {
-        this.cart = cart;
+    protected OrderItem() {}
+
+    public OrderItem(Order order, Product product, Integer quantity, BigDecimal priceAtOrder) {
+        this.order = order;
         this.product = product;
         this.quantity = quantity;
+        this.priceAtOrder = priceAtOrder;
     }
 
-    // Getters and Setters
     public Long getId() { return id; }
-    public Cart getCart() { return cart; }
-    public void setCart(Cart cart) { this.cart = cart; }
+    public Order getOrder() { return order; }
+    public void setOrder(Order order) { this.order = order; }
     public Product getProduct() { return product; }
     public void setProduct(Product product) { this.product = product; }
     public Integer getQuantity() { return quantity; }
     public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public BigDecimal getPriceAtOrder() { return priceAtOrder; }
+    public void setPriceAtOrder(BigDecimal priceAtOrder) { this.priceAtOrder = priceAtOrder; }
 }

@@ -65,6 +65,8 @@ public class AuthController {
         response.put("username", user.getUsername());
         response.put("role", user.getRole());
         response.put("profilePictureUrl", user.getProfilePictureUrl());
+        response.put("phoneNumber", user.getPhoneNumber());
+        response.put("address", user.getAddress());
         
         return ResponseEntity.ok(response);
     }
@@ -100,6 +102,7 @@ public class AuthController {
                     request.getUsername(),
                     request.getEmail(),
                     request.getPhoneNumber(),
+                    request.getAddress(),
                     request.getProfilePictureUrl()
             );
             
@@ -110,6 +113,8 @@ public class AuthController {
             response.put("username", updatedUser.getUsername());
             response.put("role", updatedUser.getRole());
             response.put("profilePictureUrl", updatedUser.getProfilePictureUrl());
+            response.put("phoneNumber", updatedUser.getPhoneNumber());
+            response.put("address", updatedUser.getAddress());
             
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
@@ -143,9 +148,9 @@ public class AuthController {
         private String username;
         private String email;
         private String phoneNumber;
+        private String address;
         private String profilePictureUrl;
 
-        // Getters and Setters
         public Long getUserId() { return userId; }
         public void setUserId(Long userId) { this.userId = userId; }
         public String getFullName() { return fullName; }
@@ -156,6 +161,8 @@ public class AuthController {
         public void setEmail(String email) { this.email = email; }
         public String getPhoneNumber() { return phoneNumber; }
         public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+        public String getAddress() { return address; }
+        public void setAddress(String address) { this.address = address; }
         public String getProfilePictureUrl() { return profilePictureUrl; }
         public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
     }

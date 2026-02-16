@@ -4,6 +4,8 @@ import com.example.timskimilenici.entities.Booking;
 import com.example.timskimilenici.entities.Business;
 import com.example.timskimilenici.repositories.BookingRepository;
 import com.example.timskimilenici.repositories.BusinessRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,7 @@ import java.util.Optional;
 @Service
 public class BusinessService {
 
+    private static final Logger log = LoggerFactory.getLogger(BusinessService.class);
     private final BusinessRepository businessRepository;
     private final BookingRepository bookingRepository;
 
@@ -29,7 +32,14 @@ public class BusinessService {
         return businessRepository.findById(id);
     }
 
+    @Transactional
     public Business saveBusiness(Business business) {
+        if (business.getId() != null && business.getOwner() == null) {
+            businessRepository.findById(business.getId()).ifPresent(existing -> {
+                business.setOwner(existing.getOwner());
+                log.debug("Preserved owner for business {} on update", business.getId());
+            });
+        }
         return businessRepository.save(business);
     }
 

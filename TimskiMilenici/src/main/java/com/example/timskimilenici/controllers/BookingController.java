@@ -2,6 +2,9 @@ package com.example.timskimilenici.controllers;
 
 import com.example.timskimilenici.entities.Booking;
 import com.example.timskimilenici.services.BookingService;
+import com.example.timskimilenici.services.NotificationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,15 +15,26 @@ import java.util.List;
 @RequestMapping("/api/bookings")
 public class BookingController {
 
+    private static final Logger log = LoggerFactory.getLogger(BookingController.class);
     private final BookingService bookingService;
+    private final NotificationService notificationService;
 
-    public BookingController(BookingService bookingService) {
+    public BookingController(BookingService bookingService, NotificationService notificationService) {
         this.bookingService = bookingService;
+        this.notificationService = notificationService;
     }
 
     @PostMapping
     public Booking create(@RequestBody Booking booking) {
-        return bookingService.createBooking(booking);
+        Booking saved = bookingService.createBooking(booking);
+        log.info("Booking created id={}, calling notifyBookingCreated", saved.getId());
+        try {
+            notificationService.notifyBookingCreated(saved.getId());
+            log.info("notifyBookingCreated completed for booking id={}", saved.getId());
+        } catch (Exception e) {
+            log.warn("notifyBookingCreated failed for booking id={}: {}", saved.getId(), e.getMessage(), e);
+        }
+        return saved;
     }
 
     @GetMapping("/full-dates/{serviceId}")

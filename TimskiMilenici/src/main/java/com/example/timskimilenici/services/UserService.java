@@ -60,7 +60,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with email or username: " + identifier));
     }
 
-    public User updateUserProfile(Long id, String fullName, String username, String email, String phoneNumber, String profilePictureUrl) {
+    public User updateUserProfile(Long id, String fullName, String username, String email, String phoneNumber, String address, String profilePictureUrl) {
         User user = getUserById(id);
         
         // Check if new username/email already exists for another user
@@ -75,6 +75,7 @@ public class UserService {
         if (username != null) user.setUsername(username);
         if (email != null) user.setEmail(email);
         if (phoneNumber != null) user.setPhoneNumber(phoneNumber);
+        if (address != null) user.setAddress(address);
         if (profilePictureUrl != null) user.setProfilePictureUrl(profilePictureUrl.isBlank() ? null : profilePictureUrl);
         
         return userRepository.save(user);
