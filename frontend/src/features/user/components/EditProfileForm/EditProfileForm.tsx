@@ -3,9 +3,11 @@ import { useAuth } from '../../../../features/auth/hooks/useAuth';
 import styles from './EditProfileForm.module.css';
 import Button from '../../../../shared/components/Button/Button';
 import { businessService } from '../../../business/services/businessService';
+import { useNavigate } from 'react-router-dom';
 
 const EditProfileForm: React.FC = () => {
-  const { user, updateProfile, changePassword } = useAuth();
+  const { user, updateProfile, changePassword, deleteAccount } = useAuth();
+  const navigate = useNavigate();
   const profilePictureUrl = user?.profilePictureUrl ?? user?.profileImageUrl ?? '';
   const [profileData, setProfileData] = useState({
     fullName: user?.fullName || '',
@@ -25,6 +27,8 @@ const EditProfileForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const [deleting, setDeleting] = useState(false);
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -93,6 +97,26 @@ const EditProfileForm: React.FC = () => {
       setError(err.message || 'Failed to change password');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleting) return;
+    const confirmed = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
+    if (!confirmed) {
+      return;
+    }
+
+    setError('');
+    setSuccess('');
+    setDeleting(true);
+    try {
+      await deleteAccount();
+      navigate('/welcome');
+    } catch (err: any) {
+      setError(err.message || 'Failed to delete account');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -181,6 +205,15 @@ const EditProfileForm: React.FC = () => {
           <div className={styles.buttonGroup}>
             <Button type="submit" disabled={loading}>
               {loading ? 'Saving...' : 'Update Profile'}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className={styles.deleteAccountButton}
+              disabled={deleting || loading}
+              onClick={handleDeleteAccount}
+            >
+              {deleting ? 'Deleting…' : 'Delete account'}
             </Button>
           </div>
         </div>

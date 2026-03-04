@@ -142,6 +142,25 @@ public class AuthController {
         }
     }
 
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        try {
+            User user = userService.getUserByIdentifier(userDetails.getUsername());
+            userService.deleteUserById(user.getId());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Account deleted successfully");
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
     public static class UpdateProfileRequest {
         private Long userId;
         private String fullName;

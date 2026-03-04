@@ -9,6 +9,7 @@ interface AuthContextType {
   updateProfile: (profileData: Partial<User>) => Promise<AuthResponse>;
   changePassword: (passwordData: PasswordData) => Promise<void>;
   logout: () => void;
+  deleteAccount: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -67,13 +68,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const deleteAccount = async () => {
+    try {
+      if (!user) throw new Error('Not authenticated');
+      await authService.deleteAccount();
+      setUser(null);
+      localStorage.removeItem('petpal_user');
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('petpal_user');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, updateProfile, changePassword, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, login, register, updateProfile, changePassword, logout, deleteAccount, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

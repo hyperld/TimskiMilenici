@@ -122,5 +122,22 @@ export const authService = {
     }
 
     return await response.json();
-  }
+  },
+
+  deleteAccount: async (): Promise<void> => {
+    const userDataStr = localStorage.getItem('petpal_user');
+    const token = userDataStr ? JSON.parse(userDataStr)?.token : null;
+
+    const response = await fetch(`${API_URL}/delete-account`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || errorData.message || 'Failed to delete account');
+    }
+  },
 };

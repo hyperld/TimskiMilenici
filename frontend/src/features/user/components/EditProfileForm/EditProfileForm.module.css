@@ -161,6 +161,18 @@
   margin-top: 1rem;
 }
 
+.deleteAccountButton {
+  margin-left: auto;
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: #b91c1c !important;
+}
+
+.deleteAccountButton:hover:not(:disabled) {
+  background-color: #b91c1c !important;
+  border-color: #7f1d1d !important;
+}
+
 .saveBtn, .cancelBtn {
   flex: 1;
   padding: 0.8rem;
