@@ -11,6 +11,9 @@
 # production
 /build
 
+# Spring Boot local config
+**/src/main/resources/application.properties
+
 # misc
 .DS_Store
 .env
