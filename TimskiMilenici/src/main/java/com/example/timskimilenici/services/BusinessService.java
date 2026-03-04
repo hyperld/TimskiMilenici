@@ -40,11 +40,46 @@ public class BusinessService {
                 log.debug("Preserved owner for business {} on update", business.getId());
             });
         }
+
+        // Normalize single vs multi category fields so both stay in sync.
+        if (business.getCategories() == null || business.getCategories().isEmpty()) {
+            if (business.getCategory() != null && !business.getCategory().isBlank()) {
+                business.setCategories(List.of(business.getCategory()));
+            }
+        } else if (business.getCategory() == null || business.getCategory().isBlank()) {
+            // Use the first category as the primary label for legacy consumers.
+            business.setCategory(business.getCategories().get(0));
+        }
         return businessRepository.save(business);
     }
 
     public List<Business> findByCategory(String category) {
-        return businessRepository.findByCategory(category);
+        // Support both legacy single category field and the new multi-category collection.
+        List<Business> legacy = businessRepository.findByCategory(category);
+        List<Business> multi = businessRepository.findByCategoriesContaining(category);
+
+        if (legacy.isEmpty()) {
+            return multi;
+        }
+        if (multi.isEmpty()) {
+            return legacy;
+        }
+
+        // Merge without duplicates (by id).
+        List<Business> combined = new java.util.ArrayList<>(legacy);
+        java.util.Set<Long> seenIds = new java.util.HashSet<>();
+        for (Business b : legacy) {
+            if (b.getId() != null) {
+                seenIds.add(b.getId());
+            }
+        }
+        for (Business b : multi) {
+            Long id = b.getId();
+            if (id == null || !seenIds.contains(id)) {
+                combined.add(b);
+            }
+        }
+        return combined;
     }
 
     public List<Business> searchByAddress(String address) {

@@ -5,11 +5,27 @@ import styles from './StoreCard.module.css';
 import Button from '../../../../shared/components/Button/Button';
 
 interface StoreCardProps {
-  store: Business & { type?: string };
+  store: Business & { type?: string; types?: string[]; category?: string };
 }
 
 const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
   const navigate = useNavigate();
+
+  const allTypes: string[] =
+    Array.isArray(store.types) && store.types.length > 0
+      ? store.types
+      : store.type
+        ? [store.type]
+        : (store as any).category
+          ? [(store as any).category]
+          : [];
+  const typeLabel = allTypes.join(' / ');
+
+  const maxDescriptionLength = 120;
+  const description =
+    store.description && store.description.length > maxDescriptionLength
+      ? `${store.description.slice(0, maxDescriptionLength)}...`
+      : store.description;
 
   return (
     <div className={styles.storeCard}>
@@ -23,9 +39,9 @@ const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
         )}
       </div>
       <div className={styles.storeInfo}>
-        <span className={styles.storeType}>{store.type}</span>
+        {typeLabel && <span className={styles.storeType}>{typeLabel}</span>}
         <h3 className={styles.storeName}>{store.name}</h3>
-        <p className={styles.storeDescription}>{store.description}</p>
+        <p className={styles.storeDescription}>{description}</p>
         <div className={styles.storeFooter}>
           <span className={styles.storeLocation}>📍 {store.address}</span>
           <Button 

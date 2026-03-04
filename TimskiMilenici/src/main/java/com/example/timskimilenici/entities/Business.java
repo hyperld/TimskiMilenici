@@ -19,8 +19,20 @@ public class Business {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    /**
+     * Primary category label kept for backward compatibility with older clients.
+     * New implementations should prefer {@link #categories} for multi-type support.
+     */
     @Column
     private String category;
+
+    /**
+     * One business can belong to multiple categories/types (e.g. Grooming, Veterinary).
+     */
+    @ElementCollection
+    @CollectionTable(name = "business_categories", joinColumns = @JoinColumn(name = "business_id"))
+    @Column(name = "category")
+    private List<String> categories;
 
     /** Full address (street, city, postal code, country) for display and map geocoding */
     @Column
@@ -77,6 +89,8 @@ public class Business {
     public void setDescription(String description) { this.description = description; }
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
+    public List<String> getCategories() { return categories; }
+    public void setCategories(List<String> categories) { this.categories = categories; }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
     public User getOwner() { return owner; }

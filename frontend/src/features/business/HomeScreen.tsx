@@ -38,10 +38,18 @@ const HomeScreen: React.FC = () => {
     fetchStores();
   }, []);
 
-    const filteredStores = stores.filter(store => {
+  const filteredStores = stores.filter(store => {
     const matchesSearch = store.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const storeType = (store as any).type || (store as any).category;
-    const matchesType = filterType === 'All' || storeType === filterType;
+    const rawType = (store as any).type || (store as any).category;
+    const storeTypes: string[] =
+      Array.isArray((store as any).types) && (store as any).types.length > 0
+        ? (store as any).types
+        : rawType
+          ? [rawType]
+          : [];
+    const matchesType =
+      filterType === 'All' ||
+      storeTypes.includes(filterType);
     return matchesSearch && matchesType;
   });
 

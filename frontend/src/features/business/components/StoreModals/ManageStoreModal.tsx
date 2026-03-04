@@ -33,7 +33,20 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
     ...editingStore,
     ...parseAddress(editingStore.address ?? ''),
     imageUrls: editingStore.imageUrls ?? editingStore.images ?? [],
-    images: editingStore.images ?? editingStore.imageUrls ?? []
+    images: editingStore.images ?? editingStore.imageUrls ?? [],
+    types:
+      (Array.isArray(editingStore.types) && editingStore.types.length > 0)
+        ? editingStore.types
+        : editingStore.type
+          ? [editingStore.type]
+          : editingStore.category
+            ? [editingStore.category]
+            : [],
+    type:
+      editingStore.type ??
+      (Array.isArray(editingStore.types) && editingStore.types.length > 0
+        ? editingStore.types[0]
+        : editingStore.category ?? '')
   }));
   const [imageUploading, setImageUploading] = useState(false);
   const imageList = localStore.imageUrls ?? localStore.images ?? [];
@@ -193,6 +206,26 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setLocalStore((prev: any) => ({ ...prev, [name]: value }));
+  };
+
+  const BUSINESS_TYPES = ['Supplies', 'Grooming', 'Veterinary', 'Training', 'Daycare', 'Cafe'];
+
+  const handleToggleType = (type: string) => {
+    setLocalStore((prev: any) => {
+      const prevTypes: string[] =
+        Array.isArray(prev.types) && prev.types.length > 0
+          ? prev.types
+          : prev.type
+            ? [prev.type]
+            : [];
+      const exists = prevTypes.includes(type);
+      const nextTypes = exists ? prevTypes.filter((t) => t !== type) : [...prevTypes, type];
+      return {
+        ...prev,
+        types: nextTypes,
+        type: nextTypes[0] ?? prev.type ?? ''
+      };
+    });
   };
 
   const handleAddImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -367,108 +400,134 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+      <div className={`${styles.modalContent} ${styles.manageStoreModal}`} onClick={e => e.stopPropagation()}>
         <header className={styles.modalHeader}>
           <h2>Manage Store: {localStore.name}</h2>
           <Button variant="ghost" onClick={onClose} className={styles.closeBtn}>&times;</Button>
         </header>
 
         {/* Main image – centered, hover to add/update/remove */}
-        <div className={styles.mainImageWrap}>
-          <div className={styles.mainImageBox}>
-            {localStore.mainImageUrl ? (
-              <img src={localStore.mainImageUrl} alt="Main store" className={styles.mainImageImg} />
-            ) : (
-              <div className={styles.mainImagePlaceholder}>No main image</div>
-            )}
-            <div className={styles.mainImageOverlay}>
-              <label className={styles.mainImageLabel}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleMainImageUpload}
-                  disabled={imageUploading}
-                  className={styles.addImageInput}
-                />
-                <span className={styles.mainImageBtn}>
-                  {imageUploading ? 'Uploading…' : localStore.mainImageUrl ? 'Change' : 'Add main image'}
-                </span>
-              </label>
-              {localStore.mainImageUrl && (
-                <Button variant="ghost" size="sm" onClick={handleRemoveMainImage} className={styles.mainImageRemoveBtn}>
-                  Remove
-                </Button>
+        <div className={`${styles.modalForm} ${styles.manageGrid}`}>
+          <div className={styles.manageColumn}>
+            <h3>Basic Information</h3>
+            <div className={styles.formGroup}>
+              <label>Store Name</label>
+              <input name="name" value={localStore.name} onChange={handleChange} required />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Store types</label>
+              <div className={styles.typeChips}>
+                {BUSINESS_TYPES.map((t) => {
+                  const selectedTypes: string[] =
+                    Array.isArray(localStore.types) && localStore.types.length > 0
+                      ? localStore.types
+                      : localStore.type
+                        ? [localStore.type]
+                        : [];
+                  const checked = selectedTypes.includes(t);
+                  return (
+                    <label key={t} className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => handleToggleType(t)}
+                      />
+                      <span>{t}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+            <div className={styles.formGroup}>
+              <label>Street address</label>
+              <input name="street" value={localStore.street ?? ''} onChange={handleChange} placeholder="e.g. 123 Main St" required />
+            </div>
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label>City</label>
+                <input name="city" value={localStore.city ?? ''} onChange={handleChange} required />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Postal code</label>
+                <input name="postalCode" value={localStore.postalCode ?? ''} onChange={handleChange} placeholder="e.g. 11000" />
+              </div>
+            </div>
+            <div className={styles.formGroup}>
+              <label>Country</label>
+              <input name="country" value={localStore.country ?? ''} onChange={handleChange} placeholder="e.g. Serbia" required />
+            </div>
+
+            {/* Main image – centered, hover to add/update/remove */}
+            <div className={styles.mainImageWrap}>
+              <div className={styles.mainImageBox}>
+                {localStore.mainImageUrl ? (
+                  <img src={localStore.mainImageUrl} alt="Main store" className={styles.mainImageImg} />
+                ) : (
+                  <div className={styles.mainImagePlaceholder}>No main image</div>
+                )}
+                <div className={styles.mainImageOverlay}>
+                  <label className={styles.mainImageLabel}>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleMainImageUpload}
+                      disabled={imageUploading}
+                      className={styles.addImageInput}
+                    />
+                    <span className={styles.mainImageBtn}>
+                      {imageUploading ? 'Uploading…' : localStore.mainImageUrl ? 'Change' : 'Add main image'}
+                    </span>
+                  </label>
+                  {localStore.mainImageUrl && (
+                    <Button variant="ghost" size="sm" onClick={handleRemoveMainImage} className={styles.mainImageRemoveBtn}>
+                      Remove
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.manageSection}>
+              <div className={styles.sectionHeader}>
+                <h3>Store images</h3>
+                <label className={styles.addImageLabel}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAddImage}
+                    disabled={imageUploading}
+                    className={styles.addImageInput}
+                  />
+                  <span className={styles.addImageBtn}>{imageUploading ? 'Uploading…' : '+ Add image'}</span>
+                </label>
+              </div>
+              {imageList.length === 0 ? (
+                <p className={styles.noImages}>No images yet. Add one above.</p>
+              ) : (
+                <div className={styles.imagesGrid}>
+                  {imageList.map((url: string, index: number) => (
+                    <div key={`${url}-${index}`} className={styles.imageCard}>
+                      <img src={url} alt="" className={styles.imageThumb} />
+                      <div className={styles.imageActions}>
+                        {localStore.mainImageUrl === url ? (
+                          <span className={styles.mainBadge}>Main</span>
+                        ) : (
+                          <Button variant="outline" size="sm" onClick={() => handleSetMainImage(url)}>
+                            Set as main
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="sm" onClick={() => handleRemoveImage(index)}>
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
-        </div>
-        
-        <div className={styles.modalForm}>
-          <h3>Basic Information</h3>
-          <div className={styles.formGroup}>
-            <label>Store Name</label>
-            <input name="name" value={localStore.name} onChange={handleChange} required />
-          </div>
-          <div className={styles.formGroup}>
-            <label>Street address</label>
-            <input name="street" value={localStore.street ?? ''} onChange={handleChange} placeholder="e.g. 123 Main St" required />
-          </div>
-          <div className={styles.formRow}>
-            <div className={styles.formGroup}>
-              <label>City</label>
-              <input name="city" value={localStore.city ?? ''} onChange={handleChange} required />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Postal code</label>
-              <input name="postalCode" value={localStore.postalCode ?? ''} onChange={handleChange} placeholder="e.g. 11000" />
-            </div>
-          </div>
-          <div className={styles.formGroup}>
-            <label>Country</label>
-            <input name="country" value={localStore.country ?? ''} onChange={handleChange} placeholder="e.g. Serbia" required />
-          </div>
-        </div>
 
-        <div className={styles.modalForm} style={{ paddingTop: 0 }}>
-          <div className={styles.manageSection}>
-            <div className={styles.sectionHeader}>
-              <h3>Store images</h3>
-              <label className={styles.addImageLabel}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAddImage}
-                  disabled={imageUploading}
-                  className={styles.addImageInput}
-                />
-                <span className={styles.addImageBtn}>{imageUploading ? 'Uploading…' : '+ Add image'}</span>
-              </label>
-            </div>
-            {imageList.length === 0 ? (
-              <p className={styles.noImages}>No images yet. Add one above.</p>
-            ) : (
-              <div className={styles.imagesGrid}>
-                {imageList.map((url: string, index: number) => (
-                  <div key={`${url}-${index}`} className={styles.imageCard}>
-                    <img src={url} alt="" className={styles.imageThumb} />
-                    <div className={styles.imageActions}>
-                      {localStore.mainImageUrl === url ? (
-                        <span className={styles.mainBadge}>Main</span>
-                      ) : (
-                        <Button variant="outline" size="sm" onClick={() => handleSetMainImage(url)}>
-                          Set as main
-                        </Button>
-                      )}
-                      <Button variant="ghost" size="sm" onClick={() => handleRemoveImage(index)}>
-                        Remove
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
+          <div className={styles.manageColumn}>
           <div className={styles.manageSection}>
             <div className={styles.sectionHeader}>
               <h3>Products</h3>
@@ -684,7 +743,7 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
             )}
           </div>
           )}
-
+          </div>
         </div>
 
         <div className={styles.formActions} style={{ padding: '1.5rem', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>

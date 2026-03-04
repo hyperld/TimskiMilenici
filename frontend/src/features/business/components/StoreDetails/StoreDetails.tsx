@@ -39,7 +39,17 @@ const StoreDetails: React.FC<StoreDetailsProps> = ({
       <header className={styles.storeHeader}>
         <div className={styles.storeMainInfo}>
           <h1>{store.name}</h1>
-          <span className={styles.storeBadge}>{store.type || store.category}</span>
+          {(() => {
+            const rawType = store.type || store.category;
+            const allTypes: string[] =
+              Array.isArray(store.types) && store.types.length > 0
+                ? store.types
+                : rawType
+                  ? [rawType]
+                  : [];
+            const label = allTypes.join(' / ');
+            return label ? <span className={styles.storeBadge}>{label}</span> : null;
+          })()}
         </div>
       </header>
 

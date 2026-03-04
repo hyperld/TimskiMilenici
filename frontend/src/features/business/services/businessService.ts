@@ -16,13 +16,24 @@ export const businessService = {
         throw new Error('Failed to fetch businesses');
       }
       const data = await response.json();
-      return data.map((business: any) => ({
-        ...business,
-        id: business.id,
-        type: business.category,
-        address: business.address || '',
-        images: business.imageUrls || []
-      }));
+      return data.map((business: any) => {
+        const categories: string[] =
+          Array.isArray(business.categories) && business.categories.length > 0
+            ? business.categories
+            : business.category
+              ? [business.category]
+              : [];
+        const primaryType = categories[0] ?? business.category ?? '';
+        return {
+          ...business,
+          id: business.id,
+          type: primaryType,
+          types: categories,
+          category: business.category,
+          address: business.address || '',
+          images: business.imageUrls || []
+        };
+      });
     } catch (error) {
       console.error("getAllBusinesses error:", error);
       throw error;
@@ -36,9 +47,18 @@ export const businessService = {
       throw new Error('Business not found');
     }
     const business = await response.json();
+    const categories: string[] =
+      Array.isArray(business.categories) && business.categories.length > 0
+        ? business.categories
+        : business.category
+          ? [business.category]
+          : [];
+    const primaryType = categories[0] ?? business.category ?? '';
     return {
       ...business,
-      type: business.category,
+      type: primaryType,
+      types: categories,
+      category: business.category,
       address: business.address || '',
       images: business.imageUrls || []
     };
@@ -58,13 +78,24 @@ export const businessService = {
       }
       const data = await response.json();
       const businesses = Array.isArray(data) ? data : (data ? [data] : []);
-      return businesses.map((business: any) => ({
-        ...business,
-        id: business.id,
-        type: business.category,
-        address: business.address || '',
-        images: business.imageUrls || []
-      }));
+      return businesses.map((business: any) => {
+        const categories: string[] =
+          Array.isArray(business.categories) && business.categories.length > 0
+            ? business.categories
+            : business.category
+              ? [business.category]
+              : [];
+        const primaryType = categories[0] ?? business.category ?? '';
+        return {
+          ...business,
+          id: business.id,
+          type: primaryType,
+          types: categories,
+          category: business.category,
+          address: business.address || '',
+          images: business.imageUrls || []
+        };
+      });
     } catch (error) {
       console.error("getBusinessByOwner error:", error);
       throw error;
@@ -96,11 +127,21 @@ export const businessService = {
   // Update business details
   updateBusiness: async (id: number, businessData: any): Promise<Business> => {
     try {
+      const categories: string[] =
+        (businessData.types && businessData.types.length > 0)
+          ? businessData.types
+          : businessData.category
+            ? [businessData.category]
+            : businessData.type
+              ? [businessData.type]
+              : [];
+
       const payload = {
         id: id,
         name: businessData.name,
         description: businessData.description,
-        category: businessData.type || businessData.category,
+        category: categories[0] ?? null,
+        categories,
         address: businessData.address,
         owner: businessData.owner,
         imageUrls: businessData.imageUrls ?? businessData.images,
@@ -122,10 +163,19 @@ export const businessService = {
         throw new Error(errorData.message || 'Failed to update business');
       }
       const data = await response.json();
+      const respCategories: string[] =
+        Array.isArray(data.categories) && data.categories.length > 0
+          ? data.categories
+          : data.category
+            ? [data.category]
+            : [];
+      const primaryType = respCategories[0] ?? data.category ?? '';
       return {
         ...data,
         id: data.id,
-        type: data.category,
+        type: primaryType,
+        types: respCategories,
+        category: data.category,
         address: data.address || '',
         images: data.imageUrls || []
       };
@@ -138,11 +188,21 @@ export const businessService = {
   // Create new business
   createBusiness: async (businessData: any): Promise<Business> => {
     try {
+      const categories: string[] =
+        (businessData.types && businessData.types.length > 0)
+          ? businessData.types
+          : businessData.category
+            ? [businessData.category]
+            : businessData.type
+              ? [businessData.type]
+              : [];
+
       const payload = {
         name: businessData.name,
         description: businessData.description,
         address: businessData.address,
-        category: businessData.type,
+        category: categories[0] ?? null,
+        categories,
         owner: { id: businessData.ownerId },
         imageUrls: businessData.imageUrls,
         mainImageUrl: businessData.mainImageUrl,
@@ -163,10 +223,19 @@ export const businessService = {
         throw new Error(errorData.message || 'Failed to create business');
       }
       const data = await response.json();
+      const respCategories: string[] =
+        Array.isArray(data.categories) && data.categories.length > 0
+          ? data.categories
+          : data.category
+            ? [data.category]
+            : [];
+      const primaryType = respCategories[0] ?? data.category ?? '';
       return {
         ...data,
         id: data.id,
-        type: data.category,
+        type: primaryType,
+        types: respCategories,
+        category: data.category,
         address: data.address || '',
         images: data.imageUrls || []
       };

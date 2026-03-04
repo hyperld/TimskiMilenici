@@ -14,9 +14,30 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ newStore, setNewSto
   const [imageUploading, setImageUploading] = useState(false);
   const imageList = newStore.imageUrls ?? [];
 
+  const BUSINESS_TYPES = ['Supplies', 'Grooming', 'Veterinary', 'Training', 'Daycare', 'Cafe'];
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setNewStore((prev: any) => ({ ...prev, [name]: value }));
+  };
+
+  const handleToggleType = (type: string) => {
+    setNewStore((prev: any) => {
+      const prevTypes: string[] =
+        Array.isArray(prev.types) && prev.types.length > 0
+          ? prev.types
+          : prev.type
+            ? [prev.type]
+            : [];
+      const exists = prevTypes.includes(type);
+      const nextTypes = exists ? prevTypes.filter((t) => t !== type) : [...prevTypes, type];
+      return {
+        ...prev,
+        types: nextTypes,
+        // Keep a primary type for older UI pieces that expect a single string
+        type: nextTypes[0] ?? ''
+      };
+    });
   };
 
   const handleAddImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,14 +141,28 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ newStore, setNewSto
             <input name="name" value={newStore.name} onChange={handleChange} required />
           </div>
           <div className={styles.formGroup}>
-            <label>Type</label>
-            <select name="type" value={newStore.type} onChange={handleChange}>
-              <option value="Supplies">Supplies</option>
-              <option value="Grooming">Grooming</option>
-              <option value="Vet">Vet Care</option>
-              <option value="Training">Training</option>
-              <option value="Cafe">Pet Cafe</option>
-            </select>
+            <label>Types</label>
+            <div className={styles.typeChips}>
+              {BUSINESS_TYPES.map((t) => {
+                const selectedTypes: string[] =
+                  Array.isArray(newStore.types) && newStore.types.length > 0
+                    ? newStore.types
+                    : newStore.type
+                      ? [newStore.type]
+                      : [];
+                const checked = selectedTypes.includes(t);
+                return (
+                  <label key={t} className={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => handleToggleType(t)}
+                    />
+                    <span>{t}</span>
+                  </label>
+                );
+              })}
+            </div>
           </div>
           <div className={styles.formGroup}>
             <label>Street address</label>

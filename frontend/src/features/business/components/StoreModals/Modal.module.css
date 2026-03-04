@@ -23,6 +23,11 @@
   box-shadow: var(--shadow-lg);
 }
 
+/* Wider layout specifically for the Manage Store modal (more complex content) */
+.manageStoreModal {
+  max-width: 1100px;
+}
+
 .modalHeader {
   padding: 1.5rem;
   border-bottom: 1px solid var(--color-border);
@@ -172,6 +177,49 @@
 
 .formGroup textarea {
   resize: vertical;
+}
+
+/* Two-column layout for ManageStoreModal content */
+.manageGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+  gap: 1.5rem;
+}
+
+.manageColumn {
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .manageStoreModal {
+    max-width: 100%;
+  }
+
+  .manageGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.typeChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-background);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.checkboxLabel input {
+  cursor: pointer;
 }
 
 .formActions {

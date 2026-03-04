@@ -4,3 +4,8 @@
 {"id":"log_1772635148851","timestamp":1772635148851,"location":"ReviewService.java:addReview","message":"review_saved","data":{"businessId":3,"userId":2,"rating":1}}
 {"id":"log_1772635150921","timestamp":1772635150921,"location":"ReviewService.java:addReview","message":"review_saved","data":{"businessId":3,"userId":2,"rating":1}}
 {"id":"log_1772635152643","timestamp":1772635152643,"location":"ReviewService.java:addReview","message":"review_saved","data":{"businessId":3,"userId":2,"rating":1}}
+{"id":"log_1772636035044","timestamp":1772636035044,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":13}}
+{"id":"log_1772636035053","timestamp":1772636035053,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":13}}
+{"id":"log_1772636449250","timestamp":1772636449250,"location":"ReviewService.java:addReview","message":"review_saved","data":{"businessId":3,"userId":2,"rating":5}}
+{"id":"log_1772636450909","timestamp":1772636450909,"location":"ReviewService.java:addReview","message":"review_saved","data":{"businessId":3,"userId":2,"rating":5}}
+{"id":"log_1772636452347","timestamp":1772636452347,"location":"ReviewService.java:addReview","message":"review_saved","data":{"businessId":3,"userId":2,"rating":5}}
