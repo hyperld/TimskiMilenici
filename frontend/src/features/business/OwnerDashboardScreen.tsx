@@ -7,8 +7,8 @@ import { Business } from './types';
 import BusinessList from './components/OwnerDashboard/BusinessList';
 import DashboardHeader from './components/DashboardHeader/DashboardHeader';
 import AccountCard from '../user/components/AccountCard/AccountCard';
-import AnalyticsPlaceholder from './components/OwnerDashboard/AnalyticsPlaceholder/AnalyticsPlaceholder';
-import NotificationTab from '../../shared/components/NotificationTab/NotificationTab';
+import OwnerAnalyticsOverview from '../analytics/components/OwnerAnalyticsOverview';
+import NotificationTab from '../notifications/components/NotificationTab/NotificationTab';
 import CreateStoreModal from './components/StoreModals/CreateStoreModal';
 import ManageStoreModal from './components/StoreModals/ManageStoreModal';
 import styles from './OwnerDashboardScreen.module.css';
@@ -164,7 +164,7 @@ const OwnerDashboardScreen: React.FC = () => {
             />
           )}
           <div className={styles.rightColumn}>
-            <AnalyticsPlaceholder />
+            <OwnerAnalyticsOverview stores={ownerStores} />
             <NotificationTab />
           </div>
         </div>

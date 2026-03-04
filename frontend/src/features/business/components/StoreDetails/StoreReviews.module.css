@@ -1,0 +1,178 @@
+.reviewsSection {
+  margin-top: 2rem;
+  background: var(--color-background);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.subtitle {
+  margin: 0.2rem 0 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+}
+
+.starSummary {
+  font-size: 1.1rem;
+}
+
+.starFull {
+  color: #facc15;
+}
+
+.starHalf {
+  color: #fbbf24;
+}
+
+.starEmpty {
+  color: #e5e7eb;
+}
+
+.list {
+  list-style: none;
+  margin: 0 0 1rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.reviewCard {
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: #f9fafb;
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.reviewer {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.reviewStars {
+  font-size: 0.95rem;
+}
+
+.reviewMeta {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+}
+
+.reviewText {
+  margin: 0.35rem 0 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+
+.formWrap {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.fieldRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.label {
+  font-size: 0.8rem;
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.label textarea {
+  resize: vertical;
+  min-height: 70px;
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.label input[type='range'] {
+  width: 100%;
+}
+
+.liveRating {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+}
+
+.liveStars {
+  font-size: 1rem;
+}
+
+.liveValue {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+}
+
+.submitBtn {
+  align-self: flex-end;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.info {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  margin: 0.25rem 0;
+}
+
+.error {
+  font-size: 0.85rem;
+  color: var(--color-error, #b91c1c);
+  margin: 0.25rem 0;
+}
+

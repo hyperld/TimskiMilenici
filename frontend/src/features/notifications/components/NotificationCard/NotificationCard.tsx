@@ -1,5 +1,5 @@
 import React from 'react';
-import type { NotificationItem } from '../../../features/notifications/services/notificationService';
+import type { NotificationItem } from '../../services/notificationService';
 import styles from './NotificationCard.module.css';
 
 export interface NotificationCardProps {
@@ -66,3 +66,4 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
 };
 
 export default NotificationCard;
+

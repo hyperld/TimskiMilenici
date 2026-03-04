@@ -42,4 +42,14 @@ public class NotificationController {
         notificationService.dismiss(id, user.getId());
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/dismiss-all")
+    public ResponseEntity<Void> dismissAll(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
+        User user = userService.getUserByIdentifier(userDetails.getUsername());
+        notificationService.dismissAllForUser(user.getId());
+        return ResponseEntity.noContent().build();
+    }
 }

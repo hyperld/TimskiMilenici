@@ -56,4 +56,19 @@ export const notificationService = {
       throw new Error(err.message || 'Failed to dismiss notification');
     }
   },
+
+  dismissAll: async (): Promise<void> => {
+    const token = getAuthToken();
+    if (!token) throw new Error('Not authenticated');
+    const response = await fetch(`${API_URL}/dismiss-all`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.message || 'Failed to dismiss all notifications');
+    }
+  },
 };

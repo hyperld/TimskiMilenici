@@ -1,0 +1,6 @@
+{"id":"log_1772635055904","timestamp":1772635055904,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":9}}
+{"id":"log_1772635055932","timestamp":1772635055932,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":9}}
+{"id":"log_1772635144776","timestamp":1772635144776,"location":"ReviewService.java:addReview","message":"review_saved","data":{"businessId":3,"userId":2,"rating":1}}
+{"id":"log_1772635148851","timestamp":1772635148851,"location":"ReviewService.java:addReview","message":"review_saved","data":{"businessId":3,"userId":2,"rating":1}}
+{"id":"log_1772635150921","timestamp":1772635150921,"location":"ReviewService.java:addReview","message":"review_saved","data":{"businessId":3,"userId":2,"rating":1}}
+{"id":"log_1772635152643","timestamp":1772635152643,"location":"ReviewService.java:addReview","message":"review_saved","data":{"businessId":3,"userId":2,"rating":1}}

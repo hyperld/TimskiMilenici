@@ -55,32 +55,43 @@ const PendingBookings: React.FC<PendingBookingsProps> = ({ userId }) => {
       {bookings.length === 0 ? (
         <p className={styles.text}>No pending bookings.</p>
       ) : (
-        <ul className={styles.list}>
-          {bookings.slice(0, 5).map((b: any) => {
-            const parsed = parseBookingDateTime(b.bookingTime);
-            const dateStr = parsed?.dateStr ?? '—';
-            const timeStr = parsed?.timeStr ?? '—';
-            const serviceName = b.service?.name || 'Service';
-            const isCancelling = cancellingId === b.id;
-            return (
-              <li key={b.id} className={styles.item}>
-                <span className={styles.date}>{dateStr}</span>
-                <span className={styles.time}>{timeStr}</span>
-                <span className={styles.service}>{serviceName}</span>
-                <span className={styles.status}>{b.status}</span>
-                <button
-                  type="button"
-                  className={styles.cancelBtn}
-                  onClick={() => handleCancel(b.id)}
-                  disabled={isCancelling}
-                  aria-label="Cancel booking"
-                >
-                  {isCancelling ? 'Cancelling…' : 'Cancel'}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+        <>
+          <div className={styles.headerRow}>
+            <span className={styles.headerCell}>Date</span>
+            <span className={styles.headerCell}>Time</span>
+            <span className={styles.headerCell}>Service</span>
+            <span className={styles.headerCell}>Status</span>
+            <span className={styles.headerCell} aria-hidden>
+              Actions
+            </span>
+          </div>
+          <ul className={styles.list}>
+            {bookings.slice(0, 5).map((b: any) => {
+              const parsed = parseBookingDateTime(b.bookingTime);
+              const dateStr = parsed?.dateStr ?? '—';
+              const timeStr = parsed?.timeStr ?? '—';
+              const serviceName = b.service?.name || 'Service';
+              const isCancelling = cancellingId === b.id;
+              return (
+                <li key={b.id} className={styles.item}>
+                  <span className={styles.date}>{dateStr}</span>
+                  <span className={styles.time}>{timeStr}</span>
+                  <span className={styles.service}>{serviceName}</span>
+                  <span className={styles.status}>{b.status}</span>
+                  <button
+                    type="button"
+                    className={styles.cancelBtn}
+                    onClick={() => handleCancel(b.id)}
+                    disabled={isCancelling}
+                    aria-label="Cancel booking"
+                  >
+                    {isCancelling ? 'Cancelling…' : 'Cancel'}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </>
       )}
       {bookings.length > 5 && (
         <p className={styles.more}>+{bookings.length - 5} more</p>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   notificationService,
   type NotificationItem,
-} from '../../../features/notifications/services/notificationService';
+} from '../../services/notificationService';
 import NotificationCard from '../NotificationCard/NotificationCard';
 import styles from './NotificationTab.module.css';
 
@@ -71,6 +71,17 @@ const NotificationTab: React.FC = () => {
     }
   };
 
+  const handleClearAll = async () => {
+    try {
+      await notificationService.dismissAll();
+      setNotifications([]);
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : 'Failed to clear notifications'
+      );
+    }
+  };
+
   const isLoggedIn = () => {
     try {
       const raw = localStorage.getItem('petpal_user');
@@ -131,6 +142,17 @@ const NotificationTab: React.FC = () => {
       <header className={styles.header}>
         <h2 className={styles.listTitle}>Notifications</h2>
         <span className={styles.count}>{notifications.length}</span>
+        {notifications.length > 0 && (
+          <button
+            type="button"
+            className={styles.clearBtn}
+            onClick={handleClearAll}
+            aria-label="Clear all notifications"
+            title="Clear all"
+          >
+            Clear all
+          </button>
+        )}
         <button
           type="button"
           className={styles.refreshBtn}
@@ -157,3 +179,4 @@ const NotificationTab: React.FC = () => {
 };
 
 export default NotificationTab;
+

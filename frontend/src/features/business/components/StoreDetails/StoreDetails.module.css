@@ -208,24 +208,24 @@
 
 .servicesSection, .productsSection {
   background: var(--color-background);
-  padding: 2rem;
+  padding: 1.25rem 1.5rem;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
 }
 
 .servicesSection h3, .productsSection h3 {
   margin-top: 0;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   color: var(--color-text);
-  font-size: 1.5rem;
-  border-bottom: 2px solid var(--color-border);
-  padding-bottom: 0.5rem;
+  font-size: 1.2rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.35rem;
 }
 
 .itemsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1.1rem;
 }
 
 .itemCard {
@@ -244,7 +244,7 @@
 }
 
 .itemImage {
-  height: 140px;
+  height: 110px;
   background-color: #e9ecef;
   display: flex;
   align-items: center;
@@ -257,7 +257,7 @@
 }
 
 .itemInfo {
-  padding: 1.25rem;
+  padding: 0.9rem 1rem 1rem;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -266,15 +266,15 @@
 
 .itemInfo h4 {
   margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--color-text);
 }
 
 .itemPrice {
   color: var(--color-primary);
   font-weight: 700;
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
   margin-top: auto;
 }
 

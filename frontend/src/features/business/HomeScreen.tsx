@@ -8,7 +8,7 @@ import StoreFilters from './components/StoreFilters/StoreFilters';
 import StoreGrid from './components/StoreGrid/StoreGrid';
 import AccountCard from '../user/components/AccountCard/AccountCard';
 import PendingBookings from '../user/components/PendingBookings/PendingBookings';
-import NotificationTab from '../../shared/components/NotificationTab/NotificationTab';
+import NotificationTab from '../notifications/components/NotificationTab/NotificationTab';
 import styles from './HomeScreen.module.css';
 
 const HomeScreen: React.FC = () => {

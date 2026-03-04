@@ -29,4 +29,65 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
            "LEFT JOIN FETCH b.user " +
            "WHERE b.id = :id")
     Optional<Booking> findByIdWithServiceBusinessOwnerAndUser(@Param("id") Long id);
+
+    @Query("""
+           SELECT DATE(b.bookingTime) AS day,
+                  COUNT(b) AS bookings,
+                  SUM(CASE WHEN b.status = 'COMPLETED' THEN 1 ELSE 0 END) AS completed,
+                  SUM(CASE WHEN b.status = 'CANCELLED' THEN 1 ELSE 0 END) AS cancelled,
+                  SUM(CASE WHEN b.status = 'COMPLETED' THEN COALESCE(ps.price, 0) ELSE 0 END) AS revenue
+           FROM Booking b
+           JOIN b.service ps
+           JOIN ps.business biz
+           WHERE biz.owner.id = :ownerId
+             AND b.bookingTime >= :from
+             AND b.bookingTime <= :to
+             AND (:businessId IS NULL OR biz.id = :businessId)
+           GROUP BY DATE(b.bookingTime)
+           ORDER BY day ASC
+           """)
+    List<Object[]> aggregateOverviewByOwnerAndDate(@Param("ownerId") Long ownerId,
+                                                   @Param("from") LocalDateTime from,
+                                                   @Param("to") LocalDateTime to,
+                                                   @Param("businessId") Long businessId);
+
+    @Query("""
+           SELECT ps.id AS serviceId,
+                  ps.name AS serviceName,
+                  COUNT(b) AS bookings,
+                  SUM(CASE WHEN b.status = 'COMPLETED' THEN 1 ELSE 0 END) AS completed,
+                  SUM(CASE WHEN b.status = 'CANCELLED' THEN 1 ELSE 0 END) AS cancelled,
+                  SUM(CASE WHEN b.status = 'COMPLETED' THEN COALESCE(ps.price, 0) ELSE 0 END) AS revenue
+           FROM Booking b
+           JOIN b.service ps
+           JOIN ps.business biz
+           WHERE biz.owner.id = :ownerId
+             AND b.bookingTime >= :from
+             AND b.bookingTime <= :to
+             AND (:businessId IS NULL OR biz.id = :businessId)
+           GROUP BY ps.id, ps.name
+           ORDER BY bookings DESC
+           """)
+    List<Object[]> aggregateServicePerformance(@Param("ownerId") Long ownerId,
+                                               @Param("from") LocalDateTime from,
+                                               @Param("to") LocalDateTime to,
+                                               @Param("businessId") Long businessId);
+
+    @Query(value = """
+           SELECT EXTRACT(DOW FROM b.booking_time)  AS dow,
+                  EXTRACT(HOUR FROM b.booking_time) AS hour,
+                  COUNT(b.id)                       AS bookings
+           FROM bookings b
+           JOIN pet_services ps ON ps.id = b.service_id
+           JOIN businesses biz  ON biz.id = ps.business_id
+           WHERE biz.owner_user_id = :ownerId
+             AND b.booking_time >= :from
+             AND b.booking_time <= :to
+             AND (:businessId IS NULL OR biz.id = :businessId)
+           GROUP BY EXTRACT(DOW FROM b.booking_time), EXTRACT(HOUR FROM b.booking_time)
+           """, nativeQuery = true)
+    List<Object[]> aggregatePeakTimes(@Param("ownerId") Long ownerId,
+                                      @Param("from") LocalDateTime from,
+                                      @Param("to") LocalDateTime to,
+                                      @Param("businessId") Long businessId);
 }

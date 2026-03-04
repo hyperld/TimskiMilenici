@@ -61,6 +61,19 @@ public class NotificationService {
         notificationRepository.save(n);
     }
 
+    @Transactional
+    public void dismissAllForUser(Long userId) {
+        List<Notification> notifications =
+                notificationRepository.findByReceiverIdAndDismissedFalseOrderByCreatedAtDesc(userId);
+        if (notifications.isEmpty()) {
+            return;
+        }
+        for (Notification n : notifications) {
+            n.setDismissed(true);
+        }
+        notificationRepository.saveAll(notifications);
+    }
+
     /** Notify business owner that a new booking was made at their store. Uses two queries so business/owner load correctly (single multi-join was leaving business null). */
     @Transactional
     public void notifyBookingCreated(Long bookingId) {

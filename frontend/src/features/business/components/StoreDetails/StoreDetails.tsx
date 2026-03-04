@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './StoreDetails.module.css';
 import Button from '../../../../shared/components/Button/Button';
 import StoreMap from './StoreMap/StoreMap';
+import StoreReviews from './StoreReviews';
 
 interface StoreDetailsProps {
   store: any;
@@ -142,6 +143,7 @@ const StoreDetails: React.FC<StoreDetailsProps> = ({
             <p>📞 {store.contactPhone || 'N/A'}</p>
             <p>✉️ {store.contactEmail || 'N/A'}</p>
           </div>
+          <StoreReviews storeId={store.id} />
         </div>
         
         <div className={styles.storeMapSection}>
