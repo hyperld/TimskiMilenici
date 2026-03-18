@@ -18,6 +18,11 @@ public class ProductController {
         this.productRepository = productRepository;
     }
 
+    @GetMapping
+    public List<Product> getAll() {
+        return productRepository.findAll();
+    }
+
     @GetMapping("/business/{businessId}")
     public List<Product> getByBusiness(@PathVariable Long businessId) {
         return productRepository.findByBusinessId(businessId);

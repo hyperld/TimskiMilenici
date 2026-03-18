@@ -1,9 +1,8 @@
+import { getStoredToken } from '../../auth/utils/tokenStorage';
+
 const API_URL = 'http://localhost:8080/api/reviews';
 
-const getAuthToken = () => {
-  const userDataStr = localStorage.getItem('petpal_user');
-  return userDataStr ? JSON.parse(userDataStr)?.token : null;
-};
+const getAuthToken = () => getStoredToken();
 
 const authHeaders = () => {
   const token = getAuthToken();

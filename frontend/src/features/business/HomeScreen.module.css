@@ -11,8 +11,145 @@
   gap: 1.5rem;
 }
 
+.headerSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.headerBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0.75rem 2rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.headerTitle {
+  margin: 0;
+  color: var(--color-primary-dark);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.headerDot {
+  color: var(--color-border);
+  font-size: 1.3rem;
+  user-select: none;
+  line-height: 1;
+}
+
+.headerSubtitle {
+  color: var(--color-text-light);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.tabBar {
+  display: flex;
+  gap: 0;
+  background: var(--color-background);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.tab {
+  padding: 0.75rem 2rem;
+  border: none;
+  background: transparent;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.tab:hover {
+  color: var(--color-primary);
+  background: var(--color-background-light);
+}
+
+.tabActive {
+  color: #ffffff;
+  background: var(--color-primary);
+}
+
+.tabActive:hover {
+  color: #ffffff;
+  background: var(--color-primary-dark);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding-bottom: 2rem;
+}
+
+.statusMessage {
+  text-align: center;
+  padding: 4rem;
+  color: var(--color-text-light);
+  font-size: 1.2rem;
+}
+
+.errorMessage {
+  background-color: #fee2e2;
+  color: var(--color-error);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  font-weight: 500;
+}
+
+.noResults {
+  text-align: center;
+  padding: 4rem;
+  color: var(--color-text-light);
+  font-size: 1.1rem;
+  background: var(--color-background);
+  border-radius: var(--radius-lg);
+  border: 2px dashed var(--color-border);
+}
+
 @media (max-width: 768px) {
   .topRow {
+    grid-template-columns: 1fr;
+  }
+
+  .headerBanner {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.75rem 1.25rem;
+  }
+
+  .headerDot {
+    display: none;
+  }
+
+  .tabBar {
+    width: 100%;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 0.65rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .grid {
     grid-template-columns: 1fr;
   }
 }

@@ -1,4 +1,5 @@
 import { User } from '../../user/types';
+import { getStoredToken } from '../utils/tokenStorage';
 
 const API_URL = 'http://localhost:8080/api/auth';
 
@@ -80,8 +81,7 @@ export const authService = {
   },
 
   updateProfile: async (profileData: any): Promise<any> => {
-    const userDataStr = localStorage.getItem('petpal_user');
-    const token = userDataStr ? JSON.parse(userDataStr)?.token : null;
+    const token = getStoredToken();
 
     const response = await fetch(`${API_URL}/profile`, {
       method: 'PUT',
@@ -104,8 +104,7 @@ export const authService = {
   },
 
   changePassword: async (passwordData: PasswordData): Promise<{ message: string }> => {
-    const userDataStr = localStorage.getItem('petpal_user');
-    const token = userDataStr ? JSON.parse(userDataStr)?.token : null;
+    const token = getStoredToken();
 
     const response = await fetch(`${API_URL}/change-password`, {
       method: 'PUT',
@@ -125,8 +124,7 @@ export const authService = {
   },
 
   deleteAccount: async (): Promise<void> => {
-    const userDataStr = localStorage.getItem('petpal_user');
-    const token = userDataStr ? JSON.parse(userDataStr)?.token : null;
+    const token = getStoredToken();
 
     const response = await fetch(`${API_URL}/delete-account`, {
       method: 'DELETE',

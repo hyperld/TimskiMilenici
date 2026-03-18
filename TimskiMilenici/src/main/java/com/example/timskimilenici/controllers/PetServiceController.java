@@ -18,6 +18,11 @@ public class PetServiceController {
             this.petServiceRepository = petServiceRepository;
         }
 
+        @GetMapping
+        public List<PetService> getAll() {
+            return petServiceRepository.findAll();
+        }
+
         @GetMapping("/business/{businessId}")
         public List<PetService> getByBusiness(@PathVariable Long businessId) {
             return petServiceRepository.findByBusinessId(businessId);

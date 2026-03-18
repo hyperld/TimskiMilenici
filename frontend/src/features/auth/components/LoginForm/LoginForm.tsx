@@ -8,6 +8,7 @@ const LoginForm: React.FC = () => {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const LoginForm: React.FC = () => {
     setLoading(true);
     
     try {
-      const userData = await login(identifier, password);
+      const userData = await login(identifier, password, rememberMe);
       
       const role = userData.role;
       if (role === 'OWNER' || role === 'BUSINESS_OWNER') {
@@ -72,6 +73,14 @@ const LoginForm: React.FC = () => {
           </button>
         </div>
       </div>
+      <label className={styles.rememberMe}>
+        <input
+          type="checkbox"
+          checked={rememberMe}
+          onChange={(e) => setRememberMe(e.target.checked)}
+        />
+        <span>Remember me</span>
+      </label>
       <Button type="submit" fullWidth disabled={loading}>
         {loading ? 'Logging in...' : 'Login'}
       </Button>

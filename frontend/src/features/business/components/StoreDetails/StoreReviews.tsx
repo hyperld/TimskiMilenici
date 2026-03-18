@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { reviewService, type ReviewItem, type ReviewsResponse } from '../../services/reviewService';
+import { isUserStored } from '../../../auth/utils/tokenStorage';
 import styles from './StoreReviews.module.css';
 
 interface StoreReviewsProps {
@@ -14,7 +15,7 @@ const StoreReviews: React.FC<StoreReviewsProps> = ({ storeId }) => {
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const canWriteReview = Boolean(localStorage.getItem('petpal_user'));
+  const canWriteReview = isUserStored();
 
   const load = async () => {
     try {

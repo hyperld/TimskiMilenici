@@ -39,6 +39,7 @@ export interface PetService {
   description: string;
   price: number;
   duration?: number;
+  durationMinutes?: number;
   businessId: number;
 }
 
@@ -48,5 +49,14 @@ export interface Product {
   description: string;
   price: number;
   stock?: number;
+  stockQuantity?: number;
   businessId: number;
+}
+
+export interface ProductWithStore extends Product {
+  businessName: string;
+}
+
+export interface PetServiceWithStore extends PetService {
+  businessName: string;
 }

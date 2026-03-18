@@ -1,15 +1,8 @@
+import { getStoredToken } from '../../auth/utils/tokenStorage';
+
 const API_URL = 'http://localhost:8080/api/cart';
 
-const getAuthToken = (): string | null => {
-  try {
-    const raw = localStorage.getItem('petpal_user');
-    if (!raw) return null;
-    const data = JSON.parse(raw);
-    return data?.token ?? null;
-  } catch {
-    return null;
-  }
-};
+const getAuthToken = (): string | null => getStoredToken();
 
 export interface CartProduct {
   id: number;

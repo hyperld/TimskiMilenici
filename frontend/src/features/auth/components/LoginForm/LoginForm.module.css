@@ -116,3 +116,21 @@
   text-align: center;
   border: 1px solid var(--color-success);
 }
+
+.rememberMe {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  user-select: none;
+}
+
+.rememberMe input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}

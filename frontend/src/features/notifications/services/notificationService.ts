@@ -1,15 +1,8 @@
+import { getStoredToken } from '../../auth/utils/tokenStorage';
+
 const API_URL = 'http://localhost:8080/api/notifications';
 
-const getAuthToken = (): string | null => {
-  const userDataStr = localStorage.getItem('petpal_user');
-  if (!userDataStr) return null;
-  try {
-    const data = JSON.parse(userDataStr);
-    return data?.token ?? null;
-  } catch {
-    return null;
-  }
-};
+const getAuthToken = (): string | null => getStoredToken();
 
 export interface NotificationSender {
   id: number;

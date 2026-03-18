@@ -1,6 +1,7 @@
 package com.example.timskimilenici.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
@@ -36,4 +37,14 @@ public abstract class BaseItem {
     public void setPrice(BigDecimal price) { this.price = price; }
     public Business getBusiness() { return business; }
     public void setBusiness(Business business) { this.business = business; }
+
+    @JsonProperty("businessId")
+    public Long resolveBusinessId() {
+        return business != null ? business.getId() : null;
+    }
+
+    @JsonProperty("businessName")
+    public String resolveBusinessName() {
+        return business != null ? business.getName() : null;
+    }
 }

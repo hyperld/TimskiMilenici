@@ -1,9 +1,8 @@
+import { getStoredUserData } from '../../auth/utils/tokenStorage';
+
 const API_URL = 'http://localhost:8080/api/bookings';
 
-const getAuthUser = () => {
-  const userDataStr = localStorage.getItem('petpal_user');
-  return userDataStr ? JSON.parse(userDataStr) : null;
-};
+const getAuthUser = () => getStoredUserData();
 
 /** Parse backend bookingTime (ISO string or array [y,m,d,h,min,s]) into date and time. */
 export function parseBookingDateTime(raw: unknown): { dateStr: string; timeStr: string } | null {

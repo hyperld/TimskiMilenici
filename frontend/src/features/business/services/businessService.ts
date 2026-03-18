@@ -1,11 +1,9 @@
-import { Business, PetService, Product } from '../types';
+import { Business, PetService, PetServiceWithStore, Product, ProductWithStore } from '../types';
+import { getStoredToken } from '../../auth/utils/tokenStorage';
 
 const API_URL = 'http://localhost:8080/api';
 
-const getAuthToken = () => {
-  const userDataStr = localStorage.getItem('petpal_user');
-  return userDataStr ? JSON.parse(userDataStr)?.token : null;
-};
+const getAuthToken = () => getStoredToken();
 
 export const businessService = {
   // Fetch all businesses
@@ -368,5 +366,17 @@ export const businessService = {
       throw new Error('Failed to delete product');
     }
     return true;
-  }
+  },
+
+  getAllProducts: async (): Promise<ProductWithStore[]> => {
+    const response = await fetch(`${API_URL}/products`);
+    if (!response.ok) throw new Error('Failed to fetch products');
+    return response.json();
+  },
+
+  getAllServices: async (): Promise<PetServiceWithStore[]> => {
+    const response = await fetch(`${API_URL}/services`);
+    if (!response.ok) throw new Error('Failed to fetch services');
+    return response.json();
+  },
 };

@@ -3,6 +3,7 @@ import {
   notificationService,
   type NotificationItem,
 } from '../../services/notificationService';
+import { isUserStored } from '../../../auth/utils/tokenStorage';
 import NotificationCard from '../NotificationCard/NotificationCard';
 import styles from './NotificationTab.module.css';
 
@@ -82,16 +83,7 @@ const NotificationTab: React.FC = () => {
     }
   };
 
-  const isLoggedIn = () => {
-    try {
-      const raw = localStorage.getItem('petpal_user');
-      if (!raw) return false;
-      const data = JSON.parse(raw);
-      return !!data?.token;
-    } catch {
-      return false;
-    }
-  };
+  const isLoggedIn = () => isUserStored();
 
   if (!isLoggedIn()) {
     return (

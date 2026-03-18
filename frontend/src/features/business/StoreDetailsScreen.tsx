@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import TopBar from '../../shared/components/TopBar/TopBar';
 import { useAuth } from '../../features/auth/hooks/useAuth';
 import { useCart } from '../../features/cart/context/CartContext';
+import { usePawPal } from '../pawpal/context/PawPalContext';
 import { businessService } from './services/businessService';
 import { Business } from './types';
 import StoreDetails from './components/StoreDetails/StoreDetails';
@@ -17,6 +18,7 @@ const StoreDetailsScreen: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { user } = useAuth();
   const { addItem } = useCart();
+  const { setStoreContext } = usePawPal();
 
   useEffect(() => {
     const fetchStore = async () => {
@@ -30,10 +32,27 @@ const StoreDetailsScreen: React.FC = () => {
           allImages.unshift(data.mainImageUrl);
         }
         
-        setStore({
-          ...data,
-          images: allImages
+        const storeData = { ...data, images: allImages };
+        setStore(storeData);
+
+        setStoreContext({
+          id: storeData.id,
+          name: storeData.name,
+          description: storeData.description || '',
+          address: storeData.address || '',
+          categories: storeData.types || (storeData.category ? [storeData.category] : []),
+          services: (storeData.services || []).map((s: any) => ({
+            name: s.name,
+            price: s.price,
+            durationMinutes: s.durationMinutes ?? s.duration,
+          })),
+          products: (storeData.products || []).map((p: any) => ({
+            name: p.name,
+            price: p.price,
+            stock: p.stockQuantity ?? p.stock,
+          })),
         });
+
         setError('');
       } catch (err) {
         console.error('Error fetching store:', err);
@@ -44,7 +63,8 @@ const StoreDetailsScreen: React.FC = () => {
     };
 
     fetchStore();
-  }, [id]);
+    return () => setStoreContext(null);
+  }, [id, setStoreContext]);
 
   const handleNextImage = () => {
     if (!store?.images) return;
