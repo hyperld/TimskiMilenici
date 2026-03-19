@@ -20,16 +20,17 @@
 }
 
 .btn {
-  padding: 0.8rem 2rem;
-  font-size: 1.1rem;
+  padding: 0.55rem 1.4rem;
+  font-size: 0.9rem;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: transform 0.2s, background-color 0.2s;
+  font-weight: 600;
+  transition: transform 0.15s, background-color 0.2s;
 }
 
 .btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .loginBtn {
@@ -44,7 +45,7 @@
 .registerBtn {
   background-color: var(--color-background);
   color: var(--color-primary);
-  border: 2px solid var(--color-primary);
+  border: 1.5px solid var(--color-primary);
 }
 
 .registerBtn:hover {
@@ -60,7 +61,7 @@
 .guestLink {
   color: var(--color-text-light);
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: 0.82rem;
   text-decoration: underline;
   transition: color 0.2s;
 }

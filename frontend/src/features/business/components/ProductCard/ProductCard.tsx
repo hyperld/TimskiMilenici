@@ -38,9 +38,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onViewD
         {description && <p className={styles.description}>{description}</p>}
         <div className={styles.footer}>
           <span className={styles.price}>${Number(product.price).toFixed(2)}</span>
-          {product.stockQuantity != null && product.stockQuantity > 0 && (
-            <span className={styles.stock}>In Stock ({product.stockQuantity})</span>
-          )}
+          <span className={product.stockQuantity != null && product.stockQuantity > 0 ? styles.stock : styles.outOfStock}>
+            {product.stockQuantity != null && product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock'}
+          </span>
         </div>
         {onAddToCart && (
           <Button

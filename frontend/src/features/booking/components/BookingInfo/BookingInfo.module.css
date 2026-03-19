@@ -14,11 +14,11 @@
   right: 0.5rem;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.15rem;
   line-height: 1;
   color: var(--color-text-light);
   cursor: pointer;
-  padding: 0.25rem;
+  padding: 0.2rem;
 }
 
 .closeBtn:hover {

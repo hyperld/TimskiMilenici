@@ -1,6 +1,6 @@
 .storeCard {
   background: var(--color-background);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   transition: transform 0.2s, box-shadow 0.2s;
@@ -10,12 +10,12 @@
 }
 
 .storeCard:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-md);
 }
 
 .storeImage {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 3;
   background-color: var(--color-background-light);
   display: flex;
   align-items: center;
@@ -30,51 +30,54 @@
 }
 
 .imagePlaceholder {
-  font-size: 4rem;
+  font-size: 2.5rem;
 }
 
 .storeInfo {
-  padding: 1.5rem;
+  padding: 0.85rem;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
 .storeType {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   text-transform: uppercase;
   color: var(--color-primary);
   font-weight: 600;
   letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
 }
 
 .storeName {
-  margin: 0 0 0.75rem 0;
-  font-size: 1.25rem;
+  margin: 0 0 0.4rem 0;
+  font-size: 0.95rem;
   color: var(--color-text);
 }
 
 .storeDescription {
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   color: var(--color-text-light);
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
   flex: 1;
   overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .storeFooter {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.75rem;
+  gap: 0.5rem;
   border-top: 1px solid var(--color-border);
-  padding-top: 1rem;
+  padding-top: 0.65rem;
 }
 
 .storeLocation {
-  font-size: 0.85rem;
+  font-size: 0.72rem;
   color: var(--color-text-light);
 }
 
@@ -82,10 +85,10 @@
   background-color: var(--color-primary);
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-md);
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   transition: background-color 0.2s;
 }
 

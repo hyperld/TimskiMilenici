@@ -77,8 +77,8 @@
 
 .profilePictureBtn {
   display: inline-block;
-  padding: 0.4rem 0.8rem;
-  font-size: 0.85rem;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
   font-weight: 600;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
@@ -94,8 +94,8 @@
 }
 
 .profilePictureRemove {
-  padding: 0.4rem 0.8rem;
-  font-size: 0.85rem;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
@@ -141,7 +141,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   opacity: 0.6;
   transition: opacity 0.2s;
   user-select: none;
@@ -172,15 +172,16 @@
 
 .submitBtn {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.6rem;
   background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 1rem;
-  margin-top: 1rem;
-  transition: background-color 0.3s;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  transition: background-color 0.2s;
 }
 
 .submitBtn:hover {

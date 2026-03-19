@@ -27,10 +27,10 @@
   background: rgba(0, 0, 0, 0.4);
   border: none;
   color: #fff;
-  width: 2rem;
-  height: 2rem;
+  width: 1.6rem;
+  height: 1.6rem;
   border-radius: 50%;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   cursor: pointer;
   display: flex;
   align-items: center;

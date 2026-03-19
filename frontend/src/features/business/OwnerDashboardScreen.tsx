@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBar from '../../shared/components/TopBar/TopBar';
 import { useAuth } from '../../features/auth/hooks/useAuth';
@@ -11,6 +11,7 @@ import OwnerAnalyticsOverview from '../analytics/components/OwnerAnalyticsOvervi
 import NotificationTab from '../notifications/components/NotificationTab/NotificationTab';
 import CreateStoreModal from './components/StoreModals/CreateStoreModal';
 import ManageStoreModal from './components/StoreModals/ManageStoreModal';
+import { ownerAnalyticsService, OverviewResult } from '../analytics/services/ownerAnalyticsService';
 import styles from './OwnerDashboardScreen.module.css';
 
 const OwnerDashboardScreen: React.FC = () => {
@@ -32,6 +33,26 @@ const OwnerDashboardScreen: React.FC = () => {
   const [ownerStores, setOwnerStores] = useState<Business[]>([]);
   const [editingStore, setEditingStore] = useState<any | null>(null);
   const [managingStore, setManagingStore] = useState<any | null>(null);
+
+  const [overview, setOverview] = useState<OverviewResult | null>(null);
+
+  useEffect(() => {
+    ownerAnalyticsService.getOverview().then(setOverview).catch(() => {});
+  }, [ownerStores]);
+
+  const ownerStats = useMemo(() => {
+    const totalProducts = ownerStores.reduce((sum, s) => sum + (s.products?.length || 0), 0);
+    const totalServices = ownerStores.reduce((sum, s) => sum + (s.services?.length || 0), 0);
+    const stats = [
+      { icon: '🏪', label: 'Stores', value: ownerStores.length },
+      { icon: '📦', label: 'Products', value: totalProducts },
+      { icon: '🐾', label: 'Services', value: totalServices },
+    ];
+    if (overview) {
+      stats.push({ icon: '📅', label: 'Bookings', value: overview.totalBookings });
+    }
+    return stats;
+  }, [ownerStores, overview]);
 
   const [newStore, setNewStore] = useState({
     name: '',
@@ -161,6 +182,8 @@ const OwnerDashboardScreen: React.FC = () => {
             <AccountCard
               userData={user}
               onEdit={() => navigate('/edit-profile')}
+              greeting={`Welcome back, ${user.fullName.split(' ')[0]}!`}
+              stats={ownerStats}
             />
           )}
           <div className={styles.rightColumn}>

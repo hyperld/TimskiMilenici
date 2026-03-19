@@ -1,34 +1,34 @@
 .reviewsSection {
-  margin-top: 2rem;
-  background: var(--color-background);
-  padding: 1.5rem;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  margin-top: 1.25rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
 }
 
 .title {
   margin: 0;
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 700;
   color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
 .subtitle {
-  margin: 0.2rem 0 0 0;
-  font-size: 0.85rem;
+  margin: 0.15rem 0 0 0;
+  font-size: 0.72rem;
   color: var(--color-text-light);
 }
 
 .starSummary {
-  font-size: 1.1rem;
+  font-size: 0.85rem;
 }
 
 .starFull {
@@ -45,86 +45,100 @@
 
 .list {
   list-style: none;
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.75rem 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  max-height: 220px;
+  gap: 0.5rem;
+  max-height: 180px;
   overflow-y: auto;
 }
 
+.list::-webkit-scrollbar {
+  width: 3px;
+}
+
+.list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
 .reviewCard {
-  padding: 0.75rem 0.9rem;
-  border-radius: var(--radius-md);
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);
-  background: #f9fafb;
+  background: var(--color-background-light);
 }
 
 .reviewHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.15rem;
 }
 
 .reviewer {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: var(--color-text);
 }
 
 .reviewStars {
-  font-size: 0.95rem;
+  font-size: 0.75rem;
 }
 
 .reviewMeta {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.62rem;
   color: var(--color-text-light);
 }
 
 .reviewText {
-  margin: 0.35rem 0 0 0;
-  font-size: 0.85rem;
+  margin: 0.25rem 0 0 0;
+  font-size: 0.75rem;
   color: var(--color-text);
+  line-height: 1.4;
 }
 
 .formWrap {
   border-top: 1px solid var(--color-border);
-  padding-top: 1rem;
+  padding-top: 0.65rem;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .fieldRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .label {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: var(--color-text);
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.2rem;
   flex: 1;
 }
 
 .label textarea {
   resize: vertical;
-  min-height: 70px;
-  padding: 0.5rem 0.6rem;
-  border-radius: var(--radius-md);
+  min-height: 50px;
+  padding: 0.4rem 0.5rem;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: 0.78rem;
 }
 
 .label input[type='range'] {
@@ -135,28 +149,32 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.15rem;
+  gap: 0.1rem;
 }
 
 .liveStars {
-  font-size: 1rem;
+  font-size: 0.85rem;
 }
 
 .liveValue {
-  font-size: 0.8rem;
+  font-size: 0.68rem;
   color: var(--color-text-light);
 }
 
 .submitBtn {
   align-self: flex-end;
-  padding: 0.45rem 0.9rem;
-  border-radius: var(--radius-md);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
   border: none;
   background: var(--color-primary);
   color: #fff;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
+}
+
+.submitBtn:hover {
+  background: var(--color-primary-dark);
 }
 
 .submitBtn:disabled {
@@ -165,14 +183,13 @@
 }
 
 .info {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--color-text-light);
-  margin: 0.25rem 0;
+  margin: 0.2rem 0;
 }
 
 .error {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--color-error, #b91c1c);
-  margin: 0.25rem 0;
+  margin: 0.2rem 0;
 }
-

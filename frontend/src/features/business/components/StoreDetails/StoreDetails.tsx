@@ -127,7 +127,9 @@ const StoreDetails: React.FC<StoreDetailsProps> = ({
                   </div>
                   <div className={styles.itemInfo}>
                     <h4>{product.name}</h4>
-                    <p className={styles.itemStock}>Stock: {product.stockQuantity}</p>
+                    <p className={product.stockQuantity > 0 ? styles.itemInStock : styles.itemOutOfStock}>
+                      {product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock'}
+                    </p>
                     <p className={styles.itemPrice}>${product.price}</p>
                     {onAddToCart && (
                       <Button

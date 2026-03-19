@@ -7,17 +7,17 @@
 
 .successCard {
   background: var(--color-background);
-  padding: 3rem;
-  border-radius: 15px;
+  padding: 2rem;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   text-align: center;
-  max-width: 500px;
+  max-width: 420px;
   width: 100%;
 }
 
 .successIcon {
-  font-size: 5rem;
-  margin-bottom: 1.5rem;
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
 }
 
 .successCard h2 {
@@ -32,13 +32,13 @@
 }
 
 .backHomeBtn {
-  margin-top: 2rem;
-  padding: 0.8rem 2rem;
+  margin-top: 1.25rem;
+  padding: 0.6rem 1.4rem;
   background-color: var(--color-primary);
   color: white;
   border: none;
-  border-radius: var(--radius-md);
-  font-size: 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
