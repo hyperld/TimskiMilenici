@@ -38,6 +38,10 @@ export interface PetService {
   name: string;
   description: string;
   price: number;
+  promotionPrice?: number | null;
+  effectivePrice?: number;
+  onSale?: boolean;
+  promoted?: boolean;
   duration?: number;
   durationMinutes?: number;
   businessId: number;
@@ -48,6 +52,10 @@ export interface Product {
   name: string;
   description: string;
   price: number;
+  promotionPrice?: number | null;
+  effectivePrice?: number;
+  onSale?: boolean;
+  promoted?: boolean;
   stock?: number;
   stockQuantity?: number;
   businessId: number;

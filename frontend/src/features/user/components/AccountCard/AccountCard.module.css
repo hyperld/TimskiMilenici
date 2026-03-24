@@ -10,13 +10,26 @@
   align-items: stretch;
   text-align: left;
   transition: box-shadow 0.15s ease, transform 0.15s ease;
-  height: 540px;
-  max-height: 540px;
+  height: auto;
+  max-height: none;
   overflow: hidden;
 }
 
 .expanded {
-  min-height: 100%;
+  min-height: 0;
+  height: auto;
+  max-height: none;
+}
+
+.expanded .extraContent {
+  flex: 0;
+  overflow: visible;
+}
+
+.homeCompact {
+  height: 420px;
+  max-height: 420px;
+  min-height: 0;
 }
 
 .topRow {

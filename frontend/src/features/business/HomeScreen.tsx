@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBar from '../../shared/components/TopBar/TopBar';
 import { useAuth } from '../../features/auth/hooks/useAuth';
@@ -14,6 +14,7 @@ import AccountCard from '../user/components/AccountCard/AccountCard';
 import PendingBookings from '../user/components/PendingBookings/PendingBookings';
 import NotificationTab from '../notifications/components/NotificationTab/NotificationTab';
 import RecommendedPanel from '../recommendations/components/RecommendedPanel/RecommendedPanel';
+import SpecialOffersTab, { SpecialOfferItem } from '../recommendations/components/SpecialOffersTab/SpecialOffersTab';
 import styles from './HomeScreen.module.css';
 
 type TabKey = 'stores' | 'products' | 'services';
@@ -24,7 +25,7 @@ const TAB_LABELS: Record<TabKey, string> = {
   services: 'Services',
 };
 
-const STORES_PER_PAGE = 5;
+const STORES_PER_PAGE = 4;
 const PRODUCTS_PER_PAGE = 10;
 const SERVICES_PER_PAGE = 10;
 
@@ -46,12 +47,55 @@ const HomeScreen: React.FC = () => {
 
   const [selectedProduct, setSelectedProduct] = useState<ProductWithStore | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [specialOffers, setSpecialOffers] = useState<SpecialOfferItem[]>([]);
 
   useEffect(() => {
     setSearchTerm('');
     setFilterType('All');
     setCurrentPage(1);
   }, [activeTab]);
+
+  const loadSpecialOffers = useCallback(async () => {
+    try {
+      const [promoProducts, promoServices] = await Promise.all([
+        businessService.getPromotedProducts(),
+        businessService.getPromotedServices(),
+      ]);
+
+      const mappedProducts: SpecialOfferItem[] = promoProducts
+        .filter((p: any) => p.promotionPrice != null && Number(p.promotionPrice) < Number(p.price))
+        .map((p: any) => ({
+          id: p.id,
+          type: 'product',
+          name: p.name,
+          businessId: p.businessId,
+          businessName: p.businessName,
+          price: Number(p.price),
+          promotionPrice: Number(p.promotionPrice),
+        }));
+
+      const mappedServices: SpecialOfferItem[] = promoServices
+        .filter((s: any) => s.promotionPrice != null && Number(s.promotionPrice) < Number(s.price))
+        .map((s: any) => ({
+          id: s.id,
+          type: 'service',
+          name: s.name,
+          businessId: s.businessId,
+          businessName: s.businessName,
+          price: Number(s.price),
+          promotionPrice: Number(s.promotionPrice),
+        }));
+
+      const combined = [...mappedProducts, ...mappedServices];
+      setSpecialOffers(combined);
+    } catch {
+      setSpecialOffers([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadSpecialOffers();
+  }, [loadSpecialOffers]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -231,14 +275,23 @@ const HomeScreen: React.FC = () => {
         {isAuthenticated && user ? (
           <div className={styles.pageLayout}>
             <section className={styles.leftPanel}>
-              <AccountCard
-                userData={user}
-                onEdit={() => navigate('/edit-profile')}
-                variant="expanded"
-              >
-                {user.userId != null && <PendingBookings userId={user.userId} />}
-                <NotificationTab />
-              </AccountCard>
+              <div className={styles.specialOffersSlot}>
+                <SpecialOffersTab
+                  items={specialOffers}
+                  onRefresh={loadSpecialOffers}
+                  onExploreOffer={(offer) => navigate(`/store/${offer.businessId}`)}
+                />
+              </div>
+              <div className={styles.accountSlot}>
+                <AccountCard
+                  userData={user}
+                  onEdit={() => navigate('/edit-profile')}
+                  variant="homeCompact"
+                >
+                  {user.userId != null && <PendingBookings userId={user.userId} />}
+                  <NotificationTab />
+                </AccountCard>
+              </div>
               <RecommendedPanel items={recommendedItems} />
             </section>
 
@@ -264,14 +317,16 @@ const HomeScreen: React.FC = () => {
                   ))}
                 </div>
 
-                <StoreFilters
-                  searchTerm={searchTerm}
-                  onSearchChange={setSearchTerm}
-                  filterType={filterType}
-                  onFilterChange={setFilterType}
-                  mode={activeTab as FilterMode}
-                />
-                {renderPagination()}
+                <div className={styles.filtersRow}>
+                  <StoreFilters
+                    searchTerm={searchTerm}
+                    onSearchChange={setSearchTerm}
+                    filterType={filterType}
+                    onFilterChange={setFilterType}
+                    mode={activeTab as FilterMode}
+                  />
+                  {renderPagination()}
+                </div>
               </div>
 
               <div className={styles.contentArea}>
@@ -302,14 +357,16 @@ const HomeScreen: React.FC = () => {
                 ))}
               </div>
 
-              <StoreFilters
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
-                filterType={filterType}
-                onFilterChange={setFilterType}
-                mode={activeTab as FilterMode}
-              />
-              {renderPagination()}
+              <div className={styles.filtersRow}>
+                <StoreFilters
+                  searchTerm={searchTerm}
+                  onSearchChange={setSearchTerm}
+                  filterType={filterType}
+                  onFilterChange={setFilterType}
+                  mode={activeTab as FilterMode}
+                />
+                {renderPagination()}
+              </div>
             </div>
 
             <div className={styles.contentArea}>

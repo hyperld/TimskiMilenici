@@ -1,16 +1,10 @@
 .wrapper {
-  background: white;
-  padding: 1.25rem 1.5rem;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  background: #ffffff;
+  padding: 1rem 1.15rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border);
-}
 
-.title {
-  margin: 0 0 1rem 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--color-text);
 }
 
 .cardRow {

@@ -179,6 +179,18 @@
   resize: vertical;
 }
 
+.inlineCheckbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--color-text);
+}
+
+.inlineCheckbox input {
+  width: auto;
+}
+
 /* Two-column layout for ManageStoreModal content */
 .manageGrid {
   display: grid;
@@ -383,9 +395,23 @@
   color: var(--color-text-light);
 }
 
+.saleInfo {
+  color: var(--color-success, #2a9d57);
+  font-weight: 700;
+}
+
 .itemActions {
   display: flex;
   gap: 0.5rem;
+}
+
+.promoteBtn {
+  border: 1px solid transparent;
+}
+
+.promoteBtnActive {
+  border-color: rgba(42, 157, 87, 0.35);
+  background: rgba(42, 157, 87, 0.08);
 }
 
 .editItemBtn, .deleteItemBtn {

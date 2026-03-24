@@ -141,7 +141,12 @@ public class CartService {
 
         Order order = new Order(user);
         for (CartItem ci : new ArrayList<>(cart.getItems())) {
-            OrderItem oi = new OrderItem(order, ci.getProduct(), ci.getQuantity(), ci.getProduct().getPrice());
+            OrderItem oi = new OrderItem(
+                    order,
+                    ci.getProduct(),
+                    ci.getQuantity(),
+                    ci.getProduct().getEffectivePrice()
+            );
             order.addItem(oi);
         }
         order = orderRepository.save(order);

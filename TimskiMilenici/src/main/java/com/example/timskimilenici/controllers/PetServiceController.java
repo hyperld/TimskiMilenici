@@ -23,6 +23,11 @@ public class PetServiceController {
             return petServiceRepository.findAll();
         }
 
+        @GetMapping("/promoted")
+        public List<PetService> getPromoted() {
+            return petServiceRepository.findPromotedServices();
+        }
+
         @GetMapping("/business/{businessId}")
         public List<PetService> getByBusiness(@PathVariable Long businessId) {
             return petServiceRepository.findByBusinessId(businessId);
@@ -48,6 +53,7 @@ public class PetServiceController {
                 service.setName(serviceDetails.getName());
                 service.setDescription(serviceDetails.getDescription());
                 service.setPrice(serviceDetails.getPrice());
+                service.setPromotionPrice(serviceDetails.getPromotionPrice());
                 service.setCapacity(serviceDetails.getCapacity());
                 service.setDurationMinutes(serviceDetails.getDurationMinutes());
                 return ResponseEntity.ok(petServiceRepository.save(service));

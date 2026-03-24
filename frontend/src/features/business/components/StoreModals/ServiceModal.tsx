@@ -41,6 +41,33 @@ const ServiceModal: React.FC<ServiceModalProps> = ({ itemFormData, setItemFormDa
               <input type="number" name="durationMinutes" value={itemFormData.durationMinutes || ''} onChange={handleChange} required />
             </div>
           </div>
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label>Sale Price ($)</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                name="promotionPrice"
+                value={itemFormData.promotionPrice || ''}
+                onChange={handleChange}
+                placeholder="Optional"
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Promote</label>
+              <label className={styles.inlineCheckbox}>
+                <input
+                  type="checkbox"
+                  checked={!!itemFormData.promoted}
+                  onChange={(e) =>
+                    setItemFormData((prev: any) => ({ ...prev, promoted: e.target.checked }))
+                  }
+                />
+                <span>Show in Special Offers</span>
+              </label>
+            </div>
+          </div>
           <div className={styles.formGroup}>
             <label>Capacity (per slot)</label>
             <input type="number" name="capacity" value={itemFormData.capacity || ''} onChange={handleChange} placeholder="e.g. 1" />

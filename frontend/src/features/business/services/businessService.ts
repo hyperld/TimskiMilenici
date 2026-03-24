@@ -286,6 +286,7 @@ export const businessService = {
     const payload = {
       name: serviceData.name,
       price: parseFloat(serviceData.price),
+      promotionPrice: serviceData.promotionPrice ? parseFloat(serviceData.promotionPrice) : null,
       description: serviceData.description || '',
       capacity: parseInt(serviceData.capacity || 10),
       durationMinutes: parseInt(serviceData.durationMinutes || 30),
@@ -332,6 +333,7 @@ export const businessService = {
     const payload = {
       name: productData.name,
       price: parseFloat(productData.price),
+      promotionPrice: productData.promotionPrice ? parseFloat(productData.promotionPrice) : null,
       description: productData.description || '',
       stockQuantity: parseInt(productData.stockQuantity || 100),
       business: { id: productData.storeId }
@@ -377,6 +379,18 @@ export const businessService = {
   getAllServices: async (): Promise<PetServiceWithStore[]> => {
     const response = await fetch(`${API_URL}/services`);
     if (!response.ok) throw new Error('Failed to fetch services');
+    return response.json();
+  },
+
+  getPromotedProducts: async (): Promise<ProductWithStore[]> => {
+    const response = await fetch(`${API_URL}/products/promoted`);
+    if (!response.ok) throw new Error('Failed to fetch promoted products');
+    return response.json();
+  },
+
+  getPromotedServices: async (): Promise<PetServiceWithStore[]> => {
+    const response = await fetch(`${API_URL}/services/promoted`);
+    if (!response.ok) throw new Error('Failed to fetch promoted services');
     return response.json();
   },
 };

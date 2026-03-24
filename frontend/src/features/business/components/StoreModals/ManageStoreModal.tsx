@@ -67,6 +67,8 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
     stockQuantity: '',
     capacity: '',
     durationMinutes: '',
+    promotionPrice: '',
+    promoted: false,
     id: null as any
   });
 
@@ -295,6 +297,8 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
         stockQuantity: item.stockQuantity?.toString() || '',
         capacity: item.capacity?.toString() || '',
         durationMinutes: item.durationMinutes?.toString() || '',
+        promotionPrice: item.promotionPrice?.toString() || '',
+        promoted: !!item.promoted,
         id: item.id
       });
     } else {
@@ -306,6 +310,8 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
         stockQuantity: '',
         capacity: '',
         durationMinutes: '',
+        promotionPrice: '',
+        promoted: false,
         id: `temp-${Date.now()}` // Temporary ID for local tracking
       });
     }
@@ -315,24 +321,25 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
   const handleLocalSaveItem = (e: React.FormEvent) => {
     e.preventDefault();
     const typeKey = itemFormData.type === 'product' ? 'products' : 'services';
+    const normalizedItem = {
+      ...itemFormData,
+      price: parseFloat(itemFormData.price),
+      stockQuantity: itemFormData.stockQuantity ? parseInt(itemFormData.stockQuantity) : undefined,
+      durationMinutes: itemFormData.durationMinutes ? parseInt(itemFormData.durationMinutes) : undefined,
+      capacity: itemFormData.capacity ? parseInt(itemFormData.capacity) : undefined,
+      promotionPrice: itemFormData.promotionPrice ? parseFloat(itemFormData.promotionPrice) : null,
+      promoted: !!itemFormData.promoted,
+    };
     
     // Update localStore
     setLocalStore((prev: any) => {
       const items = [...(prev[typeKey] || [])];
       const index = items.findIndex(i => i.id === itemFormData.id);
-      
-      const newItem = {
-        ...itemFormData,
-        price: parseFloat(itemFormData.price),
-        stockQuantity: itemFormData.stockQuantity ? parseInt(itemFormData.stockQuantity) : undefined,
-        durationMinutes: itemFormData.durationMinutes ? parseInt(itemFormData.durationMinutes) : undefined,
-        capacity: itemFormData.capacity ? parseInt(itemFormData.capacity) : undefined,
-      };
 
       if (index > -1) {
-        items[index] = newItem;
+        items[index] = normalizedItem;
       } else {
-        items.push(newItem);
+        items.push(normalizedItem);
       }
       return { ...prev, [typeKey]: items };
     });
@@ -340,7 +347,7 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
     // Add to itemsToSave (tracking for backend)
     setItemsToSave(prev => {
       const existing = prev.filter(i => !(i.id === itemFormData.id && i.type === itemFormData.type));
-      return [...existing, itemFormData];
+      return [...existing, normalizedItem];
     });
 
     setShowItemModal(false);
@@ -361,6 +368,25 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
     
     // Also remove from itemsToSave if it was there
     setItemsToSave(prev => prev.filter(i => !(i.id === itemId && i.type === type)));
+  };
+
+  const handleTogglePromote = (type: 'product' | 'service', itemId: any) => {
+    const typeKey = type === 'product' ? 'products' : 'services';
+    setLocalStore((prev: any) => {
+      const items = [...(prev[typeKey] || [])];
+      const index = items.findIndex((i: any) => i.id === itemId);
+      if (index === -1) return prev;
+      const current = items[index];
+      items[index] = {
+        ...current,
+        promoted: !current.promoted,
+      };
+      setItemsToSave((old) => {
+        const clean = old.filter((i) => !(i.id === itemId && i.type === type));
+        return [...clean, { ...items[index], type }];
+      });
+      return { ...prev, [typeKey]: items };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -544,9 +570,26 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
                 <div key={product.id} className={styles.itemEntry}>
                   <div className={styles.itemInfo}>
                     <h4>{product.name}</h4>
-                    <p>${product.price} | Stock: {product.stockQuantity}</p>
+                    <p>
+                      ${product.price}
+                      {product.promotionPrice ? (
+                        <span className={styles.saleInfo}> {'->'} ${product.promotionPrice} sale</span>
+                      ) : null}
+                      {' '}| Stock: {product.stockQuantity}
+                    </p>
                   </div>
                   <div className={styles.itemActions}>
+                    {product.promotionPrice ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={`${styles.promoteBtn} ${product.promoted ? styles.promoteBtnActive : ''}`}
+                        title={product.promoted ? 'Promoted in Special Offers' : 'Click to promote in Special Offers'}
+                        onClick={() => handleTogglePromote('product', product.id)}
+                      >
+                        📣
+                      </Button>
+                    ) : null}
                     <Button variant="ghost" size="sm" onClick={() => handleOpenItem('product', product)}>✏️</Button>
                     <Button variant="ghost" size="sm" onClick={() => handleLocalDeleteItem('product', product.id)}>🗑️</Button>
                   </div>
@@ -571,9 +614,26 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
                 <div key={service.id} className={styles.itemEntry}>
                   <div className={styles.itemInfo}>
                     <h4>{service.name}</h4>
-                    <p>${service.price} | {service.durationMinutes} min</p>
+                    <p>
+                      ${service.price}
+                      {service.promotionPrice ? (
+                        <span className={styles.saleInfo}> {'->'} ${service.promotionPrice} sale</span>
+                      ) : null}
+                      {' '}| {service.durationMinutes} min
+                    </p>
                   </div>
                   <div className={styles.itemActions}>
+                    {service.promotionPrice ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={`${styles.promoteBtn} ${service.promoted ? styles.promoteBtnActive : ''}`}
+                        title={service.promoted ? 'Promoted in Special Offers' : 'Click to promote in Special Offers'}
+                        onClick={() => handleTogglePromote('service', service.id)}
+                      >
+                        📣
+                      </Button>
+                    ) : null}
                     <Button variant="ghost" size="sm" onClick={() => handleOpenItem('service', service)}>✏️</Button>
                     <Button variant="ghost" size="sm" onClick={() => handleLocalDeleteItem('service', service.id)}>🗑️</Button>
                   </div>

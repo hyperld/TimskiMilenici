@@ -15,7 +15,7 @@ import { ownerAnalyticsService, OverviewResult } from '../analytics/services/own
 import styles from './OwnerDashboardScreen.module.css';
 
 const OwnerDashboardScreen: React.FC = () => {
-  const STORES_PER_PAGE = 5;
+  const STORES_PER_PAGE = 4;
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -185,6 +185,11 @@ const OwnerDashboardScreen: React.FC = () => {
     <div className={styles.pageShell}>
       <TopBar userName={userName} />
       <main className={styles.main}>
+        <DashboardHeader 
+          title="Owner Dashboard" 
+          description="Manage your pet businesses and services." 
+          onAddClick={() => setShowCreateModal(true)} 
+        />
         <div className={styles.pageLayout}>
           <section className={styles.leftPanel}>
             {user && (
@@ -202,20 +207,6 @@ const OwnerDashboardScreen: React.FC = () => {
           </section>
 
           <section className={styles.rightPanel}>
-            <DashboardHeader 
-              title="Owner Dashboard" 
-              description="Manage your pet businesses and services." 
-              onAddClick={() => setShowCreateModal(true)} 
-            />
-
-            <div className={styles.listViewport}>
-              <BusinessList 
-                loading={loading}
-                stores={pagedStores}
-                onEditStore={handleEditStore}
-                onAddStore={() => setShowCreateModal(true)}
-              />
-            </div>
             {!loading && totalPages > 1 && (
               <div className={styles.pagination}>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
@@ -230,6 +221,14 @@ const OwnerDashboardScreen: React.FC = () => {
                 ))}
               </div>
             )}
+            <div className={styles.listViewport}>
+              <BusinessList 
+                loading={loading}
+                stores={pagedStores}
+                onEditStore={handleEditStore}
+                onAddStore={() => setShowCreateModal(true)}
+              />
+            </div>
           </section>
         </div>
 

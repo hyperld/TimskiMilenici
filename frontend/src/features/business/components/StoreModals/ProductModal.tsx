@@ -41,6 +41,33 @@ const ProductModal: React.FC<ProductModalProps> = ({ itemFormData, setItemFormDa
               <input type="number" name="stockQuantity" value={itemFormData.stockQuantity || ''} onChange={handleChange} required />
             </div>
           </div>
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label>Sale Price ($)</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                name="promotionPrice"
+                value={itemFormData.promotionPrice || ''}
+                onChange={handleChange}
+                placeholder="Optional"
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Promote</label>
+              <label className={styles.inlineCheckbox}>
+                <input
+                  type="checkbox"
+                  checked={!!itemFormData.promoted}
+                  onChange={(e) =>
+                    setItemFormData((prev: any) => ({ ...prev, promoted: e.target.checked }))
+                  }
+                />
+                <span>Show in Special Offers</span>
+              </label>
+            </div>
+          </div>
           <div className={styles.formGroup}>
             <label>Description</label>
             <textarea name="description" value={itemFormData.description} onChange={handleChange} rows={3}></textarea>

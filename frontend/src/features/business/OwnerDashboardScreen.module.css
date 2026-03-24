@@ -1,11 +1,14 @@
 .pageShell {
-  min-height: 100vh;
+  height: calc(100vh - 70px);
+  overflow: hidden;
 }
 
 .main {
   max-width: 1320px;
   margin: 0 auto;
   padding: 2rem;
+  height: 100%;
+  overflow: hidden;
 }
 
 .pageLayout {
@@ -30,11 +33,12 @@
 .listViewport {
   flex: 1;
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .pagination {
-  margin-top: 0.75rem;
+  margin-top: 0.1rem;
+  margin-bottom: 0.35rem;
   display: flex;
   gap: 0.4rem;
   align-items: center;

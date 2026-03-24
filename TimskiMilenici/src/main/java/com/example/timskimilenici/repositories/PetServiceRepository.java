@@ -13,6 +13,9 @@ import java.util.Optional;
 public interface PetServiceRepository extends JpaRepository<PetService, Long> {
     List<PetService> findByBusinessId(Long businessId);
 
+    @Query("SELECT s FROM PetService s WHERE s.promotionPrice IS NOT NULL AND s.promotionPrice < s.price")
+    List<PetService> findPromotedServices();
+
     /** Load service with business and owner (for notifications). */
     @Query("SELECT s FROM PetService s LEFT JOIN FETCH s.business b LEFT JOIN FETCH b.owner WHERE s.id = :id")
     Optional<PetService> findByIdWithBusinessAndOwner(@Param("id") Long id);

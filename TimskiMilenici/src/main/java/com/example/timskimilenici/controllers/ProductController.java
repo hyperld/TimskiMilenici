@@ -23,6 +23,11 @@ public class ProductController {
         return productRepository.findAll();
     }
 
+    @GetMapping("/promoted")
+    public List<Product> getPromoted() {
+        return productRepository.findPromotedProducts();
+    }
+
     @GetMapping("/business/{businessId}")
     public List<Product> getByBusiness(@PathVariable Long businessId) {
         return productRepository.findByBusinessId(businessId);
@@ -48,6 +53,7 @@ public class ProductController {
             product.setName(productDetails.getName());
             product.setDescription(productDetails.getDescription());
             product.setPrice(productDetails.getPrice());
+            product.setPromotionPrice(productDetails.getPromotionPrice());
             product.setStockQuantity(productDetails.getStockQuantity());
             return ResponseEntity.ok(productRepository.save(product));
         }).orElse(ResponseEntity.notFound().build());

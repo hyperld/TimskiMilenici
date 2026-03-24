@@ -1,35 +1,34 @@
 .card {
   display: flex;
   align-items: flex-start;
-  gap: 0.875rem;
-  padding: 1rem 1rem 1rem 0.75rem;
-  background: var(--color-bg, #fff);
+  gap: 0.55rem;
+  padding: 0.55rem 0.65rem;
+  background: #fff;
   border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: var(--radius-lg, 12px);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  border-radius: var(--radius-sm, 8px);
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .card:hover {
-  border-color: var(--color-primary-light, #e0e7ff);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-color: #d4dbe3;
+  background: #fcfdff;
 }
 
 .iconWrap {
   flex-shrink: 0;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary-light, #e0e7ff) 0%, var(--color-primary, #6366f1) 100%);
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 999px;
+  background: var(--color-background-light, #f3f4f6);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .icon {
-  font-size: 1.15rem;
+  font-size: 0.78rem;
   line-height: 1;
-  filter: grayscale(0.2);
+  filter: grayscale(0.25);
 }
 
 .body {
@@ -38,33 +37,33 @@
 }
 
 .message {
-  margin: 0 0 0.35rem 0;
-  font-size: 0.9375rem;
-  font-weight: 500;
+  margin: 0 0 0.15rem 0;
+  font-size: 0.76rem;
+  font-weight: 600;
   color: var(--color-text, #1f2937);
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 .sender {
   display: block;
-  font-size: 0.8125rem;
+  font-size: 0.66rem;
   color: var(--color-text-light, #6b7280);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.1rem;
 }
 
 .time {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.62rem;
   color: var(--color-text-light, #9ca3af);
 }
 
 .dismiss {
   flex-shrink: 0;
-  width: 2rem;
-  height: 2rem;
+  width: 1.45rem;
+  height: 1.45rem;
   padding: 0;
   border: none;
-  border-radius: var(--radius-md, 8px);
+  border-radius: var(--radius-sm, 6px);
   background: transparent;
   color: var(--color-text-light, #9ca3af);
   cursor: pointer;
@@ -85,8 +84,8 @@
 }
 
 .dismissIcon {
-  font-size: 1.35rem;
+  font-size: 1rem;
   line-height: 1;
-  font-weight: 300;
+  font-weight: 400;
 }
 

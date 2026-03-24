@@ -15,7 +15,7 @@ interface AccountCardProps {
   greeting?: string;
   stats?: AccountStat[];
   children?: React.ReactNode;
-  variant?: 'default' | 'expanded';
+  variant?: 'default' | 'expanded' | 'homeCompact';
 }
 
 function getTimeGreeting(name: string): string {
@@ -47,7 +47,9 @@ const AccountCard: React.FC<AccountCardProps> = ({
   const displayGreeting = greeting ?? getTimeGreeting(userData.fullName.split(' ')[0]);
 
   return (
-    <div className={`${styles.accountCard} ${variant === 'expanded' ? styles.expanded : ''}`}>
+    <div
+      className={`${styles.accountCard} ${variant === 'expanded' ? styles.expanded : ''} ${variant === 'homeCompact' ? styles.homeCompact : ''}`}
+    >
       <div className={styles.topRow}>
         <div className={styles.avatarWrap}>
           <div className={styles.avatar}>

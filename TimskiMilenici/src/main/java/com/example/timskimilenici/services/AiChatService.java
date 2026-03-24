@@ -55,7 +55,7 @@ public class AiChatService {
                     messages.add(new UserMessage(content));
                 } else if ("assistant".equals(role)) {
                     messages.add(new AssistantMessage(content));
-                }
+                }   
             }
         }
 

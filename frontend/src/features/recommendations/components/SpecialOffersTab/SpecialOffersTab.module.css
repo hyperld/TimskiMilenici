@@ -1,0 +1,131 @@
+.panel {
+  background: linear-gradient(145deg, #f8fdff 0%, #eef8ff 100%);
+  border: 1px solid #d2e8f6;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 18px rgba(19, 112, 155, 0.08);
+  padding: 0.8rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #14546f;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.refreshBtn {
+  border: 1px solid #cae4f3;
+  background: rgba(255, 255, 255, 0.85);
+  color: #14546f;
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.slide {
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  border: 1px solid #d4ebf7;
+  padding: 0.7rem 0.75rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.slide:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(20, 84, 111, 0.12);
+}
+
+.slideTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.offerType {
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #2b6b86;
+  background: #e8f5fd;
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+}
+
+.discount {
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: #1e8f54;
+}
+
+.offerName {
+  margin: 0 0 0.2rem 0;
+  font-size: 0.85rem;
+  color: #16374a;
+  line-height: 1.25;
+}
+
+.storeName {
+  margin: 0;
+  font-size: 0.7rem;
+  color: #4f7185;
+}
+
+.priceRow {
+  margin-top: 0.45rem;
+  display: flex;
+  gap: 0.45rem;
+  align-items: baseline;
+}
+
+.oldPrice {
+  font-size: 0.7rem;
+  color: #8aa4b4;
+  text-decoration: line-through;
+}
+
+.newPrice {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f7f46;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  border: none;
+  background: #b7d8e8;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dotActive {
+  width: 16px;
+  background: #2e8ab1;
+}
+
+.empty {
+  margin: 0.2rem 0 0;
+  color: #5f7b8b;
+  font-size: 0.75rem;
+}
