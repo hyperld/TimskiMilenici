@@ -25,17 +25,19 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
         <div className={styles.imagePlaceholder}>✂️</div>
       </div>
       <div className={styles.info}>
-        <span
-          className={styles.storeName}
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/store/${service.businessId}`);
-          }}
-        >
-          {service.businessName}
-        </span>
-        <h3 className={styles.serviceName}>{service.name}</h3>
-        {description && <p className={styles.description}>{description}</p>}
+        <div>
+          <span
+            className={styles.storeName}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/store/${service.businessId}`);
+            }}
+          >
+            {service.businessName}
+          </span>
+          <h3 className={styles.serviceName}>{service.name}</h3>
+          {description && <p className={styles.description}>{description}</p>}
+        </div>
         <div className={styles.meta}>
           <span className={styles.price}>${Number(service.price).toFixed(2)}</span>
           {duration != null && (
@@ -44,7 +46,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
         </div>
         <Button
           size="sm"
-          fullWidth
           onClick={(e) => {
             e.stopPropagation();
             navigate(`/booking/${service.id}`, {
@@ -52,7 +53,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             });
           }}
         >
-          Book Now
+          Book
         </Button>
       </div>
     </div>

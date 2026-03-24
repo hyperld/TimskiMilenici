@@ -4,42 +4,53 @@
   right: 1.5rem;
   width: 3.5rem;
   height: 3.5rem;
-  border-radius: 50%;
-  background: var(--color-primary, #6366f1);
-  color: white;
-  border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--color-primary);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.28);
+  box-shadow: 0 10px 24px rgba(38, 111, 156, 0.14);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 900;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .fab:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(38, 111, 156, 0.2);
+  background: #ffffff;
 }
 
 .icon {
-  font-size: 1.5rem;
-  line-height: 1;
+  line-height: 0;
+}
+
+.iconSvg {
+  width: 1.45rem;
+  height: 1.45rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
+  top: -6px;
+  right: -6px;
   min-width: 1.25rem;
   height: 1.25rem;
   padding: 0 4px;
   border-radius: 999px;
-  background: var(--color-error, #dc2626);
+  background: var(--color-primary-dark);
   color: white;
   font-size: 0.75rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 2px solid #ffffff;
 }

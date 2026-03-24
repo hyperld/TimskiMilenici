@@ -13,6 +13,7 @@ import ProductDetailModal from './components/ProductDetailModal/ProductDetailMod
 import AccountCard from '../user/components/AccountCard/AccountCard';
 import PendingBookings from '../user/components/PendingBookings/PendingBookings';
 import NotificationTab from '../notifications/components/NotificationTab/NotificationTab';
+import RecommendedPanel from '../recommendations/components/RecommendedPanel/RecommendedPanel';
 import styles from './HomeScreen.module.css';
 
 type TabKey = 'stores' | 'products' | 'services';
@@ -22,6 +23,10 @@ const TAB_LABELS: Record<TabKey, string> = {
   products: 'Products',
   services: 'Services',
 };
+
+const STORES_PER_PAGE = 5;
+const PRODUCTS_PER_PAGE = 10;
+const SERVICES_PER_PAGE = 10;
 
 const HomeScreen: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
@@ -40,11 +45,17 @@ const HomeScreen: React.FC = () => {
   const [error, setError] = useState('');
 
   const [selectedProduct, setSelectedProduct] = useState<ProductWithStore | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     setSearchTerm('');
     setFilterType('All');
+    setCurrentPage(1);
   }, [activeTab]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterType]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -126,7 +137,11 @@ const HomeScreen: React.FC = () => {
     }
 
     if (activeTab === 'stores') {
-      return <StoreGrid stores={filteredStores} loading={false} error="" />;
+      const pagedStores = filteredStores.slice(
+        (currentPage - 1) * STORES_PER_PAGE,
+        currentPage * STORES_PER_PAGE
+      );
+      return <StoreGrid stores={pagedStores} loading={false} error="" />;
     }
 
     if (activeTab === 'products') {
@@ -136,7 +151,9 @@ const HomeScreen: React.FC = () => {
       }
       return (
         <div className={styles.grid}>
-          {filtered.map((product) => (
+          {filtered
+            .slice((currentPage - 1) * PRODUCTS_PER_PAGE, currentPage * PRODUCTS_PER_PAGE)
+            .map((product) => (
             <ProductCard
               key={product.id}
               product={product}
@@ -154,75 +171,161 @@ const HomeScreen: React.FC = () => {
     }
     return (
       <div className={styles.grid}>
-        {filtered.map((service) => (
+        {filtered
+          .slice((currentPage - 1) * SERVICES_PER_PAGE, currentPage * SERVICES_PER_PAGE)
+          .map((service) => (
           <ServiceCard key={service.id} service={service} />
         ))}
       </div>
     );
   };
 
+  const getTotalPages = (): number => {
+    if (activeTab === 'stores') {
+      return Math.max(1, Math.ceil(filteredStores.length / STORES_PER_PAGE));
+    }
+    if (activeTab === 'products') {
+      return Math.max(1, Math.ceil(getFilteredProducts().length / PRODUCTS_PER_PAGE));
+    }
+    return Math.max(1, Math.ceil(getFilteredServices().length / SERVICES_PER_PAGE));
+  };
+
+  const renderPagination = () => {
+    const totalPages = getTotalPages();
+    if (totalPages <= 1 || loading || error) return null;
+    return (
+      <div className={styles.pagination}>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+          <button
+            key={p}
+            type="button"
+            className={`${styles.pageBtn} ${currentPage === p ? styles.pageBtnActive : ''}`}
+            onClick={() => setCurrentPage(p)}
+          >
+            {p}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  const recommendedItems = [
+    { title: 'Top Stores', subtitle: 'Browse popular pet stores', tab: 'stores' as TabKey },
+    { title: 'Best Products', subtitle: 'Quick picks for your pets', tab: 'products' as TabKey },
+    { title: 'Popular Services', subtitle: 'Most booked services', tab: 'services' as TabKey },
+    { title: 'Special Offers', subtitle: 'Find current deals', tab: 'products' as TabKey },
+  ].map((item) => ({
+    title: item.title,
+    subtitle: item.subtitle,
+    onClick: () => {
+      setActiveTab(item.tab);
+      setCurrentPage(1);
+    },
+  }));
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div className={styles.pageShell}>
       <TopBar userName={user?.fullName || 'User'} />
 
-      <div style={{ display: 'flex', flex: 1 }}>
-        <main style={{ flex: 1, padding: '2rem 3rem', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
-          {isAuthenticated && user && (
-            <div className={styles.topRow}>
+      <main className={styles.main}>
+        {isAuthenticated && user ? (
+          <div className={styles.pageLayout}>
+            <section className={styles.leftPanel}>
               <AccountCard
                 userData={user}
                 onEdit={() => navigate('/edit-profile')}
-              />
-              <div className={styles.rightColumn}>
+                variant="expanded"
+              >
                 {user.userId != null && <PendingBookings userId={user.userId} />}
                 <NotificationTab />
+              </AccountCard>
+              <RecommendedPanel items={recommendedItems} />
+            </section>
+
+            <section className={styles.rightPanel}>
+              <div className={styles.headerSection}>
+                <div className={styles.headerBanner}>
+                  <h2 className={styles.headerTitle}>Explore PetPal</h2>
+                  <span className={styles.headerDot}>·</span>
+                  <p className={styles.headerSubtitle}>
+                    Find the best stores, products, and services for your pet
+                  </p>
+                </div>
+
+                <div className={styles.tabBar}>
+                  {(Object.keys(TAB_LABELS) as TabKey[]).map((tab) => (
+                    <button
+                      key={tab}
+                      className={`${styles.tab} ${activeTab === tab ? styles.tabActive : ''}`}
+                      onClick={() => setActiveTab(tab)}
+                    >
+                      {TAB_LABELS[tab]}
+                    </button>
+                  ))}
+                </div>
+
+                <StoreFilters
+                  searchTerm={searchTerm}
+                  onSearchChange={setSearchTerm}
+                  filterType={filterType}
+                  onFilterChange={setFilterType}
+                  mode={activeTab as FilterMode}
+                />
+                {renderPagination()}
               </div>
-            </div>
-          )}
 
-          <div className={styles.headerSection}>
-            <div className={styles.headerBanner}>
-              <h2 className={styles.headerTitle}>Explore PetPal</h2>
-              <span className={styles.headerDot}>·</span>
-              <p className={styles.headerSubtitle}>
-                Find the best stores, products, and services for your pet
-              </p>
-            </div>
-
-            <div className={styles.tabBar}>
-              {(Object.keys(TAB_LABELS) as TabKey[]).map((tab) => (
-                <button
-                  key={tab}
-                  className={`${styles.tab} ${activeTab === tab ? styles.tabActive : ''}`}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {TAB_LABELS[tab]}
-                </button>
-              ))}
-            </div>
-
-            <StoreFilters
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-              filterType={filterType}
-              onFilterChange={setFilterType}
-              mode={activeTab as FilterMode}
-            />
+              <div className={styles.contentArea}>
+                {renderContent()}
+              </div>
+            </section>
           </div>
+        ) : (
+          <section className={styles.rightPanelFull}>
+            <div className={styles.headerSection}>
+              <div className={styles.headerBanner}>
+                <h2 className={styles.headerTitle}>Explore PetPal</h2>
+                <span className={styles.headerDot}>·</span>
+                <p className={styles.headerSubtitle}>
+                  Find the best stores, products, and services for your pet
+                </p>
+              </div>
 
-          <div style={{ minHeight: '400px' }}>
-            {renderContent()}
-          </div>
+              <div className={styles.tabBar}>
+                {(Object.keys(TAB_LABELS) as TabKey[]).map((tab) => (
+                  <button
+                    key={tab}
+                    className={`${styles.tab} ${activeTab === tab ? styles.tabActive : ''}`}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {TAB_LABELS[tab]}
+                  </button>
+                ))}
+              </div>
 
-          {selectedProduct && (
-            <ProductDetailModal
-              product={selectedProduct}
-              onClose={() => setSelectedProduct(null)}
-              onAddToCart={handleAddToCart}
-            />
-          )}
-        </main>
-      </div>
+              <StoreFilters
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                filterType={filterType}
+                onFilterChange={setFilterType}
+                mode={activeTab as FilterMode}
+              />
+              {renderPagination()}
+            </div>
+
+            <div className={styles.contentArea}>
+              {renderContent()}
+            </div>
+          </section>
+        )}
+
+        {selectedProduct && (
+          <ProductDetailModal
+            product={selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+            onAddToCart={handleAddToCart}
+          />
+        )}
+      </main>
     </div>
   );
 };

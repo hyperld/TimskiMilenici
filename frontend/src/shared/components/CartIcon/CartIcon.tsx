@@ -26,7 +26,13 @@ const CartIcon: React.FC = () => {
       aria-label={`Cart with ${itemCount} item(s)`}
       title="View cart"
     >
-      <span className={styles.icon} aria-hidden>🛒</span>
+      <span className={styles.icon} aria-hidden>
+        <svg viewBox="0 0 24 24" className={styles.iconSvg}>
+          <path d="M3 4h2l2.2 9.2a1 1 0 0 0 1 .8h8.6a1 1 0 0 0 1-.76L20 7H7" />
+          <circle cx="10" cy="19" r="1.5" />
+          <circle cx="17" cy="19" r="1.5" />
+        </svg>
+      </span>
       <span className={styles.badge}>{itemCount > 99 ? '99+' : itemCount}</span>
     </button>
   );

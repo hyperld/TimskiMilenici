@@ -1,18 +1,79 @@
-.topRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+.pageShell {
+  min-height: 100vh;
 }
 
-.rightColumn {
+.main {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.pageLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  min-height: 780px;
+}
+
+.leftPanel {
+  min-height: 780px;
+}
+
+.rightPanel {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
+  min-width: 0;
+  min-height: 780px;
+}
+
+.listViewport {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.pagination {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pageBtn {
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.pageBtnActive {
+  background: #ffffff;
+  color: var(--color-primary-dark);
+  border-color: #ffffff;
 }
 
 @media (max-width: 768px) {
-  .topRow {
+  .main {
+    padding: 1.25rem;
+  }
+
+  .pageLayout {
     grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .leftPanel,
+  .rightPanel {
+    min-height: auto;
+  }
+
+  .listViewport {
+    overflow: visible;
   }
 }

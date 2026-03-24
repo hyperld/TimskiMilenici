@@ -3,7 +3,6 @@
   --color-primary: #3183a8;
   --color-primary-rgb: 59, 170, 236;
   --color-primary-dark: #266f9c;
-  --color-secondary: #ff4081;
   --color-background: #ffffff;
   --color-background-light: #f8f9fa;
   --color-text: #252525;
@@ -14,7 +13,6 @@
   --color-cream: #ffffff;
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #6e8efb, #a777e3);
   --gradient-secondary: linear-gradient(135deg, #ff9800, #f57c00);
 
   /* Spacing */

@@ -39,21 +39,25 @@ const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
         )}
       </div>
       <div className={styles.storeInfo}>
-        {typeLabel && <span className={styles.storeType}>{typeLabel}</span>}
-        <h3 className={styles.storeName}>{store.name}</h3>
-        <p className={styles.storeDescription}>{description}</p>
-        <div className={styles.storeFooter}>
+        <div className={styles.topRow}>
+          <div className={styles.nameTypeWrap}>
+            <h3 className={styles.storeName}>{store.name}</h3>
+            {typeLabel && <span className={styles.storeType}>{typeLabel}</span>}
+          </div>
           <span className={styles.storeLocation}>📍 {store.address}</span>
-          <Button 
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/store/${store.id}`);
-            }}
-          >
-            View Details
-          </Button>
         </div>
+        <p className={styles.storeDescription}>{description}</p>
+      </div>
+      <div className={styles.actionCol}>
+        <Button 
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/store/${store.id}`);
+          }}
+        >
+          View
+        </Button>
       </div>
     </div>
   );

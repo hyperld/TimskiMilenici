@@ -8,6 +8,7 @@ import { businessService } from './services/businessService';
 import { Business } from './types';
 import StoreDetails from './components/StoreDetails/StoreDetails';
 import Button from '../../shared/components/Button/Button';
+import styles from './StoreDetailsScreen.module.css';
 
 const StoreDetailsScreen: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -85,9 +86,9 @@ const StoreDetailsScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh' }}>
+      <div className={styles.pageShell}>
         <TopBar userName={userName} />
-        <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--color-text-light)', fontSize: '1.2rem' }}>
+        <div className={styles.statusMessage}>
           Loading store details...
         </div>
       </div>
@@ -96,9 +97,9 @@ const StoreDetailsScreen: React.FC = () => {
 
   if (error || !store) {
     return (
-      <div style={{ minHeight: '100vh' }}>
+      <div className={styles.pageShell}>
         <TopBar userName={userName} />
-        <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--color-error)' }}>
+        <div className={styles.errorMessage}>
           <h2>{error || 'Store not found'}</h2>
           <Button 
             style={{ marginTop: '1rem' }}
@@ -112,7 +113,7 @@ const StoreDetailsScreen: React.FC = () => {
   }
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div className={styles.pageShell}>
       <TopBar userName={userName} />
       <StoreDetails 
         store={store}

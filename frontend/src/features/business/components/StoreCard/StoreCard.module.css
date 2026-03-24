@@ -1,12 +1,12 @@
 .storeCard {
-  background: var(--color-background);
-  border-radius: var(--radius-md);
-  overflow: hidden;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
-  flex-direction: column;
-  height: 100%;
+  align-items: stretch;
+  min-height: 132px;
+  border: 1px solid var(--color-border);
 }
 
 .storeCard:hover {
@@ -15,12 +15,15 @@
 }
 
 .storeImage {
-  aspect-ratio: 4 / 3;
+  width: 146px;
+  min-width: 146px;
+  height: 132px;
   background-color: var(--color-background-light);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  border-right: 1px solid var(--color-border);
 }
 
 .storeImage img {
@@ -30,68 +33,84 @@
 }
 
 .imagePlaceholder {
-  font-size: 2.5rem;
+  font-size: 2rem;
 }
 
 .storeInfo {
-  padding: 0.85rem;
+  padding: 0.7rem 0.85rem;
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-width: 0;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.nameTypeWrap {
+  min-width: 0;
 }
 
 .storeType {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
   color: var(--color-primary);
   font-weight: 600;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.3rem;
+  letter-spacing: 0.35px;
+  margin-top: 0.2rem;
+  display: inline-block;
 }
 
 .storeName {
-  margin: 0 0 0.4rem 0;
-  font-size: 0.95rem;
+  margin: 0;
+  font-size: 0.93rem;
   color: var(--color-text);
+  line-height: 1.2;
 }
 
 .storeDescription {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--color-text-light);
-  line-height: 1.4;
-  margin-bottom: 0.75rem;
+  line-height: 1.35;
+  margin-top: 0.45rem;
   flex: 1;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
 
-.storeFooter {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
-  border-top: 1px solid var(--color-border);
-  padding-top: 0.65rem;
-}
-
 .storeLocation {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--color-text-light);
+  max-width: 45%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
-.viewDetailsBtn {
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
-  padding: 0.4rem 0.85rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: background-color 0.2s;
+.actionCol {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem;
+  border-left: 1px solid var(--color-border);
 }
 
-.viewDetailsBtn:hover {
-  background-color: var(--color-primary-dark);
+@media (max-width: 768px) {
+  .storeCard {
+    min-height: 110px;
+  }
+
+  .storeImage {
+    width: 110px;
+    min-width: 110px;
+    height: 110px;
+  }
+
+  .storeLocation {
+    display: none;
+  }
 }

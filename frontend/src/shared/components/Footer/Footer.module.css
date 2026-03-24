@@ -1,8 +1,12 @@
 .footer {
-  margin-top: auto;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
   border-top: 1px solid var(--color-border);
   background-color: #fafafa;
+  z-index: 40;
 }
 
 .content {

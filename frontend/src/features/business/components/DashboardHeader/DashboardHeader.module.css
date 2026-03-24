@@ -1,31 +1,33 @@
 .dashboardHeader {
   background-color: white;
-  padding: 2rem;
+  padding: 1rem 1.15rem;
   border-radius: var(--radius-lg);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 0.6rem;
   box-shadow: var(--shadow-sm);
 }
 
 .titleSection h1 {
   color: var(--color-text);
-  margin-bottom: 0.5rem;
-  font-size: 1.8rem;
+  margin-bottom: 0.25rem;
+  font-size: 1.2rem;
 }
 
 .titleSection p {
   color: var(--color-text-light);
   margin: 0;
+  font-size: 0.82rem;
 }
 
 .addBtn {
   background-color: var(--color-primary);
   color: white;
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 0.95rem;
   border-radius: var(--radius-md);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.78rem;
   box-shadow: var(--shadow-sm);
   transition: transform 0.2s, background-color 0.2s;
   display: flex;

@@ -1,0 +1,16 @@
+.pageShell {
+  min-height: 100vh;
+}
+
+.statusMessage {
+  text-align: center;
+  padding: 4rem;
+  color: var(--color-text-light);
+  font-size: 1.2rem;
+}
+
+.errorMessage {
+  text-align: center;
+  padding: 4rem;
+  color: var(--color-error);
+}

@@ -15,6 +15,7 @@ import { ownerAnalyticsService, OverviewResult } from '../analytics/services/own
 import styles from './OwnerDashboardScreen.module.css';
 
 const OwnerDashboardScreen: React.FC = () => {
+  const STORES_PER_PAGE = 5;
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -35,6 +36,7 @@ const OwnerDashboardScreen: React.FC = () => {
   const [managingStore, setManagingStore] = useState<any | null>(null);
 
   const [overview, setOverview] = useState<OverviewResult | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     ownerAnalyticsService.getOverview().then(setOverview).catch(() => {});
@@ -85,6 +87,10 @@ const OwnerDashboardScreen: React.FC = () => {
   useEffect(() => {
     fetchStores();
   }, [userId]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [ownerStores.length]);
 
   const handleEditStore = (store: Business) => {
     setEditingStore({...store});
@@ -172,38 +178,60 @@ const OwnerDashboardScreen: React.FC = () => {
   };
 
   const userName = user?.fullName || 'User';
+  const totalPages = Math.max(1, Math.ceil(ownerStores.length / STORES_PER_PAGE));
+  const pagedStores = ownerStores.slice((currentPage - 1) * STORES_PER_PAGE, currentPage * STORES_PER_PAGE);
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div className={styles.pageShell}>
       <TopBar userName={userName} />
-      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
-        <div className={styles.topRow}>
-          {user && (
-            <AccountCard
-              userData={user}
-              onEdit={() => navigate('/edit-profile')}
-              greeting={`Welcome back, ${user.fullName.split(' ')[0]}!`}
-              stats={ownerStats}
+      <main className={styles.main}>
+        <div className={styles.pageLayout}>
+          <section className={styles.leftPanel}>
+            {user && (
+              <AccountCard
+                userData={user}
+                onEdit={() => navigate('/edit-profile')}
+                greeting={`Welcome back, ${user.fullName.split(' ')[0]}!`}
+                stats={ownerStats}
+                variant="expanded"
+              >
+                <OwnerAnalyticsOverview stores={ownerStores} />
+                <NotificationTab />
+              </AccountCard>
+            )}
+          </section>
+
+          <section className={styles.rightPanel}>
+            <DashboardHeader 
+              title="Owner Dashboard" 
+              description="Manage your pet businesses and services." 
+              onAddClick={() => setShowCreateModal(true)} 
             />
-          )}
-          <div className={styles.rightColumn}>
-            <OwnerAnalyticsOverview stores={ownerStores} />
-            <NotificationTab />
-          </div>
+
+            <div className={styles.listViewport}>
+              <BusinessList 
+                loading={loading}
+                stores={pagedStores}
+                onEditStore={handleEditStore}
+                onAddStore={() => setShowCreateModal(true)}
+              />
+            </div>
+            {!loading && totalPages > 1 && (
+              <div className={styles.pagination}>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    className={`${styles.pageBtn} ${currentPage === p ? styles.pageBtnActive : ''}`}
+                    onClick={() => setCurrentPage(p)}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
         </div>
-
-        <DashboardHeader 
-          title="Owner Dashboard" 
-          description="Manage your pet businesses and services." 
-          onAddClick={() => setShowCreateModal(true)} 
-        />
-
-        <BusinessList 
-          loading={loading}
-          stores={ownerStores}
-          onEditStore={handleEditStore}
-          onAddStore={() => setShowCreateModal(true)}
-        />
 
         {showCreateModal && (
           <CreateStoreModal 

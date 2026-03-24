@@ -10,6 +10,7 @@ import Footer from '../shared/components/Footer/Footer';
 import PawPalWidget from '../features/pawpal/components/PawPalWidget/PawPalWidget';
 
 const PUBLIC_PATHS = ['/', '/login', '/register'];
+const PAWPAL_HIDDEN_PATHS = ['/', '/login', '/register'];
 
 function isTokenExpired(token: string): boolean {
   try {
@@ -56,6 +57,18 @@ const TokenGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
+const GlobalFloatingControls: React.FC = () => {
+  const location = useLocation();
+  const hidePawPal = PAWPAL_HIDDEN_PATHS.includes(location.pathname);
+
+  return (
+    <>
+      <CartIcon />
+      {!hidePawPal && <PawPalWidget />}
+    </>
+  );
+};
+
 const App: React.FC = () => {
   return (
     <AppProviders>
@@ -64,11 +77,10 @@ const App: React.FC = () => {
           <CartProvider>
             <PawPalProvider>
               <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingBottom: '70px' }}>
                   <AppRoutes />
-                  <CartIcon />
                 </div>
-                <PawPalWidget />
+                <GlobalFloatingControls />
                 <Footer />
               </div>
             </PawPalProvider>

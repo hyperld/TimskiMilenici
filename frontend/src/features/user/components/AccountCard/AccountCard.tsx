@@ -14,6 +14,8 @@ interface AccountCardProps {
   onEdit: () => void;
   greeting?: string;
   stats?: AccountStat[];
+  children?: React.ReactNode;
+  variant?: 'default' | 'expanded';
 }
 
 function getTimeGreeting(name: string): string {
@@ -34,30 +36,46 @@ function getTimeEmoji(): string {
   return '🌙';
 }
 
-const AccountCard: React.FC<AccountCardProps> = ({ userData, onEdit, greeting, stats }) => {
+const AccountCard: React.FC<AccountCardProps> = ({
+  userData,
+  onEdit,
+  greeting,
+  stats,
+  children,
+  variant = 'default',
+}) => {
   const displayGreeting = greeting ?? getTimeGreeting(userData.fullName.split(' ')[0]);
 
   return (
-    <div className={styles.accountCard}>
-      <div className={styles.avatarWrap}>
-        <div className={styles.avatar}>
-          {(userData.profilePictureUrl ?? userData.profileImageUrl) ? (
-            <img src={userData.profilePictureUrl ?? userData.profileImageUrl} alt={userData.fullName} />
-          ) : (
-            '👤'
-          )}
+    <div className={`${styles.accountCard} ${variant === 'expanded' ? styles.expanded : ''}`}>
+      <div className={styles.topRow}>
+        <div className={styles.avatarWrap}>
+          <div className={styles.avatar}>
+            {(userData.profilePictureUrl ?? userData.profileImageUrl) ? (
+              <img src={userData.profilePictureUrl ?? userData.profileImageUrl} alt={userData.fullName} />
+            ) : (
+              '👤'
+            )}
+          </div>
+        </div>
+
+        <div className={styles.identity}>
+          <div className={styles.nameRow}>
+            <h2 className={styles.name}>{userData.fullName}</h2>
+            <p className={styles.greeting}>
+              <span className={styles.greetingEmoji}>{getTimeEmoji()}</span>
+              {displayGreeting}
+            </p>
+          </div>
+          <span className={styles.roleBadge}>{userData.role}</span>
+        </div>
+
+        <div className={styles.editBtnWrap}>
+          <Button size="sm" onClick={onEdit}>
+            Edit Profile
+          </Button>
         </div>
       </div>
-
-      <div className={styles.identity}>
-        <h2 className={styles.name}>{userData.fullName}</h2>
-        <span className={styles.roleBadge}>{userData.role}</span>
-      </div>
-
-      <p className={styles.greeting}>
-        <span className={styles.greetingEmoji}>{getTimeEmoji()}</span>
-        {displayGreeting}
-      </p>
 
       {stats && stats.length > 0 && (
         <div className={styles.statsGrid}>
@@ -73,11 +91,7 @@ const AccountCard: React.FC<AccountCardProps> = ({ userData, onEdit, greeting, s
         </div>
       )}
 
-      <div className={styles.editBtnWrap}>
-        <Button size="sm" fullWidth onClick={onEdit}>
-          Edit Profile
-        </Button>
-      </div>
+      {children && <div className={styles.extraContent}>{children}</div>}
     </div>
   );
 };

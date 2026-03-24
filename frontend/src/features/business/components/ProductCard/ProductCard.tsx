@@ -25,17 +25,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onViewD
         <div className={styles.imagePlaceholder}>📦</div>
       </div>
       <div className={styles.info}>
-        <span
-          className={styles.storeName}
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/store/${product.businessId}`);
-          }}
-        >
-          {product.businessName}
-        </span>
-        <h3 className={styles.productName}>{product.name}</h3>
-        {description && <p className={styles.description}>{description}</p>}
+        <div>
+          <span
+            className={styles.storeName}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/store/${product.businessId}`);
+            }}
+          >
+            {product.businessName}
+          </span>
+          <h3 className={styles.productName}>{product.name}</h3>
+          {description && <p className={styles.description}>{description}</p>}
+        </div>
         <div className={styles.footer}>
           <span className={styles.price}>${Number(product.price).toFixed(2)}</span>
           <span className={product.stockQuantity != null && product.stockQuantity > 0 ? styles.stock : styles.outOfStock}>
@@ -45,13 +47,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onViewD
         {onAddToCart && (
           <Button
             size="sm"
-            fullWidth
             onClick={(e) => {
               e.stopPropagation();
               onAddToCart(product.id);
             }}
           >
-            Add to Cart
+            Add
           </Button>
         )}
       </div>

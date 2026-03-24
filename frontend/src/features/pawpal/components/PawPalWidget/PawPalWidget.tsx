@@ -62,7 +62,7 @@ const PawPalWidget: React.FC = () => {
           aria-hidden={!isOpen}
         >
           <div className={styles.header}>
-            <div className={styles.headerAvatar}>🐾</div>
+            <div className={styles.headerAvatar}>PP</div>
             <div className={styles.headerInfo}>
               <div className={styles.title}>PawPal</div>
               <div className={styles.subtitle}>
@@ -75,7 +75,7 @@ const PawPalWidget: React.FC = () => {
               onClick={toggleOpen}
               aria-label="Close chat"
             >
-              &times;
+              <span aria-hidden className={styles.closeGlyph}>×</span>
             </button>
           </div>
 
@@ -131,7 +131,13 @@ const PawPalWidget: React.FC = () => {
       >
         {!isOpen && <span className={styles.pulse} />}
         <span className={`${styles.chatIcon} ${isOpen ? styles.chatIconClose : ''}`}>
-          {isOpen ? '\u2715' : '🐾'}
+          {isOpen ? (
+            <span className={styles.closeGlyph} aria-hidden>×</span>
+          ) : (
+            <svg viewBox="0 0 24 24" className={styles.chatIconSvg} aria-hidden>
+              <path d="M12 3a7 7 0 0 0-7 7c0 1.8.7 3.4 1.9 4.7L6 21l5.8-1.6c.1 0 .1 0 .2.1A7 7 0 1 0 12 3Z" />
+            </svg>
+          )}
         </span>
       </button>
     </div>

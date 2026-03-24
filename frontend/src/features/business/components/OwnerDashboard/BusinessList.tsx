@@ -37,18 +37,26 @@ const BusinessList: React.FC<BusinessListProps> = ({ loading, stores, onEditStor
             )}
           </div>
           <div className={styles.cardContent}>
-            <h3>{store.name}</h3>
-            <p className={styles.typeBadge}>{store.type}</p>
-            <p className={styles.address}>{store.address}</p>
-            <div className={styles.cardActions}>
-              <Button 
-                onClick={() => onEditStore(store)}
-                fullWidth
-              >
-                Manage Store
-              </Button>
+            <div className={styles.topRow}>
+              <div>
+                <h3>{store.name}</h3>
+                <p className={styles.typeBadge}>{store.type}</p>
+              </div>
+              <p className={styles.address}>{store.address}</p>
             </div>
+            <p className={styles.description}>
+              {store.description && store.description.length > 140
+                ? `${store.description.slice(0, 140)}...`
+                : store.description || 'No description provided.'}
+            </p>
           </div>
+          <div className={styles.cardActions}>
+            <Button 
+              onClick={() => onEditStore(store)}
+            >
+              Manage
+            </Button>
+            </div>
         </div>
       ))}
     </div>
