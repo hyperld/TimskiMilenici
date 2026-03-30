@@ -2,8 +2,11 @@ package com.example.timskimilenici.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "businesses")
@@ -70,6 +73,15 @@ public class Business {
     @Column
     private LocalDateTime updatedAt;
 
+    /**
+     * Weekly opening hours. Keys are {@link DayOfWeek} (serialized as MONDAY, TUESDAY, ... in JSON).
+     */
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "business_working_schedule", joinColumns = @JoinColumn(name = "business_id"))
+    @MapKeyColumn(name = "day_of_week")
+    @MapKeyEnumerated(EnumType.STRING)
+    private Map<DayOfWeek, WorkingDaySlot> workingSchedule = new EnumMap<>(DayOfWeek.class);
+
     protected Business() {}
 
     public Business(String name, String description, String category, User owner) {
@@ -109,6 +121,11 @@ public class Business {
     public void setMainImageUrl(String mainImageUrl) { this.mainImageUrl = mainImageUrl; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    public Map<DayOfWeek, WorkingDaySlot> getWorkingSchedule() { return workingSchedule; }
+    public void setWorkingSchedule(Map<DayOfWeek, WorkingDaySlot> workingSchedule) {
+        this.workingSchedule = workingSchedule != null ? workingSchedule : new EnumMap<>(DayOfWeek.class);
+    }
 
     @PreUpdate
     public void preUpdate() {

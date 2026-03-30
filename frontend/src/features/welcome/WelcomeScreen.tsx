@@ -19,20 +19,25 @@ const WelcomeScreen: React.FC = () => {
     }
   }, [isAuthenticated, user, navigate]);
 
-  const containerStyle: React.CSSProperties = {
+  const scrollAreaStyle: React.CSSProperties = {
+    flex: 1,
+    minHeight: 0,
+    overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '100vh',
+    padding: '2rem 1rem',
     backgroundColor: 'transparent',
     color: 'var(--color-text)',
   };
 
   return (
-    <div style={containerStyle}>
-      <WelcomeHeader />
-      <AuthCard />
+    <div className="appRouteRoot">
+      <div style={scrollAreaStyle}>
+        <WelcomeHeader />
+        <AuthCard />
+      </div>
     </div>
   );
 };

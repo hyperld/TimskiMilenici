@@ -55,7 +55,7 @@ const PendingBookings: React.FC<PendingBookingsProps> = ({ userId }) => {
       {bookings.length === 0 ? (
         <p className={styles.text}>No pending bookings.</p>
       ) : (
-        <>
+        <div className={styles.scrollBody}>
           <div className={styles.headerRow}>
             <span className={styles.headerCell}>Date</span>
             <span className={styles.headerCell}>Time</span>
@@ -66,7 +66,7 @@ const PendingBookings: React.FC<PendingBookingsProps> = ({ userId }) => {
             </span>
           </div>
           <ul className={styles.list}>
-            {bookings.slice(0, 5).map((b: any) => {
+            {bookings.map((b: any) => {
               const parsed = parseBookingDateTime(b.bookingTime);
               const dateStr = parsed?.dateStr ?? '—';
               const timeStr = parsed?.timeStr ?? '—';
@@ -91,10 +91,7 @@ const PendingBookings: React.FC<PendingBookingsProps> = ({ userId }) => {
               );
             })}
           </ul>
-        </>
-      )}
-      {bookings.length > 5 && (
-        <p className={styles.more}>+{bookings.length - 5} more</p>
+        </div>
       )}
     </div>
   );

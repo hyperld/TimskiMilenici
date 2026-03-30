@@ -665,3 +665,47 @@
 .orderItemsList li:last-child {
   border-bottom: none;
 }
+
+.helpText {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.78rem;
+  color: var(--color-text-light);
+  font-weight: 400;
+}
+
+.workingDaysList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.workingDayRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.workingDayRow:last-child {
+  border-bottom: none;
+}
+
+.workingTimeInputs {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.workingTimeInputs input[type='time'] {
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--color-border);
+  font-size: 0.85rem;
+}
+
+.workingTimeSep {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+}

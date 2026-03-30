@@ -1,13 +1,17 @@
 package com.example.timskimilenici.services;
 
 import com.example.timskimilenici.entities.Booking;
+import com.example.timskimilenici.entities.Business;
 import com.example.timskimilenici.entities.PetService;
 import com.example.timskimilenici.repositories.BookingRepository;
 import com.example.timskimilenici.repositories.PetServiceRepository;
+import com.example.timskimilenici.util.BusinessScheduleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,8 +36,18 @@ public class BookingService {
 
     @Transactional
     public Booking createBooking(Booking booking) {
-        if (!isAvailable(booking.getService().getId(), booking.getBookingTime().toLocalDate())) {
-            throw new RuntimeException("Service is full for the selected date");
+        Long serviceId = booking.getService().getId();
+        PetService svc = petServiceRepository.findById(serviceId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Service not found"));
+        Business business = svc.getBusiness();
+        if (business == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Service has no business");
+        }
+        if (!BusinessScheduleUtils.isWithinWorkingHours(business, booking.getBookingTime())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Booking time is outside business working hours");
+        }
+        if (!isAvailable(serviceId, booking.getBookingTime().toLocalDate())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Service is full for the selected date");
         }
         return bookingRepository.save(booking);
     }
@@ -50,8 +64,15 @@ public class BookingService {
     }
 
     public List<LocalDate> getFullDates(Long serviceId, LocalDate start, LocalDate end) {
+        PetService service = petServiceRepository.findById(serviceId)
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+        Business business = service.getBusiness();
         List<LocalDate> fullDates = new ArrayList<>();
         for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            if (!BusinessScheduleUtils.isWorkingDay(business, date)) {
+                fullDates.add(date);
+                continue;
+            }
             if (!isAvailable(serviceId, date)) {
                 fullDates.add(date);
             }

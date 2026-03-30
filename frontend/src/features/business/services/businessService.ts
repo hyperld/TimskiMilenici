@@ -1,9 +1,30 @@
 import { Business, PetService, PetServiceWithStore, Product, ProductWithStore } from '../types';
 import { getStoredToken } from '../../auth/utils/tokenStorage';
+import { normalizeWorkingSchedule, serializeWorkingScheduleForApi } from '../utils/workingSchedule';
 
 const API_URL = 'http://localhost:8080/api';
 
 const getAuthToken = () => getStoredToken();
+
+function mapBusinessFromApi(business: any): Business {
+  const categories: string[] =
+    Array.isArray(business.categories) && business.categories.length > 0
+      ? business.categories
+      : business.category
+        ? [business.category]
+        : [];
+  const primaryType = categories[0] ?? business.category ?? '';
+  return {
+    ...business,
+    id: business.id,
+    type: primaryType,
+    types: categories,
+    category: business.category,
+    address: business.address || '',
+    images: business.imageUrls || [],
+    workingSchedule: normalizeWorkingSchedule(business.workingSchedule),
+  };
+}
 
 export const businessService = {
   // Fetch all businesses
@@ -14,24 +35,7 @@ export const businessService = {
         throw new Error('Failed to fetch businesses');
       }
       const data = await response.json();
-      return data.map((business: any) => {
-        const categories: string[] =
-          Array.isArray(business.categories) && business.categories.length > 0
-            ? business.categories
-            : business.category
-              ? [business.category]
-              : [];
-        const primaryType = categories[0] ?? business.category ?? '';
-        return {
-          ...business,
-          id: business.id,
-          type: primaryType,
-          types: categories,
-          category: business.category,
-          address: business.address || '',
-          images: business.imageUrls || []
-        };
-      });
+      return data.map((business: any) => mapBusinessFromApi(business));
     } catch (error) {
       console.error("getAllBusinesses error:", error);
       throw error;
@@ -45,21 +49,7 @@ export const businessService = {
       throw new Error('Business not found');
     }
     const business = await response.json();
-    const categories: string[] =
-      Array.isArray(business.categories) && business.categories.length > 0
-        ? business.categories
-        : business.category
-          ? [business.category]
-          : [];
-    const primaryType = categories[0] ?? business.category ?? '';
-    return {
-      ...business,
-      type: primaryType,
-      types: categories,
-      category: business.category,
-      address: business.address || '',
-      images: business.imageUrls || []
-    };
+    return mapBusinessFromApi(business);
   },
 
   // Fetch business by owner ID
@@ -76,24 +66,7 @@ export const businessService = {
       }
       const data = await response.json();
       const businesses = Array.isArray(data) ? data : (data ? [data] : []);
-      return businesses.map((business: any) => {
-        const categories: string[] =
-          Array.isArray(business.categories) && business.categories.length > 0
-            ? business.categories
-            : business.category
-              ? [business.category]
-              : [];
-        const primaryType = categories[0] ?? business.category ?? '';
-        return {
-          ...business,
-          id: business.id,
-          type: primaryType,
-          types: categories,
-          category: business.category,
-          address: business.address || '',
-          images: business.imageUrls || []
-        };
-      });
+      return businesses.map((business: any) => mapBusinessFromApi(business));
     } catch (error) {
       console.error("getBusinessByOwner error:", error);
       throw error;
@@ -145,7 +118,11 @@ export const businessService = {
         imageUrls: businessData.imageUrls ?? businessData.images,
         mainImageUrl: businessData.mainImageUrl,
         contactPhone: businessData.contactPhone,
-        contactEmail: businessData.contactEmail
+        contactEmail: businessData.contactEmail,
+        workingSchedule:
+          businessData.workingSchedule != null
+            ? serializeWorkingScheduleForApi(businessData.workingSchedule)
+            : undefined,
       };
 
       const response = await fetch(`${API_URL}/businesses`, {
@@ -161,22 +138,7 @@ export const businessService = {
         throw new Error(errorData.message || 'Failed to update business');
       }
       const data = await response.json();
-      const respCategories: string[] =
-        Array.isArray(data.categories) && data.categories.length > 0
-          ? data.categories
-          : data.category
-            ? [data.category]
-            : [];
-      const primaryType = respCategories[0] ?? data.category ?? '';
-      return {
-        ...data,
-        id: data.id,
-        type: primaryType,
-        types: respCategories,
-        category: data.category,
-        address: data.address || '',
-        images: data.imageUrls || []
-      };
+      return mapBusinessFromApi(data);
     } catch (error) {
       console.error("updateBusiness error:", error);
       throw error;
@@ -205,7 +167,11 @@ export const businessService = {
         imageUrls: businessData.imageUrls,
         mainImageUrl: businessData.mainImageUrl,
         contactPhone: businessData.contactPhone,
-        contactEmail: businessData.contactEmail
+        contactEmail: businessData.contactEmail,
+        workingSchedule:
+          businessData.workingSchedule != null
+            ? serializeWorkingScheduleForApi(businessData.workingSchedule)
+            : undefined,
       };
 
       const response = await fetch(`${API_URL}/businesses`, {
@@ -221,22 +187,7 @@ export const businessService = {
         throw new Error(errorData.message || 'Failed to create business');
       }
       const data = await response.json();
-      const respCategories: string[] =
-        Array.isArray(data.categories) && data.categories.length > 0
-          ? data.categories
-          : data.category
-            ? [data.category]
-            : [];
-      const primaryType = respCategories[0] ?? data.category ?? '';
-      return {
-        ...data,
-        id: data.id,
-        type: primaryType,
-        types: respCategories,
-        category: data.category,
-        address: data.address || '',
-        images: data.imageUrls || []
-      };
+      return mapBusinessFromApi(data);
     } catch (error) {
       console.error("createBusiness error:", error);
       throw error;
@@ -254,27 +205,6 @@ export const businessService = {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || 'Failed to delete store');
     }
-  },
-
-  // Upload an image
-  uploadImage: async (file: File): Promise<{ url: string }> => {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const response = await fetch(`${API_URL}/uploads`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${getAuthToken()}`
-      },
-      body: formData
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Failed to upload image');
-    }
-
-    return await response.json();
   },
 
   // Manage Services
@@ -379,6 +309,12 @@ export const businessService = {
   getAllServices: async (): Promise<PetServiceWithStore[]> => {
     const response = await fetch(`${API_URL}/services`);
     if (!response.ok) throw new Error('Failed to fetch services');
+    return response.json();
+  },
+
+  getServiceById: async (id: number): Promise<PetServiceWithStore> => {
+    const response = await fetch(`${API_URL}/services/${id}`);
+    if (!response.ok) throw new Error('Failed to fetch service');
     return response.json();
   },
 

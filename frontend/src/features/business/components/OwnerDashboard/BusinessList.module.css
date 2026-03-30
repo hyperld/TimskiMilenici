@@ -3,39 +3,40 @@
   flex-direction: column;
   gap: 0.75rem;
   padding-bottom: 0.5rem;
-  max-height: 100%;
-  overflow: auto;
 }
 
 .businessCard {
   background: white;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   transition: transform 0.2s, box-shadow 0.2s;
   border: 1px solid var(--color-border);
   display: flex;
-  align-items: stretch;
-  min-height: 132px;
+  align-items: center;
+  height: var(--listing-card-height);
+  min-height: var(--listing-card-height);
+  max-height: var(--listing-card-height);
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .businessCard:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-md);
 }
 
 .cardImage {
-  width: 146px;
-  min-width: 146px;
-  height: 132px;
+  width: var(--listing-card-thumb-width);
+  min-width: var(--listing-card-thumb-width);
+  height: var(--listing-card-height);
   background-color: #f8f9fa;
   display: flex;
   align-items: center;
   justify-content: center;
   border-right: 1px solid var(--color-border);
   overflow: hidden;
-  border-top-left-radius: var(--radius-lg);
-  border-bottom-left-radius: var(--radius-lg);
+  border-top-left-radius: var(--radius-md);
+  border-bottom-left-radius: var(--radius-md);
 }
 
 .cardImage img {
@@ -45,66 +46,75 @@
 }
 
 .imagePlaceholder {
-  font-size: 2rem;
+  font-size: 1.45rem;
 }
 
 .cardContent {
-  padding: 0.7rem 0.85rem;
+  padding: 0.35rem 0.5rem;
   display: flex;
   flex-direction: column;
   flex: 1;
   min-width: 0;
+  min-height: 0;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .topRow {
   display: flex;
   justify-content: space-between;
-  gap: 0.8rem;
+  gap: 0.55rem;
+  align-items: flex-start;
 }
 
 .cardContent h3 {
   margin: 0;
   color: var(--color-text);
-  font-size: 0.93rem;
-  line-height: 1.2;
+  font-size: 0.8rem;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .typeBadge {
   display: inline-block;
   background: rgba(var(--color-primary-rgb), 0.12);
   color: var(--color-primary);
-  padding: 0.15rem 0.5rem;
+  padding: 0.12rem 0.45rem;
   border-radius: 20px;
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 600;
-  margin-top: 0.25rem;
+  margin-top: 0.15rem;
 }
 
 .address {
   color: var(--color-text-light);
-  font-size: 0.7rem;
-  max-width: 45%;
+  font-size: 0.62rem;
+  max-width: 42%;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
 .description {
-  margin-top: 0.45rem;
+  margin-top: 0.12rem;
   color: var(--color-text-light);
-  font-size: 0.75rem;
-  line-height: 1.35;
+  font-size: 0.62rem;
+  line-height: 1.2;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  word-break: break-word;
 }
 
 .cardActions {
   display: flex;
   align-items: center;
-  padding: 0.8rem;
+  padding: 0.35rem 0.5rem;
   border-left: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 
 .loading, .emptyState {
@@ -116,16 +126,6 @@
 }
 
 @media (max-width: 768px) {
-  .businessCard {
-    min-height: 110px;
-  }
-
-  .cardImage {
-    width: 110px;
-    min-width: 110px;
-    height: 110px;
-  }
-
   .address {
     display: none;
   }

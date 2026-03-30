@@ -40,7 +40,7 @@ const CartScreen: React.FC = () => {
   }
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div className={`${styles.pageShell} appRouteRoot`}>
       <TopBar userName={user?.fullName || 'User'} />
       <main className={styles.main}>
         {itemCount === 0 ? (

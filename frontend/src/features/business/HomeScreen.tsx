@@ -10,11 +10,12 @@ import StoreGrid from './components/StoreGrid/StoreGrid';
 import ProductCard from './components/ProductCard/ProductCard';
 import ServiceCard from './components/ServiceCard/ServiceCard';
 import ProductDetailModal from './components/ProductDetailModal/ProductDetailModal';
-import AccountCard from '../user/components/AccountCard/AccountCard';
+import InfoCard from '../user/components/InfoCard/InfoCard';
 import PendingBookings from '../user/components/PendingBookings/PendingBookings';
 import NotificationTab from '../notifications/components/NotificationTab/NotificationTab';
 import RecommendedPanel from '../recommendations/components/RecommendedPanel/RecommendedPanel';
 import SpecialOffersTab, { SpecialOfferItem } from '../recommendations/components/SpecialOffersTab/SpecialOffersTab';
+import PaginationBar from '../../shared/components/PaginationBar/PaginationBar';
 import styles from './HomeScreen.module.css';
 
 type TabKey = 'stores' | 'products' | 'services';
@@ -25,9 +26,9 @@ const TAB_LABELS: Record<TabKey, string> = {
   services: 'Services',
 };
 
-const STORES_PER_PAGE = 4;
-const PRODUCTS_PER_PAGE = 10;
-const SERVICES_PER_PAGE = 10;
+const STORES_PER_PAGE = 3;
+const PRODUCTS_PER_PAGE = 3;
+const SERVICES_PER_PAGE = 3;
 
 const HomeScreen: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
@@ -234,24 +235,19 @@ const HomeScreen: React.FC = () => {
     return Math.max(1, Math.ceil(getFilteredServices().length / SERVICES_PER_PAGE));
   };
 
-  const renderPagination = () => {
+  const filtersPagination = (() => {
     const totalPages = getTotalPages();
     if (totalPages <= 1 || loading || error) return null;
     return (
-      <div className={styles.pagination}>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-          <button
-            key={p}
-            type="button"
-            className={`${styles.pageBtn} ${currentPage === p ? styles.pageBtnActive : ''}`}
-            onClick={() => setCurrentPage(p)}
-          >
-            {p}
-          </button>
-        ))}
-      </div>
+      <PaginationBar
+        size="inline"
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        disabled={loading || !!error}
+      />
     );
-  };
+  })();
 
   const recommendedItems = [
     { title: 'Top Stores', subtitle: 'Browse popular pet stores', tab: 'stores' as TabKey },
@@ -268,7 +264,7 @@ const HomeScreen: React.FC = () => {
   }));
 
   return (
-    <div className={styles.pageShell}>
+    <div className={`${styles.pageShell} appRouteRoot`}>
       <TopBar userName={user?.fullName || 'User'} />
 
       <main className={styles.main}>
@@ -282,29 +278,22 @@ const HomeScreen: React.FC = () => {
                   onExploreOffer={(offer) => navigate(`/store/${offer.businessId}`)}
                 />
               </div>
-              <div className={styles.accountSlot}>
-                <AccountCard
-                  userData={user}
-                  onEdit={() => navigate('/edit-profile')}
-                  variant="homeCompact"
-                >
-                  {user.userId != null && <PendingBookings userId={user.userId} />}
-                  <NotificationTab />
-                </AccountCard>
+              <div className={styles.infoCardSlot}>
+                <InfoCard userData={user} variant="homeCompact">
+                  {user.userId != null && (
+                    <div className={styles.homeScrollPanel}>
+                      <PendingBookings userId={user.userId} />
+                    </div>
+                  )}
+                  <div className={styles.homeScrollPanel}>
+                    <NotificationTab />
+                  </div>
+                </InfoCard>
               </div>
-              <RecommendedPanel items={recommendedItems} />
             </section>
 
             <section className={styles.rightPanel}>
               <div className={styles.headerSection}>
-                <div className={styles.headerBanner}>
-                  <h2 className={styles.headerTitle}>Explore PetPal</h2>
-                  <span className={styles.headerDot}>·</span>
-                  <p className={styles.headerSubtitle}>
-                    Find the best stores, products, and services for your pet
-                  </p>
-                </div>
-
                 <div className={styles.tabBar}>
                   {(Object.keys(TAB_LABELS) as TabKey[]).map((tab) => (
                     <button
@@ -324,27 +313,22 @@ const HomeScreen: React.FC = () => {
                     filterType={filterType}
                     onFilterChange={setFilterType}
                     mode={activeTab as FilterMode}
+                    pagination={filtersPagination}
                   />
-                  {renderPagination()}
                 </div>
               </div>
 
               <div className={styles.contentArea}>
                 {renderContent()}
               </div>
+              <div className={styles.recommendedBelow}>
+                <RecommendedPanel items={recommendedItems} />
+              </div>
             </section>
           </div>
         ) : (
           <section className={styles.rightPanelFull}>
             <div className={styles.headerSection}>
-              <div className={styles.headerBanner}>
-                <h2 className={styles.headerTitle}>Explore PetPal</h2>
-                <span className={styles.headerDot}>·</span>
-                <p className={styles.headerSubtitle}>
-                  Find the best stores, products, and services for your pet
-                </p>
-              </div>
-
               <div className={styles.tabBar}>
                 {(Object.keys(TAB_LABELS) as TabKey[]).map((tab) => (
                   <button
@@ -364,13 +348,16 @@ const HomeScreen: React.FC = () => {
                   filterType={filterType}
                   onFilterChange={setFilterType}
                   mode={activeTab as FilterMode}
+                  pagination={filtersPagination}
                 />
-                {renderPagination()}
               </div>
             </div>
 
             <div className={styles.contentArea}>
               {renderContent()}
+            </div>
+            <div className={styles.recommendedBelow}>
+              <RecommendedPanel items={recommendedItems} />
             </div>
           </section>
         )}

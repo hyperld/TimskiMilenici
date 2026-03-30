@@ -1,13 +1,16 @@
 .storeCard {
   background: #ffffff;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
-  align-items: stretch;
-  min-height: 118px;
+  align-items: center;
+  height: var(--listing-card-height);
+  min-height: var(--listing-card-height);
+  max-height: var(--listing-card-height);
   border: 1px solid var(--color-border);
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .storeCard:hover {
@@ -16,17 +19,17 @@
 }
 
 .storeImage {
-  width: 132px;
-  min-width: 132px;
-  height: 118px;
+  width: var(--listing-card-thumb-width);
+  min-width: var(--listing-card-thumb-width);
+  height: var(--listing-card-height);
   background-color: var(--color-background-light);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   border-right: 1px solid var(--color-border);
-  border-top-left-radius: var(--radius-lg);
-  border-bottom-left-radius: var(--radius-lg);
+  border-top-left-radius: var(--radius-md);
+  border-bottom-left-radius: var(--radius-md);
 }
 
 .storeImage img {
@@ -36,21 +39,25 @@
 }
 
 .imagePlaceholder {
-  font-size: 2rem;
+  font-size: 1.45rem;
 }
 
 .storeInfo {
-  padding: 0.7rem 0.85rem;
+  padding: 0.35rem 0.5rem;
   display: flex;
   flex-direction: column;
   flex: 1;
   min-width: 0;
+  min-height: 0;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .topRow {
   display: flex;
   justify-content: space-between;
-  gap: 0.8rem;
+  gap: 0.55rem;
+  align-items: flex-start;
 }
 
 .nameTypeWrap {
@@ -58,38 +65,41 @@
 }
 
 .storeType {
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   text-transform: uppercase;
   color: var(--color-primary);
   font-weight: 600;
   letter-spacing: 0.35px;
-  margin-top: 0.2rem;
+  margin-top: 0.12rem;
   display: inline-block;
 }
 
 .storeName {
   margin: 0;
-  font-size: 0.93rem;
+  font-size: 0.8rem;
   color: var(--color-text);
-  line-height: 1.2;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .storeDescription {
-  font-size: 0.75rem;
+  font-size: 0.62rem;
   color: var(--color-text-light);
-  line-height: 1.35;
-  margin-top: 0.45rem;
-  flex: 1;
+  line-height: 1.2;
+  margin-top: 0.12rem;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
+  word-break: break-word;
 }
 
 .storeLocation {
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   color: var(--color-text-light);
-  max-width: 45%;
+  max-width: 42%;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -98,21 +108,12 @@
 .actionCol {
   display: flex;
   align-items: center;
-  padding: 0.8rem;
+  padding: 0.35rem 0.5rem;
   border-left: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
-  .storeCard {
-    min-height: 102px;
-  }
-
-  .storeImage {
-    width: 102px;
-    min-width: 102px;
-    height: 102px;
-  }
-
   .storeLocation {
     display: none;
   }

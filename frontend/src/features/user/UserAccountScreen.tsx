@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBar from '../../shared/components/TopBar/TopBar';
 import { useAuth } from '../../features/auth/hooks/useAuth';
-import AccountCard from './components/AccountCard/AccountCard';
+import InfoCard from './components/InfoCard/InfoCard';
 
 const UserAccountScreen: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
@@ -18,24 +18,20 @@ const UserAccountScreen: React.FC = () => {
     return null;
   }
 
-  const containerStyle: React.CSSProperties = {
-    minHeight: '100vh',
-  };
-
   const contentStyle: React.CSSProperties = {
+    flex: 1,
+    minHeight: 0,
+    overflowY: 'auto',
     display: 'flex',
     justifyContent: 'center',
     padding: '4rem 2rem',
   };
 
   return (
-    <div style={containerStyle}>
+    <div className="appRouteRoot">
       <TopBar userName={user.fullName} />
       <main style={contentStyle}>
-        <AccountCard 
-          userData={user} 
-          onEdit={() => navigate('/edit-profile')} 
-        />
+        <InfoCard userData={user} onEdit={() => navigate('/edit-profile')} />
       </main>
     </div>
   );

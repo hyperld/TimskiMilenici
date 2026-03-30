@@ -56,22 +56,12 @@ const SpecialOffersTab: React.FC<SpecialOffersTabProps> = ({ items, onRefresh, o
     }
   };
 
-  if (visibleItems.length === 0) {
-    return (
-      <section className={styles.panel}>
-        <div className={styles.header}>
-          <h3 className={styles.title}>Special Offers</h3>
-          <button type="button" className={styles.refreshBtn} onClick={handleRefresh} disabled={refreshing}>
-            {refreshing ? 'Refreshing...' : 'Refresh'}
-          </button>
-        </div>
-        <p className={styles.empty}>No active offers right now. Check back soon.</p>
-      </section>
-    );
-  }
-
-  const item = visibleItems[activeIndex];
-  const discountPercent = Math.max(0, Math.round(((item.price - item.promotionPrice) / item.price) * 100));
+  const hasOffers = visibleItems.length > 0;
+  const item = hasOffers ? visibleItems[activeIndex] : null;
+  const discountPercent =
+    item && item.price > 0
+      ? Math.max(0, Math.round(((item.price - item.promotionPrice) / item.price) * 100))
+      : 0;
 
   return (
     <section className={styles.panel}>
@@ -82,38 +72,49 @@ const SpecialOffersTab: React.FC<SpecialOffersTabProps> = ({ items, onRefresh, o
         </button>
       </div>
 
-      <article
-        className={styles.slide}
-        onClick={() => onExploreOffer(item)}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') onExploreOffer(item);
-        }}
-      >
-        <div className={styles.slideTop}>
-          <span className={styles.offerType}>{item.type === 'product' ? 'Product' : 'Service'}</span>
-          <span className={styles.discount}>{discountPercent}% off</span>
-        </div>
-        <h4 className={styles.offerName}>{item.name}</h4>
-        <p className={styles.storeName}>{item.businessName}</p>
-        <div className={styles.priceRow}>
-          <span className={styles.oldPrice}>${Number(item.price).toFixed(2)}</span>
-          <span className={styles.newPrice}>${Number(item.promotionPrice).toFixed(2)}</span>
-        </div>
-      </article>
-
-      <div className={styles.dots}>
-        {visibleItems.map((_, idx) => (
-          <button
-            key={`offer-dot-${idx}`}
-            type="button"
-            className={`${styles.dot} ${idx === activeIndex ? styles.dotActive : ''}`}
-            onClick={() => setActiveIndex(idx)}
-            aria-label={`Show offer ${idx + 1}`}
-          />
-        ))}
+      <div className={styles.bodySlot}>
+        {!hasOffers ? (
+          <p className={styles.empty}>No active offers right now. Check back soon.</p>
+        ) : item ? (
+          <div className={styles.slideViewport}>
+            <article
+              key={`${item.type}-${item.id}-${activeIndex}`}
+              className={`${styles.slide} ${styles.slideEnter}`}
+              onClick={() => onExploreOffer(item)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') onExploreOffer(item);
+              }}
+            >
+              <div className={styles.slideTop}>
+                <span className={styles.offerType}>{item.type === 'product' ? 'Product' : 'Service'}</span>
+                <span className={styles.discount}>{discountPercent}% off</span>
+              </div>
+              <h4 className={styles.offerName}>{item.name}</h4>
+              <p className={styles.storeName}>{item.businessName}</p>
+              <div className={styles.priceRow}>
+                <span className={styles.oldPrice}>${Number(item.price).toFixed(2)}</span>
+                <span className={styles.newPrice}>${Number(item.promotionPrice).toFixed(2)}</span>
+              </div>
+            </article>
+          </div>
+        ) : null}
       </div>
+
+      {hasOffers && (
+        <div className={styles.dots}>
+          {visibleItems.map((_, idx) => (
+            <button
+              key={`offer-dot-${idx}`}
+              type="button"
+              className={`${styles.dot} ${idx === activeIndex ? styles.dotActive : ''}`}
+              onClick={() => setActiveIndex(idx)}
+              aria-label={`Show offer ${idx + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };

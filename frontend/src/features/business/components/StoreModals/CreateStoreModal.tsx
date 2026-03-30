@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import styles from './Modal.module.css';
 import Button from '../../../../shared/components/Button/Button';
 import { businessService } from '../../services/businessService';
+import WorkingScheduleFields from './WorkingScheduleFields';
+import { createDefaultWorkingSchedule } from '../../utils/workingSchedule';
 
 interface CreateStoreModalProps {
   newStore: any;
@@ -182,6 +184,12 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ newStore, setNewSto
             <label>Country</label>
             <input name="country" value={newStore.country} onChange={handleChange} placeholder="e.g. Serbia" required />
           </div>
+
+          <WorkingScheduleFields
+            value={newStore.workingSchedule ?? createDefaultWorkingSchedule()}
+            onChange={(workingSchedule) => setNewStore((prev: any) => ({ ...prev, workingSchedule }))}
+          />
+
           <div className={styles.formGroup}>
             <label>Description</label>
             <textarea name="description" value={newStore.description} onChange={handleChange} rows={3}></textarea>

@@ -15,18 +15,17 @@ const EditProfileScreen: React.FC = () => {
   const backLabel = isOwner ? '← Back to Dashboard' : '← Back to Home';
   const backPath = isOwner ? '/owner-dashboard' : '/home';
 
-  const containerStyle: React.CSSProperties = {
-    minHeight: '100vh',
-  };
-
   const contentStyle: React.CSSProperties = {
+    flex: 1,
+    minHeight: 0,
+    overflowY: 'auto',
     display: 'flex',
     justifyContent: 'center',
     padding: '4rem 2rem',
   };
 
   return (
-    <div style={containerStyle}>
+    <div className="appRouteRoot">
       <TopBar userName={user.fullName} />
       <main style={contentStyle}>
         <div style={{ width: '100%', maxWidth: '800px' }}>

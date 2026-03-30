@@ -3,13 +3,20 @@ import LoginForm from './components/LoginForm/LoginForm';
 
 const LoginScreen: React.FC = () => {
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      minHeight: '100vh' 
-    }}>
-      <LoginForm />
+    <div className="appRouteRoot">
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '2rem 1rem',
+        }}
+      >
+        <LoginForm />
+      </div>
     </div>
   );
 };

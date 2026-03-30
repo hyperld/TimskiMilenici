@@ -86,10 +86,10 @@ const StoreDetailsScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <div className={styles.pageShell}>
+      <div className={`${styles.pageShell} appRouteRoot`}>
         <TopBar userName={userName} />
-        <div className={styles.statusMessage}>
-          Loading store details...
+        <div className={styles.scrollBody}>
+          <div className={styles.statusMessage}>Loading store details...</div>
         </div>
       </div>
     );
@@ -99,22 +99,25 @@ const StoreDetailsScreen: React.FC = () => {
     return (
       <div className={styles.pageShell}>
         <TopBar userName={userName} />
-        <div className={styles.errorMessage}>
-          <h2>{error || 'Store not found'}</h2>
-          <Button 
-            style={{ marginTop: '1rem' }}
-            onClick={() => navigate('/home')}
-          >
-            Back to Home
-          </Button>
+        <div className={styles.scrollBody}>
+          <div className={styles.errorMessage}>
+            <h2>{error || 'Store not found'}</h2>
+            <Button
+              style={{ marginTop: '1rem' }}
+              onClick={() => navigate('/home')}
+            >
+              Back to Home
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.pageShell}>
+    <div className={`${styles.pageShell} appRouteRoot`}>
       <TopBar userName={userName} />
+      <div className={styles.scrollBody}>
       <StoreDetails 
         store={store}
         currentImageIndex={currentImageIndex}
@@ -128,6 +131,7 @@ const StoreDetailsScreen: React.FC = () => {
         onAddToCart={user ? (product) => addItem(product.id).catch(() => alert('Failed to add to cart')) : undefined}
         onBack={() => navigate('/home')}
       />
+      </div>
     </div>
   );
 };

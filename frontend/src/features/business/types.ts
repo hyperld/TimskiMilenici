@@ -1,3 +1,5 @@
+import type { WorkingSchedule } from './utils/workingSchedule';
+
 export type BusinessType =
   | 'Supplies'
   | 'Grooming'
@@ -31,6 +33,9 @@ export interface Business {
    * Raw category string from the backend for backward compatibility.
    */
   category?: BusinessType;
+
+  /** Weekly opening hours (MONDAY … SUNDAY). */
+  workingSchedule?: WorkingSchedule;
 }
 
 export interface PetService {

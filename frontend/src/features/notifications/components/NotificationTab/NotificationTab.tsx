@@ -58,7 +58,7 @@ const NotificationTab: React.FC = () => {
 
   // Refetch notifications periodically so owner sees new bookings without refreshing
   useEffect(() => {
-    if (!isLoggedIn()) return;
+    if (!isUserStored()) return;
     const interval = setInterval(() => load(false), 8000); // every 8s
     return () => clearInterval(interval);
   }, []);
@@ -83,9 +83,7 @@ const NotificationTab: React.FC = () => {
     }
   };
 
-  const isLoggedIn = () => isUserStored();
-
-  if (!isLoggedIn()) {
+  if (!isUserStored()) {
     return (
       <div className={styles.placeholder}>
         <div className={styles.icon}>🔔</div>

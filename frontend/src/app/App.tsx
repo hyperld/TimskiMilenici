@@ -6,7 +6,6 @@ import { CartProvider } from '../features/cart/context/CartContext';
 import { PawPalProvider } from '../features/pawpal/context/PawPalContext';
 import { useAuth } from '../features/auth/hooks/useAuth';
 import CartIcon from '../shared/components/CartIcon/CartIcon';
-import Footer from '../shared/components/Footer/Footer';
 import PawPalWidget from '../features/pawpal/components/PawPalWidget/PawPalWidget';
 
 const PUBLIC_PATHS = ['/', '/login', '/register'];
@@ -76,12 +75,28 @@ const App: React.FC = () => {
         <TokenGuard>
           <CartProvider>
             <PawPalProvider>
-              <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingBottom: '70px' }}>
+              <div
+                style={{
+                  height: '100%',
+                  minHeight: 0,
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  position: 'relative',
+                }}
+              >
+                <div
+                  style={{
+                    flex: 1,
+                    minHeight: 0,
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
                   <AppRoutes />
                 </div>
                 <GlobalFloatingControls />
-                <Footer />
               </div>
             </PawPalProvider>
           </CartProvider>

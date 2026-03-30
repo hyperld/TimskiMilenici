@@ -3,19 +3,62 @@
   border: 1px solid #d2e8f6;
   border-radius: var(--radius-lg);
   box-shadow: 0 8px 18px rgba(19, 112, 155, 0.08);
-  padding: 0.8rem;
+  padding: 0.5rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  height: var(--home-special-offers-height);
+  min-height: var(--home-special-offers-height);
+  max-height: var(--home-special-offers-height);
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
+  flex-shrink: 0;
+}
+
+.bodySlot {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.slideViewport {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+}
+
+@keyframes offerSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(1.1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slideEnter {
+  animation: offerSlideIn 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .title {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: #14546f;
   text-transform: uppercase;
@@ -27,8 +70,8 @@
   background: rgba(255, 255, 255, 0.85);
   color: #14546f;
   border-radius: var(--radius-sm);
-  padding: 0.25rem 0.6rem;
-  font-size: 0.72rem;
+  padding: 0.18rem 0.45rem;
+  font-size: 0.64rem;
   font-weight: 600;
   cursor: pointer;
 }
@@ -37,9 +80,16 @@
   border-radius: var(--radius-md);
   background: #ffffff;
   border: 1px solid #d4ebf7;
-  padding: 0.7rem 0.75rem;
+  padding: 0.4rem 0.5rem;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .slide:hover {
@@ -51,53 +101,60 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.22rem;
 }
 
 .offerType {
-  font-size: 0.64rem;
+  font-size: 0.58rem;
   font-weight: 700;
   text-transform: uppercase;
   color: #2b6b86;
   background: #e8f5fd;
   border-radius: 999px;
-  padding: 0.1rem 0.45rem;
+  padding: 0.06rem 0.38rem;
 }
 
 .discount {
-  font-size: 0.64rem;
+  font-size: 0.58rem;
   font-weight: 700;
   color: #1e8f54;
 }
 
 .offerName {
-  margin: 0 0 0.2rem 0;
-  font-size: 0.85rem;
+  margin: 0 0 0.12rem 0;
+  font-size: 0.76rem;
   color: #16374a;
-  line-height: 1.25;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .storeName {
   margin: 0;
-  font-size: 0.7rem;
+  font-size: 0.64rem;
   color: #4f7185;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .priceRow {
-  margin-top: 0.45rem;
+  margin-top: 0.28rem;
   display: flex;
-  gap: 0.45rem;
+  gap: 0.35rem;
   align-items: baseline;
 }
 
 .oldPrice {
-  font-size: 0.7rem;
+  font-size: 0.64rem;
   color: #8aa4b4;
   text-decoration: line-through;
 }
 
 .newPrice {
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: #0f7f46;
 }
@@ -105,13 +162,14 @@
 .dots {
   display: flex;
   justify-content: center;
-  gap: 0.3rem;
-  margin-top: 0.5rem;
+  gap: 0.25rem;
+  margin-top: 0.3rem;
+  flex-shrink: 0;
 }
 
 .dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 999px;
   border: none;
   background: #b7d8e8;
@@ -120,12 +178,15 @@
 }
 
 .dotActive {
-  width: 16px;
+  width: 14px;
   background: #2e8ab1;
 }
 
 .empty {
-  margin: 0.2rem 0 0;
+  margin: 0;
   color: #5f7b8b;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+  line-height: 1.35;
+  text-align: center;
+  padding: 0.35rem 0.2rem;
 }

@@ -5,7 +5,7 @@
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   align-items: center;
-  min-height: 84px;
+  min-height: var(--listing-card-height);
   border: 1px solid var(--color-border);
   overflow: hidden;
 }
@@ -16,9 +16,9 @@
 }
 
 .imageArea {
-  width: 74px;
-  min-width: 74px;
-  height: 84px;
+  width: var(--listing-card-thumb-width);
+  min-width: var(--listing-card-thumb-width);
+  height: var(--listing-card-height);
   background-color: var(--color-background-light);
   display: flex;
   align-items: center;

@@ -8,13 +8,19 @@ import BookingInfo from '../../../booking/components/BookingInfo/BookingInfo';
 import {
   bookingService,
   buildBookedTimesByDate,
-  buildFullDates,
   buildBookedSlotUserByDate,
   parseBookingDateTime
 } from '../../../booking/services/bookingService';
 import { businessService } from '../../services/businessService';
 import { orderService, OrderForBusiness } from '../../services/orderService';
 import { parseAddress, buildAddress } from '../../utils/addressUtils';
+import {
+  normalizeWorkingSchedule,
+  validateWorkingSchedule,
+  buildCalendarUnavailableDates,
+  generateTimeSlotsForDate,
+} from '../../utils/workingSchedule';
+import WorkingScheduleFields from './WorkingScheduleFields';
 
 interface ManageStoreModalProps {
   editingStore: any;
@@ -46,7 +52,8 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
       editingStore.type ??
       (Array.isArray(editingStore.types) && editingStore.types.length > 0
         ? editingStore.types[0]
-        : editingStore.category ?? '')
+        : editingStore.category ?? ''),
+    workingSchedule: normalizeWorkingSchedule(editingStore.workingSchedule),
   }));
   const [imageUploading, setImageUploading] = useState(false);
   const imageList = localStore.imageUrls ?? localStore.images ?? [];
@@ -92,24 +99,10 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
     .map((s: any) => s?.id)
     .filter((id: any) => typeof id === 'number'), [localStore?.services]);
 
-  const generateTimeSlots = useMemo(() => {
-    const slots: string[] = [];
-    const start = 9; // 09:00
-    const end = 20; // until 19:30 inclusive
-    for (let hour = start; hour < end; hour++) {
-      for (const min of ['00', '30']) {
-        slots.push(`${hour.toString().padStart(2, '0')}:${min}`);
-      }
-    }
-    return slots;
-  }, []);
-
-  const monthStartEnd = (year: number, month: number) => {
-    const start = new Date(year, month, 1);
-    const end = new Date(year, month + 1, 0);
-    const fmt = (d: Date) => d.toISOString().split('T')[0];
-    return { start: fmt(start), end: fmt(end) };
-  };
+  const workingScheduleNorm = useMemo(
+    () => normalizeWorkingSchedule(localStore.workingSchedule),
+    [localStore.workingSchedule]
+  );
 
   // Fetch store bookings when modal opens (by store id = editingStore.id)
   useEffect(() => {
@@ -145,8 +138,12 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
 
   const bookedTimesByDate = useMemo(() => buildBookedTimesByDate(bookings), [bookings]);
   const storeFullDates = useMemo(
-    () => buildFullDates(bookedTimesByDate, generateTimeSlots.length),
-    [bookedTimesByDate, generateTimeSlots.length]
+    () => buildCalendarUnavailableDates(workingScheduleNorm, bookedTimesByDate),
+    [workingScheduleNorm, bookedTimesByDate]
+  );
+  const timeSlotsForSelectedDate = useMemo(
+    () => (selectedDate ? generateTimeSlotsForDate(selectedDate, workingScheduleNorm) : []),
+    [selectedDate, workingScheduleNorm]
   );
   const bookedSlotUserByDate = useMemo(() => buildBookedSlotUserByDate(bookings), [bookings]);
   const datesWithBookings = useMemo(() => Object.keys(bookedTimesByDate).sort(), [bookedTimesByDate]);
@@ -391,6 +388,12 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const schedule = normalizeWorkingSchedule(localStore.workingSchedule);
+    const scheduleErr = validateWorkingSchedule(schedule);
+    if (scheduleErr) {
+      alert(scheduleErr);
+      return;
+    }
     setLoading(true);
     try {
       const address = buildAddress(
@@ -399,7 +402,7 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
         localStore.postalCode ?? '',
         localStore.country ?? ''
       );
-      await onUpdate({ ...localStore, address }, itemsToSave, itemsToDelete);
+      await onUpdate({ ...localStore, address, workingSchedule: schedule }, itemsToSave, itemsToDelete);
     } catch (error) {
       console.error(error);
     } finally {
@@ -482,6 +485,11 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
               <label>Country</label>
               <input name="country" value={localStore.country ?? ''} onChange={handleChange} placeholder="e.g. Serbia" required />
             </div>
+
+            <WorkingScheduleFields
+              value={workingScheduleNorm}
+              onChange={(workingSchedule) => setLocalStore((prev: any) => ({ ...prev, workingSchedule }))}
+            />
 
             {/* Main image – centered, hover to add/update/remove */}
             <div className={styles.mainImageWrap}>
@@ -772,7 +780,7 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
                   <div className={styles.timeSlotsSection}>
                     <h4 className={styles.bookingsSubtitle}>Time slots for {selectedDate} (yellow = reserved — click for details)</h4>
                     <div className={styles.timeSlotsGrid}>
-                      {generateTimeSlots.map((slot) => {
+                      {timeSlotsForSelectedDate.map((slot) => {
                         const isReserved = reservedSlotsForSelected.includes(slot);
                         const userNames = slotUserForSelected[slot];
                         const tooltip = isReserved && userNames?.length

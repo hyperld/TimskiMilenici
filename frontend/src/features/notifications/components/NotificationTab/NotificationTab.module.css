@@ -55,17 +55,18 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 250px;
-  max-height: 250px;
-  min-height: 170px;
+  height: var(--home-account-panel-scroll-height);
+  max-height: var(--home-account-panel-scroll-height);
+  min-height: var(--home-account-panel-scroll-height);
   min-width: 0;
+  flex: none;
 }
 
 .header {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.55rem 0.75rem;
+  gap: 0.35rem;
+  padding: 0.42rem 0.6rem;
   border-bottom: 1px solid rgba(var(--color-primary-rgb), 0.2);
   background: linear-gradient(180deg, rgba(var(--color-primary-rgb), 0.14), rgba(var(--color-primary-rgb), 0.06));
   flex-shrink: 0;
@@ -130,12 +131,12 @@
 .list {
   list-style: none;
   margin: 0;
-  padding: 0.5rem;
+  padding: 0.4rem 0.45rem;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.22rem;
   flex: 1;
   min-height: 0;
 }

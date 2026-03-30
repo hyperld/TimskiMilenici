@@ -3,13 +3,20 @@ import RegisterForm from './components/RegisterForm/RegisterForm';
 
 const RegisterScreen: React.FC = () => {
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      minHeight: '100vh' 
-    }}>
-      <RegisterForm />
+    <div className="appRouteRoot">
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '2rem 1rem',
+        }}
+      >
+        <RegisterForm />
+      </div>
     </div>
   );
 };

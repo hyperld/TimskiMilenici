@@ -6,10 +6,9 @@ interface BusinessListProps {
   loading: boolean;
   stores: any[];
   onEditStore: (store: any) => void;
-  onAddStore: () => void;
 }
 
-const BusinessList: React.FC<BusinessListProps> = ({ loading, stores, onEditStore, onAddStore }) => {
+const BusinessList: React.FC<BusinessListProps> = ({ loading, stores, onEditStore }) => {
   if (loading) {
     return <div className={styles.loading}>Loading stores...</div>;
   }
@@ -19,8 +18,7 @@ const BusinessList: React.FC<BusinessListProps> = ({ loading, stores, onEditStor
       <div className={styles.emptyState}>
         <div className={styles.emptyIcon}>🏬</div>
         <h3>No stores found</h3>
-        <p>You haven't added any businesses yet.</p>
-        <Button onClick={onAddStore}>Create Your First Store</Button>
+        <p>You haven&apos;t added any businesses yet. Use <strong>+ Add New Store</strong> above to create one.</p>
       </div>
     );
   }

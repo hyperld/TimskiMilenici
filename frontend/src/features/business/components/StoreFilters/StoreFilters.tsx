@@ -9,6 +9,8 @@ interface StoreFiltersProps {
   filterType: string;
   onFilterChange: (value: string) => void;
   mode?: FilterMode;
+  /** Shown inside the filter bar (e.g. compact pagination) */
+  pagination?: React.ReactNode;
 }
 
 const StoreFilters: React.FC<StoreFiltersProps> = ({
@@ -17,6 +19,7 @@ const StoreFilters: React.FC<StoreFiltersProps> = ({
   filterType,
   onFilterChange,
   mode = 'stores',
+  pagination,
 }) => {
   const searchPlaceholders: Record<FilterMode, string> = {
     stores: 'Search stores...',
@@ -27,7 +30,7 @@ const StoreFilters: React.FC<StoreFiltersProps> = ({
   const renderFilterDropdown = () => {
     if (mode === 'stores') {
       return (
-        <div className={styles.filterGroup}>
+        <div className={styles.selectWrap}>
           <select
             value={filterType}
             onChange={(e) => onFilterChange(e.target.value)}
@@ -45,7 +48,7 @@ const StoreFilters: React.FC<StoreFiltersProps> = ({
 
     if (mode === 'products') {
       return (
-        <div className={styles.filterGroup}>
+        <div className={styles.selectWrap}>
           <select
             value={filterType}
             onChange={(e) => onFilterChange(e.target.value)}
@@ -60,7 +63,7 @@ const StoreFilters: React.FC<StoreFiltersProps> = ({
     }
 
     return (
-      <div className={styles.filterGroup}>
+      <div className={styles.selectWrap}>
         <select
           value={filterType}
           onChange={(e) => onFilterChange(e.target.value)}
@@ -75,17 +78,24 @@ const StoreFilters: React.FC<StoreFiltersProps> = ({
   };
 
   return (
-    <div className={styles.filtersCentered}>
-      <div className={styles.filterGroup}>
-        <input
-          type="text"
-          placeholder={searchPlaceholders[mode]}
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className={styles.searchInput}
-        />
+    <div className={styles.filtersBar}>
+      <div className={styles.filtersCore}>
+        <div className={styles.searchWrap}>
+          <span className={styles.searchIcon} aria-hidden>
+            🔍
+          </span>
+          <input
+            type="search"
+            placeholder={searchPlaceholders[mode]}
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className={styles.searchInput}
+            autoComplete="off"
+          />
+        </div>
+        {renderFilterDropdown()}
       </div>
-      {renderFilterDropdown()}
+      {pagination ? <div className={styles.paginationSlot}>{pagination}</div> : null}
     </div>
   );
 };

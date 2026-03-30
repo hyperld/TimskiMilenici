@@ -4,14 +4,27 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   padding: 0.7rem;
-  height: 200px;
-  max-height: 200px;
+  height: var(--home-aside-panel-height);
+  min-height: var(--home-aside-panel-height);
+  max-height: var(--home-aside-panel-height);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .title {
   margin: 0 0 0.45rem 0;
   font-size: 0.9rem;
   color: var(--color-primary-dark);
+  flex-shrink: 0;
+}
+
+.gridScroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .grid {
