@@ -5,6 +5,11 @@
   padding-bottom: 0.5rem;
 }
 
+.businessGridOwner {
+  gap: 1.3rem;
+  padding-bottom: 0.75rem;
+}
+
 .businessCard {
   background: white;
   border-radius: var(--radius-md);
@@ -25,6 +30,13 @@
   box-shadow: var(--shadow-md);
 }
 
+.businessCardOwner {
+  height: var(--owner-business-card-height);
+  min-height: var(--owner-business-card-height);
+  max-height: var(--owner-business-card-height);
+  border-radius: var(--radius-lg);
+}
+
 .cardImage {
   width: var(--listing-card-thumb-width);
   min-width: var(--listing-card-thumb-width);
@@ -43,6 +55,18 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.cardImageOwner {
+  width: var(--owner-business-thumb-width);
+  min-width: var(--owner-business-thumb-width);
+  height: var(--owner-business-card-height);
+  border-top-left-radius: var(--radius-lg);
+  border-bottom-left-radius: var(--radius-lg);
+}
+
+.cardImageOwner .imagePlaceholder {
+  font-size: 1.85rem;
 }
 
 .imagePlaceholder {
@@ -109,12 +133,41 @@
   word-break: break-word;
 }
 
+.cardContentOwner {
+  padding: 0.65rem 0.85rem;
+}
+
+.cardContentOwner h3 {
+  font-size: 1.05rem;
+}
+
+.cardContentOwner .typeBadge {
+  font-size: 0.7rem;
+  padding: 0.16rem 0.55rem;
+  margin-top: 0.2rem;
+}
+
+.cardContentOwner .address {
+  font-size: 0.78rem;
+}
+
+.cardContentOwner .description {
+  font-size: 0.78rem;
+  line-height: 1.35;
+  margin-top: 0.22rem;
+  -webkit-line-clamp: 3;
+}
+
 .cardActions {
   display: flex;
   align-items: center;
   padding: 0.35rem 0.5rem;
   border-left: 1px solid var(--color-border);
   flex-shrink: 0;
+}
+
+.cardActionsOwner {
+  padding: 0.55rem 0.95rem;
 }
 
 .loading, .emptyState {

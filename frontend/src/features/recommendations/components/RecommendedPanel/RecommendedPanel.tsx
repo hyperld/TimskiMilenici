@@ -9,26 +9,28 @@ export interface RecommendedItem {
 
 interface RecommendedPanelProps {
   items: RecommendedItem[];
+  /** Narrow sidebar (home right column) vs full-width strip under listings */
+  variant?: 'sidebar' | 'full';
 }
 
-const RecommendedPanel: React.FC<RecommendedPanelProps> = ({ items }) => {
+const RecommendedPanel: React.FC<RecommendedPanelProps> = ({ items, variant = 'full' }) => {
+  const panelClass =
+    variant === 'sidebar' ? `${styles.panel} ${styles.panelSidebar}` : styles.panel;
+
   return (
-    <section className={styles.panel}>
+    <section className={panelClass}>
       <h3 className={styles.title}>Recommended</h3>
-      <div className={styles.gridScroll}>
-        <div className={styles.grid}>
+      <div className={styles.listScroll}>
+        <ul className={styles.list}>
           {items.slice(0, 4).map((item) => (
-            <button
-              key={item.title}
-              type="button"
-              className={styles.item}
-              onClick={item.onClick}
-            >
-              <span className={styles.itemTitle}>{item.title}</span>
-              <span className={styles.itemText}>{item.subtitle}</span>
-            </button>
+            <li key={item.title} className={styles.listItem}>
+              <button type="button" className={styles.item} onClick={item.onClick}>
+                <span className={styles.itemTitle}>{item.title}</span>
+                <span className={styles.itemText}>{item.subtitle}</span>
+              </button>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );

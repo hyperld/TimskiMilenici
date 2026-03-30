@@ -6,8 +6,7 @@
   padding: 0.5rem 0.6rem;
   display: flex;
   flex-direction: column;
-  height: var(--home-special-offers-height);
-  min-height: var(--home-special-offers-height);
+  min-height: 100px;
   max-height: var(--home-special-offers-height);
   overflow: hidden;
   box-sizing: border-box;

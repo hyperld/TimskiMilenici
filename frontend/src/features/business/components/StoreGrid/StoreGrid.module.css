@@ -1,8 +1,18 @@
 .storeGrid {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 0.6rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 0.7rem;
+  align-items: stretch;
+  --listing-card-height: 148px;
+  --listing-card-thumb-width: 108px;
+}
+
+@media (max-width: 640px) {
+  .storeGrid {
+    grid-template-columns: 1fr;
+    --listing-card-height: 156px;
+    --listing-card-thumb-width: 118px;
+  }
 }
 
 .loadingContainer {

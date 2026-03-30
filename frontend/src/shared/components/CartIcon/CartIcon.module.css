@@ -1,7 +1,5 @@
-.fab {
-  position: fixed;
-  bottom: 5.1rem;
-  right: 1.5rem;
+.stackBtn {
+  position: relative;
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 14px;
@@ -13,11 +11,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 900;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
-.fab:hover {
+.stackBtn:hover {
   transform: translateY(-2px);
   box-shadow: 0 14px 28px rgba(38, 111, 156, 0.2);
   background: #ffffff;

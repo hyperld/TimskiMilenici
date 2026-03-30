@@ -1,0 +1,126 @@
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.bell {
+  position: relative;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.28);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-primary-dark);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+}
+
+.bell:hover {
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(38, 111, 156, 0.12);
+}
+
+.bellActive {
+  background: rgba(var(--color-primary-rgb), 0.1);
+  border-color: rgba(var(--color-primary-rgb), 0.45);
+}
+
+.bellIcon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--color-primary-dark);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-cream);
+}
+
+.backdrop {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.12);
+    z-index: 850;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+
+  .backdropVisible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.panelShell {
+  position: fixed;
+  top: 3.25rem;
+  right: var(--spacing-xl, 32px);
+  width: min(340px, calc(100vw - 2rem));
+  max-height: var(--notification-dropdown-max-height);
+  display: flex;
+  flex-direction: column;
+  z-index: 900;
+  transform: translateX(calc(100% + 24px));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.22s ease;
+}
+
+.panelShellOpen {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.panelInner {
+  flex: 1;
+  min-height: 0;
+  max-height: var(--notification-dropdown-max-height);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  background: transparent;
+}
+
+@media (max-width: 640px) {
+  .panelShell {
+    top: auto;
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    width: auto;
+    max-height: min(70vh, 420px);
+    transform: translateY(calc(100% + 24px));
+  }
+
+  .panelShellOpen {
+    transform: translateY(0);
+  }
+}

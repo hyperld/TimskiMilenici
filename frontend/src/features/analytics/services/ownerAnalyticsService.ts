@@ -12,12 +12,21 @@ export interface OverviewPoint {
   revenue: number;
 }
 
+export interface OverviewSummary {
+  completionRate: number | null;
+  averageBookingValue: number | null;
+  priorPeriodRevenue: number;
+  revenueChangePercent: number | null;
+}
+
 export interface OverviewResult {
   points: OverviewPoint[];
   totalBookings: number;
   totalCompleted: number;
   totalCancelled: number;
   totalRevenue: number;
+  /** Present when API returns extended overview; omitted on older backends */
+  summary?: OverviewSummary;
 }
 
 export interface ProductSalesRow {
@@ -34,9 +43,11 @@ export interface PeakTimeBucket {
   bookings: number;
 }
 
-const authHeaders = () => {
+const authHeaders = (): Record<string, string> => {
   const token = getAuthToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  const h: Record<string, string> = {};
+  if (token) h.Authorization = `Bearer ${token}`;
+  return h;
 };
 
 interface AnalyticsQueryParams {
@@ -58,10 +69,7 @@ const buildQuery = (params?: AnalyticsQueryParams) => {
 export const ownerAnalyticsService = {
   getOverview: async (params?: AnalyticsQueryParams): Promise<OverviewResult> => {
     const res = await fetch(`${API_URL}/overview${buildQuery(params)}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders(),
-      },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -72,10 +80,7 @@ export const ownerAnalyticsService = {
 
   getProductSales: async (params?: AnalyticsQueryParams): Promise<ProductSalesRow[]> => {
     const res = await fetch(`${API_URL}/services${buildQuery(params)}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders(),
-      },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -86,10 +91,7 @@ export const ownerAnalyticsService = {
 
   getPeakTimes: async (params?: AnalyticsQueryParams): Promise<PeakTimeBucket[]> => {
     const res = await fetch(`${API_URL}/peak-times${buildQuery(params)}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders(),
-      },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));

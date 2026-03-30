@@ -7,9 +7,14 @@ import Button from '../Button/Button';
 interface TopBarProps {
   userName?: string;
   profilePic?: string;
+  beforeUserMenu?: React.ReactNode;
 }
 
-const TopBar: React.FC<TopBarProps> = ({ userName = 'User', profilePic = '' }) => {
+const TopBar: React.FC<TopBarProps> = ({
+  userName = 'User',
+  profilePic = '',
+  beforeUserMenu,
+}) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -59,6 +64,9 @@ const TopBar: React.FC<TopBarProps> = ({ userName = 'User', profilePic = '' }) =
           </Button>
         )}
         <span>Welcome, {user?.fullName || userName}</span>
+        {beforeUserMenu ? (
+          <div className={styles.beforeUserMenu}>{beforeUserMenu}</div>
+        ) : null}
         <div className={styles.userMenuContainer} ref={dropdownRef}>
           <div className={styles.userAvatar} onClick={toggleDropdown}>
             {profilePicture ? (

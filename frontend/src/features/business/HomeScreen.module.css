@@ -10,43 +10,56 @@
 .main {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 1.35rem 3rem 1.6rem;
-  max-width: 1320px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem var(--page-gutter-x) 1.75rem;
+  max-width: var(--page-content-max-width);
   margin: 0 auto;
   width: 100%;
 }
 
+/* listingPanel = 70% (first column), sidebarPanel = 30% (second column) */
 .pageLayout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 1.25rem;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+  gap: 1.2rem;
+  flex: 1;
   min-height: 0;
-  align-items: start;
+  align-items: stretch;
 }
 
-.leftPanel {
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.rightPanel {
+.listingPanel {
   display: flex;
   flex-direction: column;
   min-width: 0;
   min-height: 0;
+  overflow: hidden;
+}
+
+.sidebarPanel {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .rightPanelFull {
   width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .contentArea {
   flex: 1;
-  overflow: visible;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .headerSection {
@@ -54,34 +67,40 @@
   flex-direction: column;
   align-items: stretch;
   text-align: center;
-  margin-bottom: 0.4rem;
-  gap: 0.35rem;
+  margin-bottom: 0.45rem;
+  gap: 0.5rem;
 }
 
 .specialOffersSlot {
   flex-shrink: 0;
 }
 
-.infoCardSlot {
-  margin-top: 0;
-}
-
-.homeScrollPanel {
-  flex: none;
-  height: var(--home-account-panel-scroll-height);
-  min-height: var(--home-account-panel-scroll-height);
-  max-height: var(--home-account-panel-scroll-height);
+.sidebarBookingsSlot {
+  flex: 1;
+  min-height: 0;
+  max-height: var(--home-sidebar-bookings-max);
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-.homeScrollPanel > * {
+.sidebarBookingsSlot > * {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.sidebarRecommendedSlot {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sidebarRecommendedSlot > * {
+  flex: 0 0 auto;
 }
 
 .recommendedBelow {
@@ -90,12 +109,16 @@
   width: 100%;
 }
 
+.rightPanelFull .headerSection {
+  flex-shrink: 0;
+}
+
 .filtersRow {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.65rem;
   width: 100%;
 }
 
@@ -106,7 +129,7 @@
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: 0.45rem 1rem;
+  padding: 0.52rem 1.1rem;
   border-radius: var(--radius-xl);
   border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
@@ -115,7 +138,7 @@
 .headerTitle {
   margin: 0;
   color: var(--color-primary-dark);
-  font-size: 1rem;
+  font-size: 1.12rem;
   font-weight: 700;
 }
 
@@ -129,7 +152,7 @@
 .headerSubtitle {
   color: var(--color-text-light);
   margin: 0;
-  font-size: 0.78rem;
+  font-size: 0.86rem;
 }
 
 .tabBar {
@@ -140,6 +163,7 @@
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   border: 1px solid var(--color-border);
+  min-height: 2.65rem;
 }
 
 .tab {
@@ -148,10 +172,10 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0.38rem 0.5rem;
+  padding: 0.58rem 0.75rem;
   border: none;
   background: transparent;
-  font-size: 0.78rem;
+  font-size: 0.98rem;
   font-weight: 600;
   color: var(--color-text-light);
   cursor: pointer;
@@ -174,11 +198,23 @@
   background: var(--color-primary-dark);
 }
 
+/* Two cards per row; listing size tuned for readability in ~70% column */
 .grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 0.7rem;
   padding-bottom: 0.5rem;
+  align-items: stretch;
+  --listing-card-height: 148px;
+  --listing-card-thumb-width: 108px;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+    --listing-card-height: 156px;
+    --listing-card-thumb-width: 118px;
+  }
 }
 
 .statusMessage {
@@ -217,9 +253,17 @@
     min-height: auto;
   }
 
-  .leftPanel,
-  .rightPanel {
+  .listingPanel,
+  .sidebarPanel {
     min-height: auto;
+  }
+
+  .sidebarBookingsSlot {
+    max-height: none;
+  }
+
+  .sidebarRecommendedSlot {
+    max-height: none;
   }
 
   .headerBanner {
@@ -247,8 +291,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.65rem 0.5rem;
-    font-size: 0.85rem;
+    padding: 0.7rem 0.55rem;
+    font-size: 0.92rem;
   }
 
   .grid {

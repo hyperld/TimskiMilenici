@@ -10,10 +10,9 @@ import StoreGrid from './components/StoreGrid/StoreGrid';
 import ProductCard from './components/ProductCard/ProductCard';
 import ServiceCard from './components/ServiceCard/ServiceCard';
 import ProductDetailModal from './components/ProductDetailModal/ProductDetailModal';
-import InfoCard from '../user/components/InfoCard/InfoCard';
 import PendingBookings from '../user/components/PendingBookings/PendingBookings';
-import NotificationTab from '../notifications/components/NotificationTab/NotificationTab';
 import RecommendedPanel from '../recommendations/components/RecommendedPanel/RecommendedPanel';
+import NotificationHeaderButton from '../notifications/components/NotificationHeaderButton/NotificationHeaderButton';
 import SpecialOffersTab, { SpecialOfferItem } from '../recommendations/components/SpecialOffersTab/SpecialOffersTab';
 import PaginationBar from '../../shared/components/PaginationBar/PaginationBar';
 import styles from './HomeScreen.module.css';
@@ -26,9 +25,9 @@ const TAB_LABELS: Record<TabKey, string> = {
   services: 'Services',
 };
 
-const STORES_PER_PAGE = 3;
-const PRODUCTS_PER_PAGE = 3;
-const SERVICES_PER_PAGE = 3;
+const STORES_PER_PAGE = 5;
+const PRODUCTS_PER_PAGE = 5;
+const SERVICES_PER_PAGE = 5;
 
 const HomeScreen: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
@@ -263,36 +262,17 @@ const HomeScreen: React.FC = () => {
     },
   }));
 
+  const homeHeaderTools = isAuthenticated ? <NotificationHeaderButton /> : undefined;
+
   return (
     <div className={`${styles.pageShell} appRouteRoot`}>
-      <TopBar userName={user?.fullName || 'User'} />
+      <TopBar userName={user?.fullName || 'User'} beforeUserMenu={homeHeaderTools} />
 
       <main className={styles.main}>
         {isAuthenticated && user ? (
           <div className={styles.pageLayout}>
-            <section className={styles.leftPanel}>
-              <div className={styles.specialOffersSlot}>
-                <SpecialOffersTab
-                  items={specialOffers}
-                  onRefresh={loadSpecialOffers}
-                  onExploreOffer={(offer) => navigate(`/store/${offer.businessId}`)}
-                />
-              </div>
-              <div className={styles.infoCardSlot}>
-                <InfoCard userData={user} variant="homeCompact">
-                  {user.userId != null && (
-                    <div className={styles.homeScrollPanel}>
-                      <PendingBookings userId={user.userId} />
-                    </div>
-                  )}
-                  <div className={styles.homeScrollPanel}>
-                    <NotificationTab />
-                  </div>
-                </InfoCard>
-              </div>
-            </section>
-
-            <section className={styles.rightPanel}>
+            {/* First column: 70% — store / product / service listings */}
+            <section className={styles.listingPanel}>
               <div className={styles.headerSection}>
                 <div className={styles.tabBar}>
                   {(Object.keys(TAB_LABELS) as TabKey[]).map((tab) => (
@@ -321,10 +301,26 @@ const HomeScreen: React.FC = () => {
               <div className={styles.contentArea}>
                 {renderContent()}
               </div>
-              <div className={styles.recommendedBelow}>
-                <RecommendedPanel items={recommendedItems} />
-              </div>
             </section>
+
+            {/* Second column: 30% — offers, bookings, recommended (stacked) */}
+            <aside className={styles.sidebarPanel}>
+              <div className={styles.specialOffersSlot}>
+                <SpecialOffersTab
+                  items={specialOffers}
+                  onRefresh={loadSpecialOffers}
+                  onExploreOffer={(offer) => navigate(`/store/${offer.businessId}`)}
+                />
+              </div>
+              {user.userId != null && (
+                <div className={styles.sidebarBookingsSlot}>
+                  <PendingBookings userId={user.userId} compact />
+                </div>
+              )}
+              <div className={styles.sidebarRecommendedSlot}>
+                <RecommendedPanel items={recommendedItems} variant="sidebar" />
+              </div>
+            </aside>
           </div>
         ) : (
           <section className={styles.rightPanelFull}>
@@ -357,7 +353,7 @@ const HomeScreen: React.FC = () => {
               {renderContent()}
             </div>
             <div className={styles.recommendedBelow}>
-              <RecommendedPanel items={recommendedItems} />
+              <RecommendedPanel items={recommendedItems} variant="full" />
             </div>
           </section>
         )}

@@ -48,18 +48,39 @@
   background: rgba(var(--color-primary-rgb), 0.14);
 }
 
-.wrapper {
+/* Shared card chrome (embedded tab + header dropdown) */
+.shell {
   background: #fff;
   border-radius: var(--radius-md);
   border: 1px solid rgba(var(--color-primary-rgb), 0.22);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+}
+
+/* Owner dashboard / embedded: fixed-height shell, list scrolls inside */
+.shellEmbedded {
   height: var(--home-account-panel-scroll-height);
   max-height: var(--home-account-panel-scroll-height);
   min-height: var(--home-account-panel-scroll-height);
-  min-width: 0;
   flex: none;
+}
+
+/* Header dropdown: same look, capped height, narrower footprint */
+.shellDropdown {
+  width: 100%;
+  min-height: 0;
+  max-height: var(--notification-dropdown-max-height);
+  flex: 1 1 auto;
+}
+
+/* Fills header panel; list scrolls inside */
+.shellDropdownFill {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
@@ -141,6 +162,11 @@
   min-height: 0;
 }
 
+.listDropdown {
+  padding: 0.32rem 0.38rem;
+  gap: 0.18rem;
+}
+
 .list::-webkit-scrollbar {
   width: 4px;
 }
@@ -153,4 +179,3 @@
 .listItem {
   margin: 0;
 }
-

@@ -3,10 +3,10 @@
   flex-wrap: nowrap;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.35rem 0.45rem;
+  gap: 0.5rem 0.65rem;
   width: 100%;
   max-width: 100%;
-  padding: 0.32rem 0.5rem;
+  padding: 0.5rem 0.75rem;
   background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -21,8 +21,8 @@
   flex-wrap: nowrap;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.4rem;
-  flex: 1 1 0;
+  gap: 0.55rem;
+  flex: 1 1 auto;
   min-width: 0;
 }
 
@@ -35,34 +35,34 @@
 
 .searchWrap {
   position: relative;
-  flex: 1 1 0;
-  min-width: 0;
-  max-width: none;
-  width: auto;
+  flex: 0 1 auto;
+  width: clamp(11rem, 26vw, 15.5rem);
+  max-width: 100%;
+  min-width: 9.5rem;
 }
 
 .searchIcon {
   position: absolute;
-  left: 0.45rem;
+  left: 0.55rem;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   opacity: 0.55;
   pointer-events: none;
 }
 
 .searchInput {
   width: 100%;
-  padding: 0.28rem 0.45rem 0.28rem 1.75rem;
+  padding: 0.42rem 0.55rem 0.42rem 2.05rem;
   border: 1px solid rgba(36, 95, 130, 0.18);
   border-radius: var(--radius-md);
-  font-size: 0.72rem;
+  font-size: 0.88rem;
   background: rgba(255, 255, 255, 0.95);
   color: var(--color-text);
   transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
-  min-height: 1.75rem;
-  line-height: 1.2;
+  min-height: 2.15rem;
+  line-height: 1.25;
 }
 
 .searchInput::placeholder {
@@ -77,19 +77,19 @@
 
 .selectWrap {
   position: relative;
-  flex: 0 1 9rem;
-  min-width: 5.5rem;
-  max-width: 10rem;
+  flex: 0 1 auto;
+  min-width: 7.5rem;
+  max-width: 11.5rem;
   width: auto;
 }
 
 .selectWrap::after {
   content: '▾';
   position: absolute;
-  right: 0.45rem;
+  right: 0.55rem;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.55rem;
+  font-size: 0.62rem;
   color: var(--color-text-light);
   pointer-events: none;
 }
@@ -97,18 +97,18 @@
 .filterSelect {
   width: 100%;
   appearance: none;
-  padding: 0.28rem 1.45rem 0.28rem 0.5rem;
+  padding: 0.42rem 1.55rem 0.42rem 0.6rem;
   border: 1px solid rgba(36, 95, 130, 0.18);
   border-radius: var(--radius-md);
-  font-size: 0.7rem;
+  font-size: 0.86rem;
   font-weight: 600;
   background: rgba(255, 255, 255, 0.95);
   color: var(--color-primary-dark);
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
-  min-height: 1.75rem;
-  line-height: 1.2;
+  min-height: 2.15rem;
+  line-height: 1.25;
 }
 
 .filterSelect:focus {
@@ -135,6 +135,8 @@
   }
 
   .searchWrap {
+    width: 100%;
+    min-width: 0;
     max-width: none;
   }
 

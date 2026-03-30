@@ -7,6 +7,7 @@ import { PawPalProvider } from '../features/pawpal/context/PawPalContext';
 import { useAuth } from '../features/auth/hooks/useAuth';
 import CartIcon from '../shared/components/CartIcon/CartIcon';
 import PawPalWidget from '../features/pawpal/components/PawPalWidget/PawPalWidget';
+import FloatingActionStack from '../shared/components/FloatingActionStack/FloatingActionStack';
 
 const PUBLIC_PATHS = ['/', '/login', '/register'];
 const PAWPAL_HIDDEN_PATHS = ['/', '/login', '/register'];
@@ -61,10 +62,10 @@ const GlobalFloatingControls: React.FC = () => {
   const hidePawPal = PAWPAL_HIDDEN_PATHS.includes(location.pathname);
 
   return (
-    <>
+    <FloatingActionStack>
       <CartIcon />
-      {!hidePawPal && <PawPalWidget />}
-    </>
+      {!hidePawPal && <PawPalWidget variant="stack" />}
+    </FloatingActionStack>
   );
 };
 

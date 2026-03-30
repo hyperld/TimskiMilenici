@@ -15,7 +15,7 @@ interface InfoCardProps {
   greeting?: string;
   stats?: InfoStat[];
   children?: React.ReactNode;
-  variant?: 'default' | 'expanded' | 'homeCompact';
+  variant?: 'default' | 'expanded' | 'homeCompact' | 'ownerDashboard';
 }
 
 function getTimeGreeting(name: string): string {
@@ -46,11 +46,13 @@ const InfoCard: React.FC<InfoCardProps> = ({
 }) => {
   const displayGreeting = greeting ?? getTimeGreeting(userData.fullName.split(' ')[0]);
   const showProfileChrome = variant === 'default';
+  const stackExpanded =
+    variant === 'expanded' || variant === 'ownerDashboard';
 
   if (!showProfileChrome) {
     return (
       <div
-        className={`${styles.infoCard} ${styles.stackCompact} ${variant === 'expanded' ? styles.expanded : ''} ${variant === 'homeCompact' ? styles.homeCompact : ''}`}
+        className={`${styles.infoCard} ${styles.stackCompact} ${stackExpanded ? styles.expanded : ''} ${variant === 'homeCompact' ? styles.homeCompact : ''} ${variant === 'ownerDashboard' ? styles.ownerDashboard : ''}`}
       >
         {stats && stats.length > 0 && (
           <div className={styles.statsGrid}>

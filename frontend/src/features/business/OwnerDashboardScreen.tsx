@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBar from '../../shared/components/TopBar/TopBar';
 import { useAuth } from '../../features/auth/hooks/useAuth';
@@ -7,18 +7,18 @@ import { Business } from './types';
 import BusinessList from './components/OwnerDashboard/BusinessList';
 import OwnerDashboardStatsBar from './components/OwnerDashboard/OwnerDashboardStatsBar';
 import OwnerStoreToolbar from './components/OwnerStoreToolbar/OwnerStoreToolbar';
-import InfoCard from '../user/components/InfoCard/InfoCard';
 import OwnerAnalyticsPanels from '../analytics/components/OwnerAnalyticsPanels/OwnerAnalyticsPanels';
-import NotificationTab from '../notifications/components/NotificationTab/NotificationTab';
+import NotificationWidget from '../notifications/components/NotificationWidget/NotificationWidget';
 import CreateStoreModal from './components/StoreModals/CreateStoreModal';
 import ManageStoreModal from './components/StoreModals/ManageStoreModal';
 import PaginationBar from '../../shared/components/PaginationBar/PaginationBar';
 import { ownerAnalyticsService, OverviewResult } from '../analytics/services/ownerAnalyticsService';
+import { getDefaultAnalyticsRange } from '../analytics/ownerAnalyticsDisplayUtils';
 import { createDefaultWorkingSchedule, validateWorkingSchedule } from './utils/workingSchedule';
 import styles from './OwnerDashboardScreen.module.css';
 
 const OwnerDashboardScreen: React.FC = () => {
-  const STORES_PER_PAGE = 3;
+  const STORES_PER_PAGE = 2;
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -40,9 +40,25 @@ const OwnerDashboardScreen: React.FC = () => {
   const [overview, setOverview] = useState<OverviewResult | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const statsOverviewParams = useMemo(() => {
+    const { from, to } = getDefaultAnalyticsRange();
+    return { from, to };
+  }, []);
+
   useEffect(() => {
-    ownerAnalyticsService.getOverview().then(setOverview).catch(() => {});
-  }, [ownerStores]);
+    let cancelled = false;
+    ownerAnalyticsService
+      .getOverview(statsOverviewParams)
+      .then((o) => {
+        if (!cancelled) setOverview(o);
+      })
+      .catch(() => {
+        if (!cancelled) setOverview(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ownerStores, statsOverviewParams]);
 
   const ownerStats = useMemo(() => {
     const totalProducts = ownerStores.reduce((sum, s) => sum + (s.products?.length || 0), 0);
@@ -188,6 +204,19 @@ const OwnerDashboardScreen: React.FC = () => {
   const totalPages = Math.max(1, Math.ceil(ownerStores.length / STORES_PER_PAGE));
   const pagedStores = ownerStores.slice((currentPage - 1) * STORES_PER_PAGE, currentPage * STORES_PER_PAGE);
 
+  const leftPanelRef = useRef<HTMLElement>(null);
+  const [analyticsColumnHeight, setAnalyticsColumnHeight] = useState<number | null>(null);
+
+  useLayoutEffect(() => {
+    const el = leftPanelRef.current;
+    if (!el) return;
+    const measure = () => setAnalyticsColumnHeight(Math.round(el.getBoundingClientRect().height));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [loading, ownerStores.length, currentPage, pagedStores.length]);
+
   const ownerPagination =
     !loading && totalPages > 1 ? (
       <PaginationBar
@@ -200,21 +229,10 @@ const OwnerDashboardScreen: React.FC = () => {
 
   return (
     <div className={`${styles.pageShell} appRouteRoot`}>
-      <TopBar userName={userName} />
+      <TopBar userName={userName} beforeUserMenu={<NotificationWidget />} />
       <main className={styles.main}>
         <div className={styles.pageLayout}>
-          <section className={styles.leftPanel}>
-            {user && (
-              <InfoCard userData={user} variant="expanded">
-                <OwnerAnalyticsPanels />
-              </InfoCard>
-            )}
-          </section>
-
-          <section className={styles.rightPanel}>
-            <div className={styles.ownerNotifWrap}>
-              <NotificationTab />
-            </div>
+          <section ref={leftPanelRef} className={styles.leftPanel}>
             <div className={styles.ownerStatsSlot}>
               <OwnerDashboardStatsBar stats={ownerStats} />
             </div>
@@ -227,8 +245,26 @@ const OwnerDashboardScreen: React.FC = () => {
                 loading={loading}
                 stores={pagedStores}
                 onEditStore={handleEditStore}
+                variant="ownerLarge"
               />
             </div>
+          </section>
+
+          <section
+            className={styles.rightPanel}
+            style={
+              analyticsColumnHeight != null
+                ? { height: analyticsColumnHeight, minHeight: 0 }
+                : undefined
+            }
+          >
+            {user && (
+              <div className={styles.analyticsStack}>
+                <OwnerAnalyticsPanels
+                  stores={ownerStores.map((s) => ({ id: s.id, name: s.name }))}
+                />
+              </div>
+            )}
           </section>
         </div>
 

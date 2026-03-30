@@ -4,9 +4,10 @@ import styles from './PendingBookings.module.css';
 
 interface PendingBookingsProps {
   userId: number;
+  compact?: boolean;
 }
 
-const PendingBookings: React.FC<PendingBookingsProps> = ({ userId }) => {
+const PendingBookings: React.FC<PendingBookingsProps> = ({ userId, compact }) => {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState<number | null>(null);
@@ -39,9 +40,11 @@ const PendingBookings: React.FC<PendingBookingsProps> = ({ userId }) => {
     }
   };
 
+  const rootClass = compact ? `${styles.card} ${styles.cardCompact}` : styles.card;
+
   if (loading) {
     return (
-      <div className={styles.card}>
+      <div className={rootClass}>
         <h3 className={styles.title}>My pending bookings</h3>
         <p className={styles.text}>Loading…</p>
       </div>
@@ -49,11 +52,43 @@ const PendingBookings: React.FC<PendingBookingsProps> = ({ userId }) => {
   }
 
   return (
-    <div className={styles.card}>
+    <div className={rootClass}>
       <h3 className={styles.title}>My pending bookings</h3>
       {error && <p className={styles.error}>{error}</p>}
       {bookings.length === 0 ? (
         <p className={styles.text}>No pending bookings.</p>
+      ) : compact ? (
+        <ul className={styles.compactList}>
+          {bookings.map((b: any) => {
+            const parsed = parseBookingDateTime(b.bookingTime);
+            const dateStr = parsed?.dateStr ?? '—';
+            const timeStr = parsed?.timeStr ?? '—';
+            const serviceName = b.service?.name || 'Service';
+            const isCancelling = cancellingId === b.id;
+            return (
+              <li key={b.id} className={styles.compactItem}>
+                <div className={styles.compactTop}>
+                  <span className={styles.compactService}>{serviceName}</span>
+                  <span className={styles.status}>{b.status}</span>
+                </div>
+                <div className={styles.compactMeta}>
+                  <span className={styles.compactWhen}>
+                    {dateStr} · {timeStr}
+                  </span>
+                  <button
+                    type="button"
+                    className={styles.cancelBtn}
+                    onClick={() => handleCancel(b.id)}
+                    disabled={isCancelling}
+                    aria-label="Cancel booking"
+                  >
+                    {isCancelling ? '…' : 'Cancel'}
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       ) : (
         <div className={styles.scrollBody}>
           <div className={styles.headerRow}>

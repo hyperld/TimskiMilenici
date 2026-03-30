@@ -21,6 +21,13 @@
   max-height: none;
 }
 
+/* Owner dashboard right column: fill grid cell; analytics scroll inside */
+.ownerDashboard {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .expanded .extraContent {
   flex: 0;
   overflow: visible;
@@ -59,10 +66,21 @@
   margin-bottom: 0.45rem;
 }
 
-.stackCompact.expanded .extraContent {
+.stackCompact.expanded:not(.ownerDashboard) .extraContent {
   margin-top: 0;
   flex: 0;
   overflow: visible;
+}
+
+.stackCompact.expanded.ownerDashboard .extraContent {
+  margin-top: 0;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
 }
 
 .topRow {

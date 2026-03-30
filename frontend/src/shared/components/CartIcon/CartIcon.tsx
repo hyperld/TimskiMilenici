@@ -14,16 +14,17 @@ const CartIcon: React.FC = () => {
 
   const isHidden = HIDDEN_PATHS.some((p) => location.pathname.startsWith(p));
   const isOwner = user?.role === 'OWNER' || user?.role === 'BUSINESS_OWNER';
-  const show = itemCount > 0 && !isHidden && !isOwner;
+
+  const show = !isHidden && !isOwner && itemCount > 0;
 
   if (!show) return null;
 
   return (
     <button
       type="button"
-      className={styles.fab}
+      className={styles.stackBtn}
       onClick={() => navigate('/cart')}
-      aria-label={`Cart with ${itemCount} item(s)`}
+      aria-label={itemCount > 0 ? `Cart with ${itemCount} item(s)` : 'Cart'}
       title="View cart"
     >
       <span className={styles.icon} aria-hidden>
@@ -33,7 +34,9 @@ const CartIcon: React.FC = () => {
           <circle cx="17" cy="19" r="1.5" />
         </svg>
       </span>
-      <span className={styles.badge}>{itemCount > 99 ? '99+' : itemCount}</span>
+      {itemCount > 0 && (
+        <span className={styles.badge}>{itemCount > 99 ? '99+' : itemCount}</span>
+      )}
     </button>
   );
 };

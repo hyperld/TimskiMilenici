@@ -4,7 +4,13 @@ import { pawpalService } from '../../services/pawpalService';
 import { ChatMessage } from '../../types';
 import styles from './PawPalWidget.module.css';
 
-const PawPalWidget: React.FC = () => {
+export type PawPalWidgetVariant = 'fab' | 'header' | 'stack';
+
+interface PawPalWidgetProps {
+  variant?: PawPalWidgetVariant;
+}
+
+const PawPalWidget: React.FC<PawPalWidgetProps> = ({ variant = 'fab' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -54,92 +60,119 @@ const PawPalWidget: React.FC = () => {
     ? `You're browsing ${storeContext.name}. Ask me about their products, services, or anything else!`
     : "Hi there! I'm PawPal, your pet care assistant. Ask me anything about stores, products, services, or pet care!";
 
-  return (
-    <div className={styles.chatbotContainer} aria-live="polite">
-      <div className={styles.panelWrapper}>
-        <div
-          className={`${styles.chatPanel} ${isOpen ? styles.chatPanelOpen : ''}`}
-          aria-hidden={!isOpen}
-        >
-          <div className={styles.header}>
-            <div className={styles.headerAvatar}>PP</div>
-            <div className={styles.headerInfo}>
-              <div className={styles.title}>PawPal</div>
-              <div className={styles.subtitle}>
-                {storeContext ? `Helping with ${storeContext.name}` : 'Your pet care assistant'}
-              </div>
-            </div>
-            <button
-              type="button"
-              className={styles.closeButton}
-              onClick={toggleOpen}
-              aria-label="Close chat"
-            >
-              <span aria-hidden className={styles.closeGlyph}>×</span>
-            </button>
-          </div>
+  const rootClass =
+    variant === 'header'
+      ? styles.chatbotContainerHeader
+      : variant === 'stack'
+        ? styles.chatbotContainerStack
+        : styles.chatbotContainer;
+  const panelClass = `${styles.chatPanel} ${isOpen ? styles.chatPanelOpen : ''} ${
+    variant === 'header' ? styles.chatPanelHeader : ''
+  } ${variant === 'stack' ? styles.chatPanelStack : ''}`;
+  const buttonClass = `${styles.chatButton} ${isOpen ? styles.chatButtonOpen : ''} ${
+    variant === 'header' ? styles.chatButtonHeader : ''
+  }`;
+  const wrapClass =
+    variant === 'header' ? styles.panelWrapperHeader : styles.panelWrapper;
 
-          <div className={styles.conversationArea} ref={conversationRef}>
-            <div className={styles.systemMessage}>{greeting}</div>
-            {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={msg.role === 'user' ? styles.userMessage : styles.assistantMessage}
-              >
-                {msg.content}
-              </div>
-            ))}
-            {isLoading && (
-              <div className={styles.assistantMessage}>
-                <span className={styles.typingDots}>
-                  <span />
-                  <span />
-                  <span />
-                </span>
-              </div>
-            )}
+  const chatPanel = (
+    <div className={panelClass} aria-hidden={!isOpen}>
+      <div className={styles.header}>
+        <div className={styles.headerAvatar}>PP</div>
+        <div className={styles.headerInfo}>
+          <div className={styles.title}>PawPal</div>
+          <div className={styles.subtitle}>
+            {storeContext ? `Helping with ${storeContext.name}` : 'Your pet care assistant'}
           </div>
-
-          <form className={styles.inputArea} onSubmit={handleSubmit}>
-            <input
-              ref={inputRef}
-              className={styles.inputField}
-              type="text"
-              placeholder="Ask PawPal anything..."
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-            />
-            <button
-              type="submit"
-              className={styles.sendButton}
-              disabled={!inputValue.trim() || isLoading}
-              aria-label="Send message"
-            >
-              <svg className={styles.sendIcon} viewBox="0 0 24 24">
-                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-              </svg>
-            </button>
-          </form>
         </div>
+        <button
+          type="button"
+          className={styles.closeButton}
+          onClick={toggleOpen}
+          aria-label="Close chat"
+        >
+          <span aria-hidden className={styles.closeGlyph}>×</span>
+        </button>
       </div>
 
-      <button
-        type="button"
-        className={`${styles.chatButton} ${isOpen ? styles.chatButtonOpen : ''}`}
-        onClick={toggleOpen}
-        aria-label={isOpen ? 'Close PawPal' : 'Chat with PawPal'}
-      >
-        {!isOpen && <span className={styles.pulse} />}
-        <span className={`${styles.chatIcon} ${isOpen ? styles.chatIconClose : ''}`}>
-          {isOpen ? (
-            <span className={styles.closeGlyph} aria-hidden>×</span>
-          ) : (
-            <svg viewBox="0 0 24 24" className={styles.chatIconSvg} aria-hidden>
-              <path d="M12 3a7 7 0 0 0-7 7c0 1.8.7 3.4 1.9 4.7L6 21l5.8-1.6c.1 0 .1 0 .2.1A7 7 0 1 0 12 3Z" />
-            </svg>
-          )}
-        </span>
-      </button>
+      <div className={styles.conversationArea} ref={conversationRef}>
+        <div className={styles.systemMessage}>{greeting}</div>
+        {messages.map((msg, idx) => (
+          <div
+            key={idx}
+            className={msg.role === 'user' ? styles.userMessage : styles.assistantMessage}
+          >
+            {msg.content}
+          </div>
+        ))}
+        {isLoading && (
+          <div className={styles.assistantMessage}>
+            <span className={styles.typingDots}>
+              <span />
+              <span />
+              <span />
+            </span>
+          </div>
+        )}
+      </div>
+
+      <form className={styles.inputArea} onSubmit={handleSubmit}>
+        <input
+          ref={inputRef}
+          className={styles.inputField}
+          type="text"
+          placeholder="Ask PawPal anything..."
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <button
+          type="submit"
+          className={styles.sendButton}
+          disabled={!inputValue.trim() || isLoading}
+          aria-label="Send message"
+        >
+          <svg className={styles.sendIcon} viewBox="0 0 24 24">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+          </svg>
+        </button>
+      </form>
+    </div>
+  );
+
+  const trigger = (
+    <button
+      type="button"
+      className={buttonClass}
+      onClick={toggleOpen}
+      aria-label={isOpen ? 'Close PawPal' : 'Chat with PawPal'}
+    >
+      {!isOpen && (variant === 'fab' || variant === 'stack') && <span className={styles.pulse} />}
+      {!isOpen && variant === 'header' && <span className={styles.pulseHeader} />}
+      <span className={`${styles.chatIcon} ${isOpen ? styles.chatIconClose : ''}`}>
+        {isOpen ? (
+          <span className={styles.closeGlyph} aria-hidden>×</span>
+        ) : (
+          <svg viewBox="0 0 24 24" className={styles.chatIconSvg} aria-hidden>
+            <path d="M12 3a7 7 0 0 0-7 7c0 1.8.7 3.4 1.9 4.7L6 21l5.8-1.6c.1 0 .1 0 .2.1A7 7 0 1 0 12 3Z" />
+          </svg>
+        )}
+      </span>
+    </button>
+  );
+
+  return (
+    <div className={rootClass} aria-live="polite">
+      {variant === 'header' ? (
+        <>
+          {trigger}
+          <div className={wrapClass}>{chatPanel}</div>
+        </>
+      ) : (
+        <>
+          <div className={wrapClass}>{chatPanel}</div>
+          {trigger}
+        </>
+      )}
     </div>
   );
 };

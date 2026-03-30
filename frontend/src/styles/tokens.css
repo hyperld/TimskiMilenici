@@ -35,14 +35,27 @@
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 
+  /* Main column: use more viewport width, less side margin (home + owner dashboard) */
+  --page-content-max-width: 1600px;
+  --page-gutter-x: clamp(0.65rem, 1.25vw, 1.1rem);
+
   /* Listing cards (store / product / service row alignment) */
-  --listing-card-height: 84px;
-  --listing-card-thumb-width: 74px;
+  --listing-card-height: 130px;
+  --listing-card-thumb-width: 108px;
 
-  /* Home left column: special offers + recommended */
-  --home-aside-panel-height: 200px;
-  --home-special-offers-height: 158px;
+  /* Home: panel caps scale with viewport; inner content scrolls */
+  --home-aside-panel-height: clamp(120px, 22vh, 280px);
+  --home-special-offers-height: clamp(120px, 18vh, 240px);
+  --home-account-panel-scroll-height: clamp(130px, 26vh, 320px);
+  --home-sidebar-bookings-max: clamp(160px, 32vh, 360px);
 
-  /* Account sidebar: bookings + notifications stacks */
-  --home-account-panel-scroll-height: 200px;
+  /* Owner dashboard: analytics sub-panels (cap height, body scrolls inside) */
+  --owner-analytics-panel-max-height: clamp(140px, 24vh, 340px);
+
+  /* Owner dashboard store cards (larger than global listing row) */
+  --owner-business-card-height: clamp(172px, 30vh, 268px);
+  --owner-business-thumb-width: clamp(132px, 36%, 200px);
+
+  /* Header notification dropdown */
+  --notification-dropdown-max-height: min(72vh, 440px);
 }

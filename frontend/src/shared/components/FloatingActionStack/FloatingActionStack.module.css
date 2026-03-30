@@ -1,0 +1,23 @@
+.stack {
+  position: fixed;
+  bottom: 1.35rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.65rem;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.stack > * {
+  pointer-events: auto;
+}
+
+@media (max-width: 640px) {
+  .stack {
+    bottom: 1rem;
+    right: 1rem;
+    gap: 0.55rem;
+  }
+}

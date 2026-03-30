@@ -57,3 +57,15 @@
 {"id":"log_1774366061238","timestamp":1774366061238,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":16}}
 {"id":"log_1774366131615","timestamp":1774366131615,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":2,"count":0}}
 {"id":"log_1774366131623","timestamp":1774366131623,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":2,"count":0}}
+{"id":"log_1774368432942","timestamp":1774368432942,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":16}}
+{"id":"log_1774368432970","timestamp":1774368432970,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":16}}
+{"id":"log_1774368450533","timestamp":1774368450533,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":16}}
+{"id":"log_1774368450533","timestamp":1774368450533,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":16}}
+{"id":"log_1774368562441","timestamp":1774368562441,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":16}}
+{"id":"log_1774368562442","timestamp":1774368562442,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":16}}
+{"id":"log_1774368628615","timestamp":1774368628615,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":16}}
+{"id":"log_1774368628615","timestamp":1774368628615,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":16}}
+{"id":"log_1774904318390","timestamp":1774904318390,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":16}}
+{"id":"log_1774904318410","timestamp":1774904318410,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":16}}
+{"id":"log_1774906335034","timestamp":1774906335034,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":16}}
+{"id":"log_1774906335054","timestamp":1774906335054,"location":"ReviewService.java:getReviewsForBusiness","message":"reviews_fetched","data":{"businessId":3,"count":16}}

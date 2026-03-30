@@ -6,9 +6,16 @@ interface BusinessListProps {
   loading: boolean;
   stores: any[];
   onEditStore: (store: any) => void;
+  /** Taller cards + spacing for owner dashboard (2 per page) */
+  variant?: 'default' | 'ownerLarge';
 }
 
-const BusinessList: React.FC<BusinessListProps> = ({ loading, stores, onEditStore }) => {
+const BusinessList: React.FC<BusinessListProps> = ({
+  loading,
+  stores,
+  onEditStore,
+  variant = 'default',
+}) => {
   if (loading) {
     return <div className={styles.loading}>Loading stores...</div>;
   }
@@ -23,18 +30,39 @@ const BusinessList: React.FC<BusinessListProps> = ({ loading, stores, onEditStor
     );
   }
 
+  const gridClass =
+    variant === 'ownerLarge'
+      ? `${styles.businessGrid} ${styles.businessGridOwner}`
+      : styles.businessGrid;
+  const cardClass =
+    variant === 'ownerLarge'
+      ? `${styles.businessCard} ${styles.businessCardOwner}`
+      : styles.businessCard;
+
   return (
-    <div className={styles.businessGrid}>
-      {stores.map(store => (
-        <div key={store.id} className={styles.businessCard}>
-          <div className={styles.cardImage}>
+    <div className={gridClass}>
+      {stores.map((store) => (
+        <div key={store.id} className={cardClass}>
+          <div
+            className={
+              variant === 'ownerLarge'
+                ? `${styles.cardImage} ${styles.cardImageOwner}`
+                : styles.cardImage
+            }
+          >
             {store.mainImageUrl ? (
               <img src={store.mainImageUrl} alt={store.name} />
             ) : (
               <div className={styles.imagePlaceholder}>🏬</div>
             )}
           </div>
-          <div className={styles.cardContent}>
+          <div
+            className={
+              variant === 'ownerLarge'
+                ? `${styles.cardContent} ${styles.cardContentOwner}`
+                : styles.cardContent
+            }
+          >
             <div className={styles.topRow}>
               <div>
                 <h3>{store.name}</h3>
@@ -48,13 +76,15 @@ const BusinessList: React.FC<BusinessListProps> = ({ loading, stores, onEditStor
                 : store.description || 'No description provided.'}
             </p>
           </div>
-          <div className={styles.cardActions}>
-            <Button 
-              onClick={() => onEditStore(store)}
-            >
-              Manage
-            </Button>
-            </div>
+          <div
+            className={
+              variant === 'ownerLarge'
+                ? `${styles.cardActions} ${styles.cardActionsOwner}`
+                : styles.cardActions
+            }
+          >
+            <Button onClick={() => onEditStore(store)}>Manage</Button>
+          </div>
         </div>
       ))}
     </div>
