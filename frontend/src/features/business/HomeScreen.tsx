@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBar from '../../shared/components/TopBar/TopBar';
 import { useAuth } from '../../features/auth/hooks/useAuth';
@@ -15,7 +15,13 @@ import RecommendedPanel from '../recommendations/components/RecommendedPanel/Rec
 import NotificationHeaderButton from '../notifications/components/NotificationHeaderButton/NotificationHeaderButton';
 import SpecialOffersTab, { SpecialOfferItem } from '../recommendations/components/SpecialOffersTab/SpecialOffersTab';
 import PaginationBar from '../../shared/components/PaginationBar/PaginationBar';
+import { useUserLocation } from '../location/hooks/useUserLocation';
+import LocationConsentModal from '../location/components/LocationConsentModal/LocationConsentModal';
 import styles from './HomeScreen.module.css';
+
+/** Effectively "the whole planet" so we can grab a distance for every
+ *  geocoded store and rank them by proximity while still showing the rest. */
+const NEAR_ME_RADIUS_KM = 20000;
 
 type TabKey = 'stores' | 'products' | 'services';
 
@@ -48,6 +54,12 @@ const HomeScreen: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<ProductWithStore | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [specialOffers, setSpecialOffers] = useState<SpecialOfferItem[]>([]);
+
+  const { coords, status, requestLocation, clearLocation } = useUserLocation(true);
+  const [consentOpen, setConsentOpen] = useState(false);
+  const [nearbyStores, setNearbyStores] = useState<Business[] | null>(null);
+  const [nearbyLoading, setNearbyLoading] = useState(false);
+  const nearMeActive = nearbyStores != null;
 
   useEffect(() => {
     setSearchTerm('');
@@ -102,6 +114,55 @@ const HomeScreen: React.FC = () => {
   }, [searchTerm, filterType]);
 
   useEffect(() => {
+    if (!coords) return;
+    let cancelled = false;
+    setNearbyLoading(true);
+    businessService
+      .getNearbyBusinesses(coords.latitude, coords.longitude, NEAR_ME_RADIUS_KM)
+      .then((data) => {
+        if (cancelled) return;
+        setNearbyStores(data);
+      })
+      .catch((err) => {
+        console.error('getNearbyBusinesses error:', err);
+        if (!cancelled) setNearbyStores([]);
+      })
+      .finally(() => {
+        if (!cancelled) setNearbyLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [coords]);
+
+  const handleNearMeToggle = useCallback(() => {
+    if (nearMeActive) {
+      setNearbyStores(null);
+      clearLocation();
+      return;
+    }
+    if (coords) {
+      setNearbyLoading(true);
+      businessService
+        .getNearbyBusinesses(coords.latitude, coords.longitude, NEAR_ME_RADIUS_KM)
+        .then((data) => setNearbyStores(data))
+        .catch(() => setNearbyStores([]))
+        .finally(() => setNearbyLoading(false));
+      return;
+    }
+    setConsentOpen(true);
+  }, [nearMeActive, coords, clearLocation]);
+
+  const handleConsentAllow = useCallback(() => {
+    setConsentOpen(false);
+    requestLocation();
+  }, [requestLocation]);
+
+  const handleConsentDeny = useCallback(() => {
+    setConsentOpen(false);
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError('');
@@ -127,7 +188,30 @@ const HomeScreen: React.FC = () => {
     fetchData();
   }, [activeTab]);
 
-  const filteredStores = stores.filter((store) => {
+  const activeStoreList = useMemo(() => {
+    if (!nearMeActive || !nearbyStores) {
+      return stores;
+    }
+    const distanceById = new Map<number | string, number>();
+    for (const s of nearbyStores) {
+      const raw = (s as Business & { distanceKm?: number }).distanceKm;
+      if (s.id != null && typeof raw === 'number' && isFinite(raw)) {
+        distanceById.set(s.id, raw);
+      }
+    }
+    const annotated: (Business & { distanceKm?: number })[] = stores.map((store) => {
+      const d = store.id != null ? distanceById.get(store.id) : undefined;
+      return typeof d === 'number' ? { ...store, distanceKm: d } : store;
+    });
+    return [...annotated].sort((a, b) => {
+      const ad = typeof a.distanceKm === 'number' ? a.distanceKm : Number.POSITIVE_INFINITY;
+      const bd = typeof b.distanceKm === 'number' ? b.distanceKm : Number.POSITIVE_INFINITY;
+      if (ad !== bd) return ad - bd;
+      return a.name.localeCompare(b.name);
+    });
+  }, [nearMeActive, nearbyStores, stores]);
+
+  const filteredStores = activeStoreList.filter((store) => {
     const matchesSearch = store.name.toLowerCase().includes(searchTerm.toLowerCase());
     const rawType = (store as any).type || (store as any).category;
     const storeTypes: string[] =
@@ -294,6 +378,12 @@ const HomeScreen: React.FC = () => {
                     onFilterChange={setFilterType}
                     mode={activeTab as FilterMode}
                     pagination={filtersPagination}
+                    nearMe={{
+                      active: nearMeActive,
+                      loading: nearbyLoading || status === 'prompting',
+                      onToggle: handleNearMeToggle,
+                      label: nearMeActive ? 'Near me · on' : 'Near me',
+                    }}
                   />
                 </div>
               </div>
@@ -345,6 +435,12 @@ const HomeScreen: React.FC = () => {
                   onFilterChange={setFilterType}
                   mode={activeTab as FilterMode}
                   pagination={filtersPagination}
+                  nearMe={{
+                    active: nearMeActive,
+                    loading: nearbyLoading || status === 'prompting',
+                    onToggle: handleNearMeToggle,
+                    label: nearMeActive ? 'Near me · on' : 'Near me',
+                  }}
                 />
               </div>
             </div>
@@ -357,6 +453,12 @@ const HomeScreen: React.FC = () => {
             </div>
           </section>
         )}
+
+        <LocationConsentModal
+          open={consentOpen}
+          onAllow={handleConsentAllow}
+          onDeny={handleConsentDeny}
+        />
 
         {selectedProduct && (
           <ProductDetailModal

@@ -11,6 +11,13 @@ interface StoreFiltersProps {
   mode?: FilterMode;
   /** Shown inside the filter bar (e.g. compact pagination) */
   pagination?: React.ReactNode;
+  /** "Near me" toggle — rendered for the stores tab only when this prop is set. */
+  nearMe?: {
+    active: boolean;
+    loading?: boolean;
+    onToggle: () => void;
+    label?: string;
+  };
 }
 
 const StoreFilters: React.FC<StoreFiltersProps> = ({
@@ -20,6 +27,7 @@ const StoreFilters: React.FC<StoreFiltersProps> = ({
   onFilterChange,
   mode = 'stores',
   pagination,
+  nearMe,
 }) => {
   const searchPlaceholders: Record<FilterMode, string> = {
     stores: 'Search stores...',
@@ -94,6 +102,18 @@ const StoreFilters: React.FC<StoreFiltersProps> = ({
           />
         </div>
         {renderFilterDropdown()}
+        {mode === 'stores' && nearMe ? (
+          <button
+            type="button"
+            className={`${styles.nearMeBtn} ${nearMe.active ? styles.nearMeBtnActive : ''}`}
+            onClick={nearMe.onToggle}
+            disabled={nearMe.loading}
+            aria-pressed={nearMe.active}
+          >
+            <span aria-hidden>📍</span>
+            <span>{nearMe.loading ? 'Locating…' : nearMe.label ?? 'Near me'}</span>
+          </button>
+        ) : null}
       </div>
       {pagination ? <div className={styles.paginationSlot}>{pagination}</div> : null}
     </div>

@@ -42,6 +42,34 @@ export const businessService = {
     }
   },
 
+  /**
+   * Fetch businesses within {@code radiusKm} of the supplied coordinates.
+   * The backend returns each business with a {@code distanceKm} field which we
+   * forward on the mapped object so the UI can render it.
+   */
+  getNearbyBusinesses: async (
+    lat: number,
+    lng: number,
+    radiusKm: number = 10,
+    limit?: number,
+  ): Promise<Array<Business & { distanceKm: number }>> => {
+    const params = new URLSearchParams({
+      lat: String(lat),
+      lng: String(lng),
+      radiusKm: String(radiusKm),
+    });
+    if (limit != null) params.set('limit', String(limit));
+    const response = await fetch(`${API_URL}/businesses/nearby?${params.toString()}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch nearby businesses');
+    }
+    const data = await response.json();
+    return data.map((row: any) => ({
+      ...mapBusinessFromApi(row),
+      distanceKm: typeof row.distanceKm === 'number' ? row.distanceKm : Number(row.distanceKm) || 0,
+    }));
+  },
+
   // Fetch business by ID
   getBusinessById: async (id: string | number): Promise<Business> => {
     const response = await fetch(`${API_URL}/businesses/${id}`);

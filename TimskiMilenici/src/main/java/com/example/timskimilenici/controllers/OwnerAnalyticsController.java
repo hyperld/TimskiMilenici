@@ -65,6 +65,25 @@ public class OwnerAnalyticsController {
         return ResponseEntity.ok(rows);
     }
 
+    @GetMapping("/special-offers")
+    public ResponseEntity<OwnerAnalyticsService.SpecialOffersResult> getSpecialOffers(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(required = false) Long businessId
+    ) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
+        User user = userService.getUserByIdentifier(userDetails.getUsername());
+
+        LocalDate toDate = to != null ? to : LocalDate.now();
+        LocalDate fromDate = from != null ? from : toDate.minusDays(29);
+
+        var result = ownerAnalyticsService.getSpecialOffers(user.getId(), fromDate, toDate, businessId);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/peak-times")
     public ResponseEntity<List<OwnerAnalyticsService.PeakTimeBucket>> getPeakTimes(
             @AuthenticationPrincipal UserDetails userDetails,

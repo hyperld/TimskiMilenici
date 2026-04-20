@@ -1,0 +1,159 @@
+.summaryRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.avgBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.2rem 0.5rem;
+  border-right: 1px solid var(--color-border);
+  min-width: 3.3rem;
+}
+
+.avgNumber {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+  line-height: 1;
+}
+
+.avgStars {
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.avgMeta {
+  font-size: 0.52rem;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.starOn {
+  color: #f5a623;
+}
+
+.starOff {
+  color: rgba(0, 0, 0, 0.15);
+}
+
+.distList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.14rem;
+  min-width: 0;
+}
+
+.distRow {
+  display: grid;
+  grid-template-columns: 1.1rem minmax(0, 1fr) 1.4rem;
+  gap: 0.3rem;
+  align-items: center;
+  font-size: 0.58rem;
+}
+
+.distLabel {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.distBar {
+  height: 0.35rem;
+  border-radius: 999px;
+  background: rgba(var(--color-primary-rgb), 0.1);
+  overflow: hidden;
+}
+
+.distBarFill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #f5a623, var(--color-primary));
+}
+
+.distCount {
+  text-align: right;
+  font-weight: 600;
+  color: var(--color-text-light);
+}
+
+.recentList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.32rem;
+  overflow-y: auto;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.recentItem {
+  padding: 0.3rem 0.4rem;
+  background: var(--color-background-light);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.14rem;
+}
+
+.recentHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.recentName {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.recentRating {
+  font-size: 0.62rem;
+  color: #f5a623;
+  white-space: nowrap;
+}
+
+.recentRatingMuted {
+  color: rgba(0, 0, 0, 0.15);
+}
+
+.recentMeta {
+  display: flex;
+  gap: 0.4rem;
+  font-size: 0.52rem;
+  color: var(--color-text-light);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.recentComment {
+  margin: 0.1rem 0 0 0;
+  font-size: 0.62rem;
+  color: var(--color-text);
+  line-height: 1.3;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  line-clamp: 3;
+}

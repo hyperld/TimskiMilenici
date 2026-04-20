@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { StoreContext } from '../types';
 
 interface PawPalContextValue {
@@ -18,11 +18,12 @@ export const PawPalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setStoreContextState(ctx);
   }, []);
 
-  return (
-    <PawPalContext.Provider value={{ storeContext, setStoreContext }}>
-      {children}
-    </PawPalContext.Provider>
+  const value = useMemo(
+    () => ({ storeContext, setStoreContext }),
+    [storeContext, setStoreContext],
   );
+
+  return <PawPalContext.Provider value={value}>{children}</PawPalContext.Provider>;
 };
 
 export const usePawPal = () => useContext(PawPalContext);

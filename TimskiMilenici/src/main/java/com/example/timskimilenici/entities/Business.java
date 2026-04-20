@@ -41,6 +41,14 @@ public class Business {
     @Column
     private String address;
 
+    /** Geocoded latitude for the stored address, nullable until first geocode. */
+    @Column
+    private Double latitude;
+
+    /** Geocoded longitude for the stored address, nullable until first geocode. */
+    @Column
+    private Double longitude;
+
     @ElementCollection
     @CollectionTable(name = "business_images", joinColumns = @JoinColumn(name = "business_id"))
     @Column(name = "image_url")
@@ -105,6 +113,10 @@ public class Business {
     public void setCategories(List<String> categories) { this.categories = categories; }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+    public Double getLatitude() { return latitude; }
+    public void setLatitude(Double latitude) { this.latitude = latitude; }
+    public Double getLongitude() { return longitude; }
+    public void setLongitude(Double longitude) { this.longitude = longitude; }
     public User getOwner() { return owner; }
     public void setOwner(User owner) { this.owner = owner; }
     public List<PetService> getServices() { return services; }

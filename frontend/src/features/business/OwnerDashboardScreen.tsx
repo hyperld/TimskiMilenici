@@ -7,7 +7,7 @@ import { Business } from './types';
 import BusinessList from './components/OwnerDashboard/BusinessList';
 import OwnerDashboardStatsBar from './components/OwnerDashboard/OwnerDashboardStatsBar';
 import OwnerStoreToolbar from './components/OwnerStoreToolbar/OwnerStoreToolbar';
-import OwnerAnalyticsPanels from '../analytics/components/OwnerAnalyticsPanels/OwnerAnalyticsPanels';
+import OwnerAnalyticsCarousel from '../analytics/components/OwnerAnalyticsCarousel/OwnerAnalyticsCarousel';
 import NotificationWidget from '../notifications/components/NotificationWidget/NotificationWidget';
 import CreateStoreModal from './components/StoreModals/CreateStoreModal';
 import ManageStoreModal from './components/StoreModals/ManageStoreModal';
@@ -260,7 +260,7 @@ const OwnerDashboardScreen: React.FC = () => {
           >
             {user && (
               <div className={styles.analyticsStack}>
-                <OwnerAnalyticsPanels
+                <OwnerAnalyticsCarousel
                   stores={ownerStores.map((s) => ({ id: s.id, name: s.name }))}
                 />
               </div>

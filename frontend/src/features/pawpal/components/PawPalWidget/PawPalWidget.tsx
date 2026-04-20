@@ -1,16 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { usePawPal } from '../../context/PawPalContext';
 import { pawpalService } from '../../services/pawpalService';
-import { ChatMessage } from '../../types';
+import { ChatMessage, PawPalMode } from '../../types';
 import styles from './PawPalWidget.module.css';
 
 export type PawPalWidgetVariant = 'fab' | 'header' | 'stack';
 
 interface PawPalWidgetProps {
   variant?: PawPalWidgetVariant;
+  mode?: PawPalMode;
 }
 
-const PawPalWidget: React.FC<PawPalWidgetProps> = ({ variant = 'fab' }) => {
+const PawPalWidget: React.FC<PawPalWidgetProps> = ({ variant = 'fab', mode = 'customer' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -44,7 +45,11 @@ const PawPalWidget: React.FC<PawPalWidgetProps> = ({ variant = 'fab' }) => {
     setIsLoading(true);
 
     try {
-      const reply = await pawpalService.sendMessage(trimmed, [...messages, userMessage], storeContext);
+      const reply = await pawpalService.sendMessage(
+        trimmed,
+        [...messages, userMessage],
+        mode === 'owner' ? { mode } : { mode, storeContext },
+      );
       setMessages((prev) => [...prev, { role: 'assistant', content: reply }]);
     } catch {
       setMessages((prev) => [
@@ -56,9 +61,12 @@ const PawPalWidget: React.FC<PawPalWidgetProps> = ({ variant = 'fab' }) => {
     }
   };
 
-  const greeting = storeContext
-    ? `You're browsing ${storeContext.name}. Ask me about their products, services, or anything else!`
-    : "Hi there! I'm PawPal, your pet care assistant. Ask me anything about stores, products, services, or pet care!";
+  const greeting =
+    mode === 'owner'
+      ? "Hey, I'm PawPal for Owners. Ask me about your analytics, your stores, or for help writing descriptions and promos."
+      : storeContext
+        ? `You're browsing ${storeContext.name}. Ask me about their products, services, or anything else!`
+        : "Hi there! I'm PawPal, your pet care assistant. Ask me anything about stores, products, services, or pet care!";
 
   const rootClass =
     variant === 'header'
@@ -80,9 +88,13 @@ const PawPalWidget: React.FC<PawPalWidgetProps> = ({ variant = 'fab' }) => {
       <div className={styles.header}>
         <div className={styles.headerAvatar}>PP</div>
         <div className={styles.headerInfo}>
-          <div className={styles.title}>PawPal</div>
+          <div className={styles.title}>{mode === 'owner' ? 'PawPal for Owners' : 'PawPal'}</div>
           <div className={styles.subtitle}>
-            {storeContext ? `Helping with ${storeContext.name}` : 'Your pet care assistant'}
+            {mode === 'owner'
+              ? 'Your store co-pilot'
+              : storeContext
+                ? `Helping with ${storeContext.name}`
+                : 'Your pet care assistant'}
           </div>
         </div>
         <button
@@ -121,7 +133,11 @@ const PawPalWidget: React.FC<PawPalWidgetProps> = ({ variant = 'fab' }) => {
           ref={inputRef}
           className={styles.inputField}
           type="text"
-          placeholder="Ask PawPal anything..."
+          placeholder={
+            mode === 'owner'
+              ? 'Ask about your stores, analytics or promos...'
+              : 'Ask PawPal anything...'
+          }
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />

@@ -62,6 +62,35 @@ public class OwnerAnalyticsService {
             long bookings
     ) {}
 
+    public record SpecialOfferRow(
+            Long itemId,
+            String itemName,
+            /** "service" or "product". */
+            String itemType,
+            Long businessId,
+            String businessName,
+            BigDecimal basePrice,
+            BigDecimal promotionPrice,
+            /** Current discount percent (0-100). */
+            Double discountPercent,
+            /** Bookings/orders in this period. */
+            long usageCount,
+            /** Revenue earned during this period from this promoted item. */
+            BigDecimal promotedRevenue
+    ) {}
+
+    public record SpecialOffersResult(
+            int activeOfferCount,
+            long totalUsageCount,
+            BigDecimal totalPromotedRevenue,
+            /** Average discount percent across active offers (0-100), or null when no offers. */
+            Double averageDiscountPercent,
+            /** Top offers sorted by usage desc, capped by caller (default 5). */
+            List<SpecialOfferRow> topOffers,
+            /** Every active offer for the owner in this period. */
+            List<SpecialOfferRow> offers
+    ) {}
+
     public OverviewResult getOverview(Long ownerId, LocalDate fromDate, LocalDate toDate, Long businessId) {
         OverviewResult current = buildOverviewCore(ownerId, fromDate, toDate, businessId);
         List<OverviewPoint> points = current.points();
@@ -148,6 +177,88 @@ public class OwnerAnalyticsService {
                         (BigDecimal) r[4]
                 ))
                 .toList();
+    }
+
+    public SpecialOffersResult getSpecialOffers(Long ownerId, LocalDate fromDate, LocalDate toDate, Long businessId) {
+        LocalDateTime from = fromDate.atStartOfDay();
+        LocalDateTime to = toDate.atTime(LocalTime.MAX);
+
+        List<SpecialOfferRow> offers = new java.util.ArrayList<>();
+
+        List<Object[]> serviceRows = bookingRepository.aggregatePromotedServices(ownerId, from, to, businessId);
+        for (Object[] r : serviceRows) {
+            BigDecimal base = r[4] instanceof BigDecimal ? (BigDecimal) r[4] : BigDecimal.ZERO;
+            BigDecimal promo = r[5] instanceof BigDecimal ? (BigDecimal) r[5] : BigDecimal.ZERO;
+            BigDecimal revenue = r[8] instanceof BigDecimal ? (BigDecimal) r[8] : BigDecimal.ZERO;
+            offers.add(new SpecialOfferRow(
+                    ((Number) r[0]).longValue(),
+                    (String) r[1],
+                    "service",
+                    ((Number) r[2]).longValue(),
+                    (String) r[3],
+                    base,
+                    promo,
+                    computeDiscountPercent(base, promo),
+                    ((Number) r[6]).longValue(),
+                    revenue
+            ));
+        }
+
+        List<Object[]> productRows = orderRepository.aggregatePromotedProducts(ownerId, from, to, businessId);
+        for (Object[] r : productRows) {
+            BigDecimal base = r[4] instanceof BigDecimal ? (BigDecimal) r[4] : BigDecimal.ZERO;
+            BigDecimal promo = r[5] instanceof BigDecimal ? (BigDecimal) r[5] : BigDecimal.ZERO;
+            BigDecimal revenue = r[8] instanceof BigDecimal ? (BigDecimal) r[8] : BigDecimal.ZERO;
+            offers.add(new SpecialOfferRow(
+                    ((Number) r[0]).longValue(),
+                    (String) r[1],
+                    "product",
+                    ((Number) r[2]).longValue(),
+                    (String) r[3],
+                    base,
+                    promo,
+                    computeDiscountPercent(base, promo),
+                    ((Number) r[7]).longValue(),
+                    revenue
+            ));
+        }
+
+        offers.sort((a, b) -> Long.compare(b.usageCount(), a.usageCount()));
+
+        long totalUsage = offers.stream().mapToLong(SpecialOfferRow::usageCount).sum();
+        BigDecimal totalRevenue = offers.stream()
+                .map(SpecialOfferRow::promotedRevenue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        Double avgDiscount = null;
+        if (!offers.isEmpty()) {
+            double sum = offers.stream()
+                    .map(SpecialOfferRow::discountPercent)
+                    .filter(java.util.Objects::nonNull)
+                    .mapToDouble(Double::doubleValue)
+                    .sum();
+            avgDiscount = sum / offers.size();
+        }
+
+        List<SpecialOfferRow> top = offers.stream().limit(5).toList();
+
+        return new SpecialOffersResult(
+                offers.size(),
+                totalUsage,
+                totalRevenue,
+                avgDiscount,
+                top,
+                offers
+        );
+    }
+
+    private static Double computeDiscountPercent(BigDecimal base, BigDecimal promo) {
+        if (base == null || promo == null) return null;
+        if (base.compareTo(BigDecimal.ZERO) <= 0) return null;
+        BigDecimal diff = base.subtract(promo);
+        return diff.multiply(BigDecimal.valueOf(100))
+                .divide(base, 1, RoundingMode.HALF_UP)
+                .doubleValue();
     }
 
     public List<PeakTimeBucket> getPeakTimes(Long ownerId, LocalDate fromDate, LocalDate toDate, Long businessId) {

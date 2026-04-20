@@ -13,6 +13,7 @@
   border: 1px solid var(--color-border);
   overflow: hidden;
   box-sizing: border-box;
+  position: relative;
 }
 
 .storeCard:hover {
@@ -98,13 +99,39 @@
   word-break: break-word;
 }
 
+.locationWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  max-width: 48%;
+  min-width: 0;
+}
+
 .storeLocation {
   font-size: 0.7rem;
   color: var(--color-text-light);
-  max-width: 42%;
+  max-width: 100%;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.distanceBadge {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  z-index: 2;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  background: rgba(var(--color-primary-rgb), 0.16);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.3);
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow-sm);
 }
 
 .actionCol {
@@ -118,5 +145,8 @@
 @media (max-width: 768px) {
   .storeLocation {
     display: none;
+  }
+  .locationWrap {
+    align-items: flex-end;
   }
 }

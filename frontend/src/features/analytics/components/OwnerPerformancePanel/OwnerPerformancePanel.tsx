@@ -2,14 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import type { OverviewResult, PeakTimeBucket } from '../../services/ownerAnalyticsService';
 import { ownerAnalyticsService } from '../../services/ownerAnalyticsService';
 import {
-  getDefaultAnalyticsRange,
   buildBookingsPolyline,
   buildRevenuePolyline,
   buildStackedDailyBars,
   OVERVIEW_CHART_VIEWBOX,
   buildPeakDemandMatrix12,
 } from '../../ownerAnalyticsDisplayUtils';
-import styles from './OwnerAnalyticsPanels.module.css';
+import styles from '../OwnerAnalyticsPanels/OwnerAnalyticsPanels.module.css';
 
 const HEATMAP_HOUR_LABELS = [0, 4, 8, 12, 16, 20];
 const HEATMAP_DOW_LABELS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
@@ -28,8 +27,6 @@ const HM = {
 
 type ChartMode = 'volume' | 'revenue';
 
-export type OwnerAnalyticsStoreOption = { id: number; name: string };
-
 function formatCompletion(rate: number | null | undefined): string {
   if (rate == null) return '—';
   return `${Math.round(rate * 100)}%`;
@@ -46,15 +43,13 @@ function formatRevenueDelta(p: number | null | undefined): string | null {
   return `${sign}${p.toFixed(1)}% vs prior`;
 }
 
-export interface OwnerAnalyticsPanelsProps {
-  stores: OwnerAnalyticsStoreOption[];
+export interface OwnerPerformancePanelProps {
+  businessId: number | null;
+  from: string;
+  to: string;
 }
 
-const OwnerAnalyticsPanels: React.FC<OwnerAnalyticsPanelsProps> = ({ stores }) => {
-  const defaultRange = useMemo(() => getDefaultAnalyticsRange(), []);
-  const [from, setFrom] = useState(defaultRange.from);
-  const [to, setTo] = useState(defaultRange.to);
-  const [businessId, setBusinessId] = useState<number | null>(null);
+const OwnerPerformancePanel: React.FC<OwnerPerformancePanelProps> = ({ businessId, from, to }) => {
   const [chartMode, setChartMode] = useState<ChartMode>('volume');
 
   const [overview, setOverview] = useState<OverviewResult | null>(null);
@@ -121,66 +116,8 @@ const OwnerAnalyticsPanels: React.FC<OwnerAnalyticsPanelsProps> = ({ stores }) =
     </p>
   );
 
-  const onFromChange = (v: string) => {
-    setFrom(v);
-    if (v > to) setTo(v);
-  };
-
-  const onToChange = (v: string) => {
-    setTo(v);
-    if (v < from) setFrom(v);
-  };
-
   return (
     <div className={styles.column}>
-      <div className={styles.filterBar} role="search" aria-label="Analytics filters">
-        <div className={styles.filterGroup}>
-          <label className={styles.filterLabel} htmlFor="owner-analytics-store">
-            Store
-          </label>
-          <select
-            id="owner-analytics-store"
-            className={styles.filterSelect}
-            value={businessId ?? ''}
-            onChange={(e) => {
-              const v = e.target.value;
-              setBusinessId(v === '' ? null : Number(v));
-            }}
-          >
-            <option value="">All stores</option>
-            {stores.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className={styles.filterGroup}>
-          <label className={styles.filterLabel} htmlFor="owner-analytics-from">
-            From
-          </label>
-          <input
-            id="owner-analytics-from"
-            type="date"
-            className={styles.filterDate}
-            value={from}
-            onChange={(e) => onFromChange(e.target.value)}
-          />
-        </div>
-        <div className={styles.filterGroup}>
-          <label className={styles.filterLabel} htmlFor="owner-analytics-to">
-            To
-          </label>
-          <input
-            id="owner-analytics-to"
-            type="date"
-            className={styles.filterDate}
-            value={to}
-            onChange={(e) => onToChange(e.target.value)}
-          />
-        </div>
-      </div>
-
       <section
         className={`${styles.section} ${styles.performanceSection}`}
         aria-labelledby="owner-analytics-performance"
@@ -417,4 +354,4 @@ const OwnerAnalyticsPanels: React.FC<OwnerAnalyticsPanelsProps> = ({ stores }) =
   );
 };
 
-export default OwnerAnalyticsPanels;
+export default OwnerPerformancePanel;

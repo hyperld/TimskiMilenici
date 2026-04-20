@@ -36,6 +36,16 @@ export interface Business {
 
   /** Weekly opening hours (MONDAY … SUNDAY). */
   workingSchedule?: WorkingSchedule;
+
+  /** Persisted geocoded coordinates (may be null for legacy rows). */
+  latitude?: number | null;
+  longitude?: number | null;
+
+  /**
+   * Populated only by the nearby search. Distance (km) from the user's current
+   * location to this store.
+   */
+  distanceKm?: number;
 }
 
 export interface PetService {

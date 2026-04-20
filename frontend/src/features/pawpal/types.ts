@@ -3,6 +3,8 @@ export interface ChatMessage {
   content: string;
 }
 
+export type PawPalMode = 'customer' | 'owner';
+
 export interface StoreContext {
   id: number;
   name: string;

@@ -117,6 +117,53 @@
   box-shadow: 0 0 0 3px rgba(47, 124, 165, 0.15);
 }
 
+.nearMeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(36, 95, 130, 0.25);
+  border-radius: var(--radius-md);
+  padding: 0.42rem 0.8rem;
+  min-height: 2.15rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, color 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nearMeBtn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.08);
+}
+
+.nearMeBtn:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(47, 124, 165, 0.2);
+}
+
+.nearMeBtn:disabled {
+  cursor: progress;
+  opacity: 0.75;
+}
+
+.nearMeBtnActive {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.nearMeBtnActive:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  color: #fff;
+}
+
 @media (max-width: 768px) {
   .filtersBar {
     flex-direction: column;

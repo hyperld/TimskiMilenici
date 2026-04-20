@@ -40,4 +40,38 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                                 @Param("from") LocalDateTime from,
                                                 @Param("to") LocalDateTime to,
                                                 @Param("businessId") Long businessId);
+
+    /**
+     * Per-promoted-product aggregation. Only products with a valid active promotion
+     * (promotion_price not null AND promotion_price &lt; price) are included.
+     * Revenue is computed as units sold * current promotion_price.
+     */
+    @Query(value = """
+           SELECT p.id,
+                  p.name,
+                  b.id,
+                  b.name,
+                  p.price,
+                  p.promotion_price,
+                  COALESCE(SUM(oi.quantity), 0)                                     AS units,
+                  COUNT(DISTINCT o.id)                                              AS orders,
+                  COALESCE(SUM(oi.quantity * COALESCE(p.promotion_price, 0)), 0)    AS promoted_rev
+           FROM products p
+           JOIN businesses b ON b.id = p.business_id
+           LEFT JOIN order_items oi ON oi.product_id = p.id
+           LEFT JOIN orders o
+                  ON o.id = oi.order_id
+                 AND o.created_at >= :from
+                 AND o.created_at <= :to
+                 AND o.status = 'CONFIRMED'
+           WHERE b.owner_user_id = :ownerId
+             AND p.promotion_price IS NOT NULL
+             AND p.promotion_price < p.price
+             AND (:businessId IS NULL OR b.id = :businessId)
+           GROUP BY p.id, p.name, b.id, b.name, p.price, p.promotion_price
+           """, nativeQuery = true)
+    List<Object[]> aggregatePromotedProducts(@Param("ownerId") Long ownerId,
+                                             @Param("from") LocalDateTime from,
+                                             @Param("to") LocalDateTime to,
+                                             @Param("businessId") Long businessId);
 }

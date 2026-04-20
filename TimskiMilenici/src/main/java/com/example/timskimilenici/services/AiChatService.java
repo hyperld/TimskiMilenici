@@ -1,15 +1,12 @@
 package com.example.timskimilenici.services;
 
-import com.example.timskimilenici.entities.Business;
-import com.example.timskimilenici.entities.PetService;
-import com.example.timskimilenici.entities.Product;
-import com.example.timskimilenici.repositories.BusinessRepository;
+import com.example.timskimilenici.services.ai.CustomerAiTools;
+import com.example.timskimilenici.services.ai.OwnerAiTools;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,29 +16,49 @@ import java.util.Map;
 @Service
 public class AiChatService {
 
-    private static final String BASE_SYSTEM_PROMPT =
-            "You are PawPal, a friendly AI assistant for a pet care marketplace app called PetPal. " +
-            "You help users find pet stores, products, services, and answer questions about pet health and care. " +
-            "Keep answers concise and helpful. Do not use markdown formatting in your responses. " +
-            "When a user asks about stores, products, or services, ONLY recommend stores and items that exist on the PetPal platform (listed below). " +
-            "Never invent stores or products that are not in the catalog. " +
-            "If the user is browsing a specific store, prioritize information about that store.";
+    public enum ChatMode { CUSTOMER, OWNER }
+
+    private static final String CUSTOMER_SYSTEM_PROMPT =
+            "You are PawPal, a friendly AI assistant for the PetPal pet-care marketplace. " +
+            "You help shoppers discover pet stores, products and services and answer general pet-care questions. " +
+            "Keep answers short, warm and free of markdown formatting. " +
+            "Whenever the user asks about stores, products, services, or what is nearby, you MUST use the provided tools to look up real data before answering; never invent store names, prices, or inventory. " +
+            "Search smart: extract the product or service keyword from the user's sentence (e.g. 'shampoo for my bichon' -> query 'shampoo'; 'dog food for my puppy' -> 'dog food'; 'somewhere to groom my cat' -> call searchServices with 'grooming'). " +
+            "If a keyword search returns nothing, retry with a broader or alternative term (e.g. try 'shampoo', then 'bath', then 'grooming'; try the singular of a word; try a parent category) before telling the user nothing was found. " +
+            "Always combine searchProducts AND searchServices when the user's request could be either, and consider searchStores when they mention a type of shop. " +
+            "If tools still return no results after reasonable retries, say so honestly and suggest related searches. " +
+            "When recommending items, always name the store that carries them.";
+
+    private static final String OWNER_SYSTEM_PROMPT =
+            "You are PawPal for Owners, an AI co-pilot inside the PetPal owner dashboard. " +
+            "The current user is an authenticated store owner. Help them understand their own analytics, manage their stores, and draft store copy (names, descriptions, marketing blurbs, promotion ideas). " +
+            "Keep answers concise, actionable, and free of markdown formatting. " +
+            "Use the owner tools to fetch real data before quoting any numbers. Never invent revenue, bookings, or store details. " +
+            "When the owner asks 'how am I doing' or about a time period, call getOverview (and getPeakTimes or getSpecialOffers if relevant) and summarize the key highlights with one or two suggestions. " +
+            "Dates are ISO yyyy-MM-dd; if the owner says 'this month' or 'last 7 days', resolve the range yourself before calling a tool. " +
+            "If asked to write a description or promo, answer directly without a tool call.";
 
     private final ChatClient chatClient;
-    private final BusinessRepository businessRepository;
+    private final CustomerAiTools customerAiTools;
+    private final OwnerAiTools ownerAiTools;
 
-    public AiChatService(ChatClient.Builder chatClientBuilder, BusinessRepository businessRepository) {
+    public AiChatService(ChatClient.Builder chatClientBuilder,
+                         CustomerAiTools customerAiTools,
+                         OwnerAiTools ownerAiTools) {
         this.chatClient = chatClientBuilder.build();
-        this.businessRepository = businessRepository;
+        this.customerAiTools = customerAiTools;
+        this.ownerAiTools = ownerAiTools;
     }
 
-    public String chat(String userMessage, List<Map<String, String>> history, Map<String, Object> storeContext) {
+    public String chat(String userMessage,
+                       List<Map<String, String>> history,
+                       Map<String, Object> storeContext,
+                       ChatMode mode,
+                       Long ownerUserId) {
         List<Message> messages = new ArrayList<>();
 
-        String systemPrompt = BASE_SYSTEM_PROMPT;
-        systemPrompt += buildPlatformCatalog();
-
-        if (storeContext != null && storeContext.get("name") != null) {
+        String systemPrompt = mode == ChatMode.OWNER ? OWNER_SYSTEM_PROMPT : CUSTOMER_SYSTEM_PROMPT;
+        if (mode == ChatMode.CUSTOMER && storeContext != null && storeContext.get("name") != null) {
             systemPrompt += buildStoreContextPrompt(storeContext);
         }
         messages.add(new SystemMessage(systemPrompt));
@@ -55,64 +72,25 @@ public class AiChatService {
                     messages.add(new UserMessage(content));
                 } else if ("assistant".equals(role)) {
                     messages.add(new AssistantMessage(content));
-                }   
+                }
             }
         }
-
         messages.add(new UserMessage(userMessage));
 
-        Prompt prompt = new Prompt(messages);
-        return chatClient.prompt(prompt).call().content();
-    }
+        ChatClient.ChatClientRequestSpec spec = chatClient.prompt().messages(messages);
 
-    private String buildPlatformCatalog() {
-        List<Business> allStores = businessRepository.findAll();
-        if (allStores.isEmpty()) {
-            return "\n\nThe PetPal platform currently has no stores listed.";
+        if (mode == ChatMode.OWNER) {
+            if (ownerUserId == null) {
+                throw new IllegalStateException("Owner chat requires an authenticated owner user id.");
+            }
+            spec = spec
+                    .tools(ownerAiTools, customerAiTools)
+                    .toolContext(Map.of(OwnerAiTools.OWNER_ID_KEY, ownerUserId));
+        } else {
+            spec = spec.tools(customerAiTools);
         }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n\n=== PetPal Platform Catalog ===\n");
-        sb.append("The following stores are available on PetPal:\n");
-
-        for (Business store : allStores) {
-            sb.append("\n- Store: \"").append(store.getName()).append("\"");
-            if (store.getAddress() != null && !store.getAddress().isEmpty()) {
-                sb.append(" | Address: ").append(store.getAddress());
-            }
-            List<String> cats = store.getCategories();
-            if (cats != null && !cats.isEmpty()) {
-                sb.append(" | Categories: ").append(String.join(", ", cats));
-            } else if (store.getCategory() != null) {
-                sb.append(" | Category: ").append(store.getCategory());
-            }
-            if (store.getDescription() != null && !store.getDescription().isEmpty()) {
-                sb.append(" | About: ").append(store.getDescription());
-            }
-
-            List<PetService> services = store.getServices();
-            if (services != null && !services.isEmpty()) {
-                sb.append("\n  Services: ");
-                for (int i = 0; i < services.size(); i++) {
-                    PetService svc = services.get(i);
-                    if (i > 0) sb.append(", ");
-                    sb.append(svc.getName()).append(" ($").append(svc.getPrice()).append(")");
-                }
-            }
-
-            List<Product> products = store.getProducts();
-            if (products != null && !products.isEmpty()) {
-                sb.append("\n  Products: ");
-                for (int i = 0; i < products.size(); i++) {
-                    Product prod = products.get(i);
-                    if (i > 0) sb.append(", ");
-                    sb.append(prod.getName()).append(" ($").append(prod.getPrice()).append(")");
-                }
-            }
-        }
-
-        sb.append("\n=== End of Catalog ===");
-        return sb.toString();
+        return spec.call().content();
     }
 
     @SuppressWarnings("unchecked")
@@ -155,7 +133,8 @@ public class AiChatService {
             sb.append(".");
         }
 
-        sb.append(" Prioritize this store's information when answering questions.");
+        sb.append(" Prioritize this store's information when answering questions. " +
+                "If the user asks about something the store does not carry, fall back to tools to look up other stores.");
         return sb.toString();
     }
 }

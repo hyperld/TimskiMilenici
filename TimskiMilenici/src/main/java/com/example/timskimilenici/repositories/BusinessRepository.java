@@ -11,4 +11,9 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
     List<Business> findByCategoriesContaining(String category);
     List<Business> findByAddressContainingIgnoreCase(String address);
     List<Business> findByOwnerId(Long ownerId);
+
+    /** Bounding-box pre-filter for nearby searches. */
+    List<Business> findByLatitudeBetweenAndLongitudeBetween(
+            Double minLatitude, Double maxLatitude,
+            Double minLongitude, Double maxLongitude);
 }

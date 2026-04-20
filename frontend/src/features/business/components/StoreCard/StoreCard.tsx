@@ -5,7 +5,13 @@ import styles from './StoreCard.module.css';
 import Button from '../../../../shared/components/Button/Button';
 
 interface StoreCardProps {
-  store: Business & { type?: string; types?: string[]; category?: string };
+  store: Business & { type?: string; types?: string[]; category?: string; distanceKm?: number };
+}
+
+function formatDistance(km: number): string {
+  if (!isFinite(km) || km < 0) return '';
+  if (km < 1) return `${Math.round(km * 1000)} m`;
+  return `${km.toFixed(km < 10 ? 1 : 0)} km`;
 }
 
 const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
@@ -29,6 +35,14 @@ const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
 
   return (
     <div className={styles.storeCard}>
+      {typeof store.distanceKm === 'number' ? (
+        <span
+          className={styles.distanceBadge}
+          aria-label={`${formatDistance(store.distanceKm)} away`}
+        >
+          {formatDistance(store.distanceKm)}
+        </span>
+      ) : null}
       <div className={styles.storeImage}>
         {store.mainImageUrl ? (
           <img src={store.mainImageUrl} alt={store.name} />
@@ -44,7 +58,9 @@ const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
             <h3 className={styles.storeName}>{store.name}</h3>
             {typeLabel && <span className={styles.storeType}>{typeLabel}</span>}
           </div>
-          <span className={styles.storeLocation}>📍 {store.address}</span>
+          <div className={styles.locationWrap}>
+            <span className={styles.storeLocation}>📍 {store.address}</span>
+          </div>
         </div>
         <p className={styles.storeDescription}>{description}</p>
       </div>

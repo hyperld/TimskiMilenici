@@ -14,20 +14,29 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class BusinessService {
 
     private static final Logger log = LoggerFactory.getLogger(BusinessService.class);
+    private static final double EARTH_RADIUS_KM = 6371.0088;
+
     private final BusinessRepository businessRepository;
     private final BookingRepository bookingRepository;
+    private final MapboxGeocodingService geocoder;
 
-    public BusinessService(BusinessRepository businessRepository, BookingRepository bookingRepository) {
+    public BusinessService(BusinessRepository businessRepository,
+                           BookingRepository bookingRepository,
+                           MapboxGeocodingService geocoder) {
         this.businessRepository = businessRepository;
         this.bookingRepository = bookingRepository;
+        this.geocoder = geocoder;
     }
 
     public List<Business> getAllBusinesses() {
@@ -67,7 +76,111 @@ public class BusinessService {
         }
 
         validateWorkingSchedule(business);
+        applyGeocodingIfNeeded(business);
         return businessRepository.save(business);
+    }
+
+    /**
+     * Geocode the business address into lat/lng when the address changed or
+     * no coordinates have been persisted yet. Failures are swallowed so a save
+     * never fails because of a geocoder outage.
+     */
+    private void applyGeocodingIfNeeded(Business business) {
+        String address = business.getAddress();
+        if (address == null || address.isBlank()) {
+            return;
+        }
+
+        boolean needsGeocode = business.getLatitude() == null || business.getLongitude() == null;
+        if (!needsGeocode && business.getId() != null) {
+            // Re-geocode when the address string has changed.
+            Business existing = businessRepository.findById(business.getId()).orElse(null);
+            if (existing != null && !Objects.equals(existing.getAddress(), address)) {
+                needsGeocode = true;
+            }
+        }
+        if (!needsGeocode) {
+            return;
+        }
+
+        geocoder.geocode(address).ifPresent(coords -> {
+            business.setLongitude(coords[0]);
+            business.setLatitude(coords[1]);
+            log.debug("Geocoded business '{}' → ({}, {}).", business.getName(), coords[1], coords[0]);
+        });
+    }
+
+    /**
+     * Fill lat/lng for every persisted business that still has a blank
+     * coordinate. Safe to call repeatedly. Returns the number of rows updated.
+     */
+    @Transactional
+    public int backfillMissingCoordinates() {
+        List<Business> all = businessRepository.findAll();
+        int updated = 0;
+        for (Business b : all) {
+            if (b.getAddress() == null || b.getAddress().isBlank()) continue;
+            if (b.getLatitude() != null && b.getLongitude() != null) continue;
+            Optional<double[]> coords = geocoder.geocode(b.getAddress());
+            if (coords.isPresent()) {
+                b.setLongitude(coords.get()[0]);
+                b.setLatitude(coords.get()[1]);
+                businessRepository.save(b);
+                updated++;
+            }
+        }
+        if (updated > 0) {
+            log.info("Backfilled coordinates for {} business row(s).", updated);
+        }
+        return updated;
+    }
+
+    /**
+     * Find businesses within a given radius (km) of the supplied coordinates.
+     * Uses a cheap bounding-box pre-filter in memory (could be pushed to SQL later)
+     * and refines with the Haversine formula.
+     */
+    public List<BusinessWithDistance> findNearby(double lat, double lng, double radiusKm, Integer limit) {
+        // Cap at ~half the earth's circumference so callers can request
+        // "distance to every geocoded store" with a sentinel huge radius.
+        double effectiveRadius = radiusKm <= 0 ? 10 : Math.min(radiusKm, 20037);
+        double latDelta = Math.toDegrees(effectiveRadius / EARTH_RADIUS_KM);
+        // Avoid division by zero at the poles.
+        double cosLat = Math.max(Math.cos(Math.toRadians(lat)), 0.000001);
+        double lngDelta = latDelta / cosLat;
+
+        double minLat = lat - latDelta;
+        double maxLat = lat + latDelta;
+        double minLng = lng - lngDelta;
+        double maxLng = lng + lngDelta;
+
+        List<Business> candidates =
+                businessRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLng, maxLng);
+
+        List<BusinessWithDistance> results = new ArrayList<>();
+        for (Business b : candidates) {
+            if (b.getLatitude() == null || b.getLongitude() == null) continue;
+            double d = haversineKm(lat, lng, b.getLatitude(), b.getLongitude());
+            if (d <= effectiveRadius) {
+                results.add(new BusinessWithDistance(b, d));
+            }
+        }
+        results.sort(Comparator.comparingDouble(BusinessWithDistance::getDistanceKm));
+        if (limit != null && limit > 0 && results.size() > limit) {
+            return results.subList(0, limit);
+        }
+        return results;
+    }
+
+    private static double haversineKm(double lat1, double lng1, double lat2, double lng2) {
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLng = Math.toRadians(lng2 - lng1);
+        double rLat1 = Math.toRadians(lat1);
+        double rLat2 = Math.toRadians(lat2);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(rLat1) * Math.cos(rLat2) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return EARTH_RADIUS_KM * c;
     }
 
     private void validateWorkingSchedule(Business business) {

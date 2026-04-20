@@ -43,6 +43,28 @@ export interface PeakTimeBucket {
   bookings: number;
 }
 
+export interface SpecialOfferRow {
+  itemId: number;
+  itemName: string;
+  itemType: 'service' | 'product';
+  businessId: number;
+  businessName: string;
+  basePrice: number;
+  promotionPrice: number;
+  discountPercent: number | null;
+  usageCount: number;
+  promotedRevenue: number;
+}
+
+export interface SpecialOffersResult {
+  activeOfferCount: number;
+  totalUsageCount: number;
+  totalPromotedRevenue: number;
+  averageDiscountPercent: number | null;
+  topOffers: SpecialOfferRow[];
+  offers: SpecialOfferRow[];
+}
+
 const authHeaders = (): Record<string, string> => {
   const token = getAuthToken();
   const h: Record<string, string> = {};
@@ -96,6 +118,17 @@ export const ownerAnalyticsService = {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.message || 'Failed to load peak time analytics');
+    }
+    return await res.json();
+  },
+
+  getSpecialOffers: async (params?: AnalyticsQueryParams): Promise<SpecialOffersResult> => {
+    const res = await fetch(`${API_URL}/special-offers${buildQuery(params)}`, {
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Failed to load special offers analytics');
     }
     return await res.json();
   },

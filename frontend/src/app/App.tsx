@@ -11,6 +11,7 @@ import FloatingActionStack from '../shared/components/FloatingActionStack/Floati
 
 const PUBLIC_PATHS = ['/', '/login', '/register'];
 const PAWPAL_HIDDEN_PATHS = ['/', '/login', '/register'];
+const OWNER_DASHBOARD_PATHS = ['/owner-dashboard'];
 
 function isTokenExpired(token: string): boolean {
   try {
@@ -60,11 +61,15 @@ const TokenGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 const GlobalFloatingControls: React.FC = () => {
   const location = useLocation();
   const hidePawPal = PAWPAL_HIDDEN_PATHS.includes(location.pathname);
+  const isOwnerDashboard = OWNER_DASHBOARD_PATHS.includes(location.pathname);
+  const pawpalMode = isOwnerDashboard ? 'owner' : 'customer';
 
   return (
     <FloatingActionStack>
       <CartIcon />
-      {!hidePawPal && <PawPalWidget variant="stack" />}
+      {!hidePawPal && (
+        <PawPalWidget key={pawpalMode} variant="stack" mode={pawpalMode} />
+      )}
     </FloatingActionStack>
   );
 };

@@ -90,4 +90,37 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                       @Param("from") LocalDateTime from,
                                       @Param("to") LocalDateTime to,
                                       @Param("businessId") Long businessId);
+
+    /**
+     * Per-promoted-service aggregation. Only services that currently have a valid
+     * promotion (promotion_price not null AND promotion_price &lt; price) are included.
+     * Returns: itemId, itemName, businessId, businessName, price, promotionPrice,
+     *          bookingsCount, completedBookings, promotedRevenue (completed bookings * promotionPrice).
+     */
+    @Query(value = """
+           SELECT ps.id,
+                  ps.name,
+                  biz.id,
+                  biz.name,
+                  ps.price,
+                  ps.promotion_price,
+                  COUNT(b.id),
+                  SUM(CASE WHEN b.status = 'COMPLETED' THEN 1 ELSE 0 END),
+                  SUM(CASE WHEN b.status = 'COMPLETED' THEN COALESCE(ps.promotion_price, 0) ELSE 0 END)
+           FROM pet_services ps
+           JOIN businesses biz ON biz.id = ps.business_id
+           LEFT JOIN bookings b
+                  ON b.service_id = ps.id
+                 AND b.booking_time >= :from
+                 AND b.booking_time <= :to
+           WHERE biz.owner_user_id = :ownerId
+             AND ps.promotion_price IS NOT NULL
+             AND ps.promotion_price < ps.price
+             AND (:businessId IS NULL OR biz.id = :businessId)
+           GROUP BY ps.id, ps.name, biz.id, biz.name, ps.price, ps.promotion_price
+           """, nativeQuery = true)
+    List<Object[]> aggregatePromotedServices(@Param("ownerId") Long ownerId,
+                                             @Param("from") LocalDateTime from,
+                                             @Param("to") LocalDateTime to,
+                                             @Param("businessId") Long businessId);
 }
