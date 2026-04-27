@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBar from '../../shared/components/TopBar/TopBar';
 import { useAuth } from '../../features/auth/hooks/useAuth';
@@ -204,19 +204,6 @@ const OwnerDashboardScreen: React.FC = () => {
   const totalPages = Math.max(1, Math.ceil(ownerStores.length / STORES_PER_PAGE));
   const pagedStores = ownerStores.slice((currentPage - 1) * STORES_PER_PAGE, currentPage * STORES_PER_PAGE);
 
-  const leftPanelRef = useRef<HTMLElement>(null);
-  const [analyticsColumnHeight, setAnalyticsColumnHeight] = useState<number | null>(null);
-
-  useLayoutEffect(() => {
-    const el = leftPanelRef.current;
-    if (!el) return;
-    const measure = () => setAnalyticsColumnHeight(Math.round(el.getBoundingClientRect().height));
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [loading, ownerStores.length, currentPage, pagedStores.length]);
-
   const ownerPagination =
     !loading && totalPages > 1 ? (
       <PaginationBar
@@ -232,7 +219,7 @@ const OwnerDashboardScreen: React.FC = () => {
       <TopBar userName={userName} beforeUserMenu={<NotificationWidget />} />
       <main className={styles.main}>
         <div className={styles.pageLayout}>
-          <section ref={leftPanelRef} className={styles.leftPanel}>
+          <section className={styles.leftPanel}>
             <div className={styles.ownerStatsSlot}>
               <OwnerDashboardStatsBar stats={ownerStats} />
             </div>
@@ -250,14 +237,7 @@ const OwnerDashboardScreen: React.FC = () => {
             </div>
           </section>
 
-          <section
-            className={styles.rightPanel}
-            style={
-              analyticsColumnHeight != null
-                ? { height: analyticsColumnHeight, minHeight: 0 }
-                : undefined
-            }
-          >
+          <section className={styles.rightPanel}>
             {user && (
               <div className={styles.analyticsStack}>
                 <OwnerAnalyticsCarousel

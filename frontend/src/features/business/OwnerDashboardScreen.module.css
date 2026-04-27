@@ -44,10 +44,10 @@
   flex-direction: column;
   gap: 1.35rem;
   min-width: 0;
-  min-height: 0;
   overflow: hidden;
   align-self: start;
   width: 100%;
+  height: calc(2 * var(--owner-business-card-height) + 10rem);
 }
 
 .analyticsStack {

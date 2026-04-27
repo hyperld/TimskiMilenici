@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { getDefaultAnalyticsRange } from '../../ownerAnalyticsDisplayUtils';
 import OwnerPerformancePanel from '../OwnerPerformancePanel/OwnerPerformancePanel';
 import OwnerSpecialOffersPanel from '../OwnerSpecialOffersPanel/OwnerSpecialOffersPanel';
@@ -25,7 +25,6 @@ const OwnerAnalyticsCarousel: React.FC<OwnerAnalyticsCarouselProps> = ({ stores 
   const [to, setTo] = useState(defaultRange.to);
   const [businessId, setBusinessId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const viewportRef = useRef<HTMLDivElement>(null);
 
   const pages: CarouselPage[] = useMemo(
     () => [
@@ -64,40 +63,12 @@ const OwnerAnalyticsCarousel: React.FC<OwnerAnalyticsCarouselProps> = ({ stores 
     if (v < from) setFrom(v);
   };
 
-  const goPrev = useCallback(() => {
-    setCurrentPage((p) => (p - 1 + pages.length) % pages.length);
-  }, [pages.length]);
-
-  const goNext = useCallback(() => {
-    setCurrentPage((p) => (p + 1) % pages.length);
-  }, [pages.length]);
-
-  useEffect(() => {
-    const node = viewportRef.current;
-    if (!node) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.target && (e.target as HTMLElement).closest('input, select, textarea, button')) {
-        return;
-      }
-      if (e.key === 'ArrowLeft') {
-        goPrev();
-        e.preventDefault();
-      } else if (e.key === 'ArrowRight') {
-        goNext();
-        e.preventDefault();
-      }
-    };
-    node.addEventListener('keydown', onKey);
-    return () => node.removeEventListener('keydown', onKey);
-  }, [goPrev, goNext]);
-
   const filters = { businessId, from, to };
 
   return (
     <div
       className={styles.carousel}
       role="region"
-      aria-roledescription="carousel"
       aria-label="Analytics pages"
     >
       <div className={panelStyles.filterBar} role="search" aria-label="Analytics filters">
@@ -148,52 +119,7 @@ const OwnerAnalyticsCarousel: React.FC<OwnerAnalyticsCarouselProps> = ({ stores 
         </div>
       </div>
 
-      <div className={styles.frame}>
-        <button
-          type="button"
-          className={`${styles.chevron} ${styles.chevronPrev}`}
-          onClick={goPrev}
-          aria-label={`Previous page (${pages[(currentPage - 1 + pages.length) % pages.length].title})`}
-        >
-          <span aria-hidden>‹</span>
-        </button>
-
-        <div
-          ref={viewportRef}
-          className={styles.viewport}
-          tabIndex={0}
-          aria-live="polite"
-        >
-          <div
-            className={styles.track}
-            style={{ transform: `translateX(calc(-${currentPage * 100}% - ${currentPage * 0.4}rem))` }}
-          >
-            {pages.map((page, idx) => (
-              <div
-                key={page.id}
-                className={styles.slide}
-                role="group"
-                aria-roledescription="slide"
-                aria-label={`${idx + 1} of ${pages.length}: ${page.title}`}
-                aria-hidden={idx !== currentPage}
-              >
-                {page.render(filters)}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <button
-          type="button"
-          className={`${styles.chevron} ${styles.chevronNext}`}
-          onClick={goNext}
-          aria-label={`Next page (${pages[(currentPage + 1) % pages.length].title})`}
-        >
-          <span aria-hidden>›</span>
-        </button>
-      </div>
-
-      <div className={styles.dots} role="tablist" aria-label="Analytics pages">
+      <div className={styles.tabs} role="tablist" aria-label="Analytics pages">
         {pages.map((page, idx) => (
           <button
             key={page.id}
@@ -201,12 +127,36 @@ const OwnerAnalyticsCarousel: React.FC<OwnerAnalyticsCarouselProps> = ({ stores 
             role="tab"
             aria-selected={idx === currentPage}
             aria-label={page.title}
-            className={`${styles.dot} ${idx === currentPage ? styles.dotActive : ''}`}
+            className={`${styles.tab} ${idx === currentPage ? styles.tabActive : ''}`}
             onClick={() => setCurrentPage(idx)}
           >
-            <span className={styles.dotLabel}>{page.title}</span>
+            {page.title}
           </button>
         ))}
+      </div>
+
+      <div className={styles.frame}>
+        <div
+          className={styles.viewport}
+          aria-live="polite"
+        >
+          <div
+            className={styles.track}
+            style={{ transform: `translateX(-${currentPage * 100}%)` }}
+          >
+            {pages.map((page, idx) => (
+              <div
+                key={page.id}
+                className={styles.slide}
+                role="tabpanel"
+                aria-label={page.title}
+                aria-hidden={idx !== currentPage}
+              >
+                {page.render(filters)}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

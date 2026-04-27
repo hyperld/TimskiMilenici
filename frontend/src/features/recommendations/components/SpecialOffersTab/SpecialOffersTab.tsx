@@ -16,6 +16,7 @@ interface SpecialOffersTabProps {
   items: SpecialOfferItem[];
   onRefresh: () => Promise<void> | void;
   onExploreOffer: (item: SpecialOfferItem) => void;
+  onViewAll?: () => void;
 }
 
 const AUTO_SLIDE_MS = 4500;
@@ -29,7 +30,7 @@ const shuffle = <T,>(arr: T[]): T[] => {
   return clone;
 };
 
-const SpecialOffersTab: React.FC<SpecialOffersTabProps> = ({ items, onRefresh, onExploreOffer }) => {
+const SpecialOffersTab: React.FC<SpecialOffersTabProps> = ({ items, onRefresh, onExploreOffer, onViewAll }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -67,9 +68,16 @@ const SpecialOffersTab: React.FC<SpecialOffersTabProps> = ({ items, onRefresh, o
     <section className={styles.panel}>
       <div className={styles.header}>
         <h3 className={styles.title}>Special Offers</h3>
-        <button type="button" className={styles.refreshBtn} onClick={handleRefresh} disabled={refreshing}>
-          {refreshing ? 'Refreshing...' : 'Refresh'}
-        </button>
+        <div className={styles.headerActions}>
+          <button type="button" className={styles.refreshBtn} onClick={handleRefresh} disabled={refreshing}>
+            {refreshing ? 'Refreshing...' : 'Refresh'}
+          </button>
+          {onViewAll && (
+            <button type="button" className={styles.viewAllBtn} onClick={onViewAll}>
+              View all
+            </button>
+          )}
+        </div>
       </div>
 
       <div className={styles.bodySlot}>

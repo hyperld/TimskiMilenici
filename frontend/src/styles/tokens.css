@@ -45,7 +45,7 @@
 
   /* Home: panel caps scale with viewport; inner content scrolls */
   --home-aside-panel-height: clamp(120px, 22vh, 280px);
-  --home-special-offers-height: clamp(120px, 18vh, 240px);
+  --home-special-offers-height: clamp(160px, 24vh, 300px);
   --home-account-panel-scroll-height: clamp(130px, 26vh, 320px);
   --home-sidebar-bookings-max: clamp(160px, 32vh, 360px);
 

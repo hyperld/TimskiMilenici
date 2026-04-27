@@ -12,6 +12,7 @@ import BookingScreen from '../../features/booking/BookingScreen';
 import CartScreen from '../../features/cart/screens/CartScreen';
 import EditProfileScreen from '../../features/user/EditProfileScreen';
 import OwnerDashboardScreen from '../../features/business/OwnerDashboardScreen';
+import SpecialOffersScreen from '../../features/business/SpecialOffersScreen';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -21,6 +22,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/register" element={<RegisterScreen />} />
       
       <Route path="/home" element={<HomeScreen />} />
+      <Route path="/special-offers" element={<SpecialOffersScreen />} />
       <Route path="/store/:id" element={<StoreDetailsScreen />} />
 
       <Route path="/cart" element={

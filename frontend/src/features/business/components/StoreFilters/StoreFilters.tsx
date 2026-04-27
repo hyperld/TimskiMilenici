@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './StoreFilters.module.css';
 
-export type FilterMode = 'stores' | 'products' | 'services';
+export type FilterMode = 'stores' | 'products' | 'services' | 'offers';
 
 interface StoreFiltersProps {
   searchTerm: string;
@@ -33,6 +33,7 @@ const StoreFilters: React.FC<StoreFiltersProps> = ({
     stores: 'Search stores...',
     products: 'Search products...',
     services: 'Search services...',
+    offers: 'Search offers...',
   };
 
   const renderFilterDropdown = () => {
@@ -49,6 +50,22 @@ const StoreFilters: React.FC<StoreFiltersProps> = ({
             <option value="Veterinary">Veterinary</option>
             <option value="Grooming">Grooming</option>
             <option value="Daycare">Daycare</option>
+          </select>
+        </div>
+      );
+    }
+
+    if (mode === 'offers') {
+      return (
+        <div className={styles.selectWrap}>
+          <select
+            value={filterType}
+            onChange={(e) => onFilterChange(e.target.value)}
+            className={styles.filterSelect}
+          >
+            <option value="All">All Offers</option>
+            <option value="product">Products</option>
+            <option value="service">Services</option>
           </select>
         </div>
       );
@@ -102,7 +119,7 @@ const StoreFilters: React.FC<StoreFiltersProps> = ({
           />
         </div>
         {renderFilterDropdown()}
-        {mode === 'stores' && nearMe ? (
+        {(mode === 'stores' || mode === 'offers') && nearMe ? (
           <button
             type="button"
             className={`${styles.nearMeBtn} ${nearMe.active ? styles.nearMeBtnActive : ''}`}

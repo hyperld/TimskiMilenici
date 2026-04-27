@@ -31,9 +31,9 @@ const TAB_LABELS: Record<TabKey, string> = {
   services: 'Services',
 };
 
-const STORES_PER_PAGE = 5;
-const PRODUCTS_PER_PAGE = 5;
-const SERVICES_PER_PAGE = 5;
+const STORES_PER_PAGE = 6;
+const PRODUCTS_PER_PAGE = 6;
+const SERVICES_PER_PAGE = 6;
 
 const HomeScreen: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
@@ -336,7 +336,6 @@ const HomeScreen: React.FC = () => {
     { title: 'Top Stores', subtitle: 'Browse popular pet stores', tab: 'stores' as TabKey },
     { title: 'Best Products', subtitle: 'Quick picks for your pets', tab: 'products' as TabKey },
     { title: 'Popular Services', subtitle: 'Most booked services', tab: 'services' as TabKey },
-    { title: 'Special Offers', subtitle: 'Find current deals', tab: 'products' as TabKey },
   ].map((item) => ({
     title: item.title,
     subtitle: item.subtitle,
@@ -400,6 +399,7 @@ const HomeScreen: React.FC = () => {
                   items={specialOffers}
                   onRefresh={loadSpecialOffers}
                   onExploreOffer={(offer) => navigate(`/store/${offer.businessId}`)}
+                  onViewAll={() => navigate('/special-offers')}
                 />
               </div>
               {user.userId != null && (
