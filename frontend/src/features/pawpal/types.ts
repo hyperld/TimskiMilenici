@@ -11,6 +11,8 @@ export interface StoreContext {
   description: string;
   address: string;
   categories: string[];
-  services: { name: string; price: number; durationMinutes?: number }[];
-  products: { name: string; price: number; stock?: number }[];
+  /** Services offered by the store. `currentPrice` is what is actually charged. */
+  services: { name: string; currentPrice: number; originalPrice?: number; durationMinutes?: number }[];
+  /** Products offered by the store. `currentPrice` is what is actually charged. */
+  products: { name: string; currentPrice: number; originalPrice?: number; stock?: number }[];
 }

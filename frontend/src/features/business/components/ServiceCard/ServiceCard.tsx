@@ -39,7 +39,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
           {description && <p className={styles.description}>{description}</p>}
         </div>
         <div className={styles.meta}>
-          <span className={styles.price}>${Number(service.price).toFixed(2)}</span>
+          <span className={styles.price}>
+            {service.onSale && service.originalPrice != null && service.originalPrice > service.currentPrice && (
+              <span className={styles.originalPrice}>${Number(service.originalPrice).toFixed(2)}</span>
+            )}
+            ${Number(service.currentPrice).toFixed(2)}
+          </span>
           {duration != null && (
             <span className={styles.duration}>{duration} min</span>
           )}

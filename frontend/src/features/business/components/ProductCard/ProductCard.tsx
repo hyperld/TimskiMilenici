@@ -39,7 +39,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onViewD
           {description && <p className={styles.description}>{description}</p>}
         </div>
         <div className={styles.footer}>
-          <span className={styles.price}>${Number(product.price).toFixed(2)}</span>
+          <span className={styles.price}>
+            {product.onSale && product.originalPrice != null && product.originalPrice > product.currentPrice && (
+              <span className={styles.originalPrice}>${Number(product.originalPrice).toFixed(2)}</span>
+            )}
+            ${Number(product.currentPrice).toFixed(2)}
+          </span>
           <span className={product.stockQuantity != null && product.stockQuantity > 0 ? styles.stock : styles.outOfStock}>
             {product.stockQuantity != null && product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock'}
           </span>

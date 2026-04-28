@@ -62,8 +62,10 @@ public class CustomerAiTools {
             Long itemId,
             String itemName,
             String itemType,
-            BigDecimal price,
-            BigDecimal promotionPrice,
+            /** Regular (non-discounted) price of the item. */
+            BigDecimal originalPrice,
+            /** Price applied to the customer (equals originalPrice unless an active special offer discounts it). */
+            BigDecimal currentPrice,
             Long storeId,
             String storeName
     ) {}
@@ -311,8 +313,8 @@ public class CustomerAiTools {
                 s.getId(),
                 s.getName(),
                 "service",
-                s.getPrice(),
-                s.getPromotionPrice(),
+                s.getOriginalPrice(),
+                s.getCurrentPrice(),
                 b.getId(),
                 b.getName()
         );
@@ -323,8 +325,8 @@ public class CustomerAiTools {
                 p.getId(),
                 p.getName(),
                 "product",
-                p.getPrice(),
-                p.getPromotionPrice(),
+                p.getOriginalPrice(),
+                p.getCurrentPrice(),
                 b.getId(),
                 b.getName()
         );

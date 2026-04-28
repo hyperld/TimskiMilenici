@@ -30,7 +30,12 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
           <h2 className={styles.productName}>{product.name}</h2>
           <p className={styles.description}>{product.description}</p>
           <div className={styles.meta}>
-            <span className={styles.price}>${Number(product.price).toFixed(2)}</span>
+            <span className={styles.price}>
+              {product.onSale && product.originalPrice != null && product.originalPrice > product.currentPrice && (
+                <span className={styles.originalPrice}>${Number(product.originalPrice).toFixed(2)}</span>
+              )}
+              ${Number(product.currentPrice).toFixed(2)}
+            </span>
             {product.stockQuantity != null && (
               <span className={product.stockQuantity > 0 ? styles.inStock : styles.outOfStock}>
                 {product.stockQuantity > 0 ? `In Stock (${product.stockQuantity})` : 'Out of Stock'}

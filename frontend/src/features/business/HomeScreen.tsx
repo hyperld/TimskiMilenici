@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import TopBar from '../../shared/components/TopBar/TopBar';
 import { useAuth } from '../../features/auth/hooks/useAuth';
 import { useCart } from '../../features/cart/context/CartContext';
@@ -39,10 +39,20 @@ const HomeScreen: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const { addItem } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [activeTab, setActiveTab] = useState<TabKey>('stores');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('All');
+  /**
+   * When true, the active tab fetches the popularity-ranked list:
+   *   stores   → top by average review rating
+   *   products → top by units sold
+   *   services → top by booking count
+   * Toggled either via the star button in the filter bar or by the
+   * Recommended panel shortcuts.
+   */
+  const [topActive, setTopActive] = useState(false);
 
   const [stores, setStores] = useState<Business[]>([]);
   const [products, setProducts] = useState<ProductWithStore[]>([]);
@@ -65,7 +75,25 @@ const HomeScreen: React.FC = () => {
     setSearchTerm('');
     setFilterType('All');
     setCurrentPage(1);
+    setTopActive(false);
   }, [activeTab]);
+
+  // Allow other screens (e.g. Recommended panel shortcuts) to deep-link into
+  // a specific tab with the "Top" filter pre-applied via location.state.
+  useEffect(() => {
+    const state = location.state as { activeTab?: TabKey; topActive?: boolean } | null;
+    if (!state) return;
+    if (state.activeTab) {
+      setActiveTab(state.activeTab);
+    }
+    if (state.topActive) {
+      setTopActive(true);
+    }
+    // Consume the state so a normal back/forward navigation doesn't replay it.
+    if (state.activeTab || state.topActive) {
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location, navigate]);
 
   const loadSpecialOffers = useCallback(async () => {
     try {
@@ -75,27 +103,27 @@ const HomeScreen: React.FC = () => {
       ]);
 
       const mappedProducts: SpecialOfferItem[] = promoProducts
-        .filter((p: any) => p.promotionPrice != null && Number(p.promotionPrice) < Number(p.price))
+        .filter((p: any) => Number(p.currentPrice) < Number(p.originalPrice))
         .map((p: any) => ({
           id: p.id,
           type: 'product',
           name: p.name,
           businessId: p.businessId,
           businessName: p.businessName,
-          price: Number(p.price),
-          promotionPrice: Number(p.promotionPrice),
+          originalPrice: Number(p.originalPrice),
+          currentPrice: Number(p.currentPrice),
         }));
 
       const mappedServices: SpecialOfferItem[] = promoServices
-        .filter((s: any) => s.promotionPrice != null && Number(s.promotionPrice) < Number(s.price))
+        .filter((s: any) => Number(s.currentPrice) < Number(s.originalPrice))
         .map((s: any) => ({
           id: s.id,
           type: 'service',
           name: s.name,
           businessId: s.businessId,
           businessName: s.businessName,
-          price: Number(s.price),
-          promotionPrice: Number(s.promotionPrice),
+          originalPrice: Number(s.originalPrice),
+          currentPrice: Number(s.currentPrice),
         }));
 
       const combined = [...mappedProducts, ...mappedServices];
@@ -168,13 +196,19 @@ const HomeScreen: React.FC = () => {
       setError('');
       try {
         if (activeTab === 'stores') {
-          const data = await businessService.getAllBusinesses();
+          const data = topActive
+            ? await businessService.getTopBusinesses()
+            : await businessService.getAllBusinesses();
           setStores(data);
         } else if (activeTab === 'products') {
-          const data = await businessService.getAllProducts();
+          const data = topActive
+            ? await businessService.getTopProducts()
+            : await businessService.getAllProducts();
           setProducts(data);
         } else {
-          const data = await businessService.getAllServices();
+          const data = topActive
+            ? await businessService.getTopServices()
+            : await businessService.getAllServices();
           setServices(data);
         }
       } catch (err) {
@@ -186,7 +220,7 @@ const HomeScreen: React.FC = () => {
     };
 
     fetchData();
-  }, [activeTab]);
+  }, [activeTab, topActive]);
 
   const activeStoreList = useMemo(() => {
     if (!nearMeActive || !nearbyStores) {
@@ -229,9 +263,9 @@ const HomeScreen: React.FC = () => {
       p.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     if (filterType === 'price-low') {
-      filtered = [...filtered].sort((a, b) => Number(a.price) - Number(b.price));
+      filtered = [...filtered].sort((a, b) => Number(a.currentPrice) - Number(b.currentPrice));
     } else if (filterType === 'price-high') {
-      filtered = [...filtered].sort((a, b) => Number(b.price) - Number(a.price));
+      filtered = [...filtered].sort((a, b) => Number(b.currentPrice) - Number(a.currentPrice));
     }
     return filtered;
   };
@@ -241,9 +275,9 @@ const HomeScreen: React.FC = () => {
       s.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     if (filterType === 'price-low') {
-      filtered = [...filtered].sort((a, b) => Number(a.price) - Number(b.price));
+      filtered = [...filtered].sort((a, b) => Number(a.currentPrice) - Number(b.currentPrice));
     } else if (filterType === 'price-high') {
-      filtered = [...filtered].sort((a, b) => Number(b.price) - Number(a.price));
+      filtered = [...filtered].sort((a, b) => Number(b.currentPrice) - Number(a.currentPrice));
     }
     return filtered;
   };
@@ -333,17 +367,28 @@ const HomeScreen: React.FC = () => {
   })();
 
   const recommendedItems = [
-    { title: 'Top Stores', subtitle: 'Browse popular pet stores', tab: 'stores' as TabKey },
-    { title: 'Best Products', subtitle: 'Quick picks for your pets', tab: 'products' as TabKey },
-    { title: 'Popular Services', subtitle: 'Most booked services', tab: 'services' as TabKey },
+    { title: 'Top Stores', subtitle: 'Highest-rated pet stores', tab: 'stores' as TabKey },
+    { title: 'Top Products', subtitle: 'Best-selling picks for your pets', tab: 'products' as TabKey },
+    { title: 'Popular Services', subtitle: 'Most-booked services', tab: 'services' as TabKey },
   ].map((item) => ({
     title: item.title,
     subtitle: item.subtitle,
     onClick: () => {
       setActiveTab(item.tab);
       setCurrentPage(1);
+      setTopActive(true);
     },
   }));
+
+  const handleToggleTop = useCallback(() => {
+    setTopActive((prev) => !prev);
+    setCurrentPage(1);
+  }, []);
+
+  const topToggle = useMemo(
+    () => ({ active: topActive, loading, onToggle: handleToggleTop }),
+    [topActive, loading, handleToggleTop]
+  );
 
   const homeHeaderTools = isAuthenticated ? <NotificationHeaderButton /> : undefined;
 
@@ -383,6 +428,7 @@ const HomeScreen: React.FC = () => {
                       onToggle: handleNearMeToggle,
                       label: nearMeActive ? 'Near me · on' : 'Near me',
                     }}
+                    top={topToggle}
                   />
                 </div>
               </div>
@@ -441,6 +487,7 @@ const HomeScreen: React.FC = () => {
                     onToggle: handleNearMeToggle,
                     label: nearMeActive ? 'Near me · on' : 'Near me',
                   }}
+                  top={topToggle}
                 />
               </div>
             </div>

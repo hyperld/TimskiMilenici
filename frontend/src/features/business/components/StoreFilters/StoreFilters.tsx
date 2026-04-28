@@ -18,6 +18,16 @@ interface StoreFiltersProps {
     onToggle: () => void;
     label?: string;
   };
+  /**
+   * "Top" toggle — rendered for stores / products / services tabs when this
+   * prop is set. When active, the listing fetches the popularity-ranked list
+   * (top by rating / sales / bookings depending on the tab).
+   */
+  top?: {
+    active: boolean;
+    loading?: boolean;
+    onToggle: () => void;
+  };
 }
 
 const StoreFilters: React.FC<StoreFiltersProps> = ({
@@ -28,7 +38,14 @@ const StoreFilters: React.FC<StoreFiltersProps> = ({
   mode = 'stores',
   pagination,
   nearMe,
+  top,
 }) => {
+  const topLabels: Record<FilterMode, string> = {
+    stores: 'Top rated',
+    products: 'Top sellers',
+    services: 'Most booked',
+    offers: 'Top offers',
+  };
   const searchPlaceholders: Record<FilterMode, string> = {
     stores: 'Search stores...',
     products: 'Search products...',
@@ -119,6 +136,19 @@ const StoreFilters: React.FC<StoreFiltersProps> = ({
           />
         </div>
         {renderFilterDropdown()}
+        {top && (mode === 'stores' || mode === 'products' || mode === 'services') ? (
+          <button
+            type="button"
+            className={`${styles.topBtn} ${top.active ? styles.topBtnActive : ''}`}
+            onClick={top.onToggle}
+            disabled={top.loading}
+            aria-pressed={top.active}
+            title={top.active ? `Showing ${topLabels[mode].toLowerCase()}` : `Show ${topLabels[mode].toLowerCase()}`}
+          >
+            <span aria-hidden className={styles.topStar}>★</span>
+            <span>{top.loading ? 'Loading…' : topLabels[mode]}</span>
+          </button>
+        ) : null}
         {(mode === 'stores' || mode === 'offers') && nearMe ? (
           <button
             type="button"

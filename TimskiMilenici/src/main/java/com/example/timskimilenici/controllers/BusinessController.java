@@ -60,6 +60,16 @@ public class BusinessController {
      * sorted by ascending distance. Each row includes a {@code distanceKm}
      * field. Invalid coordinates yield an empty list.
      */
+    /**
+     * Top stores ranked by their average review rating (then by review volume,
+     * then alphabetically). The aggregate runs as a single batch query so this
+     * endpoint stays cheap regardless of how many stores exist.
+     */
+    @GetMapping("/top")
+    public List<Business> top(@RequestParam(required = false) Integer limit) {
+        return businessService.getTopBusinesses(limit);
+    }
+
     @GetMapping("/nearby")
     public List<BusinessWithDistance> nearby(@RequestParam double lat,
                                              @RequestParam double lng,

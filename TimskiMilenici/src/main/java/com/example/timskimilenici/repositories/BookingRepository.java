@@ -35,7 +35,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                   COUNT(b) AS bookings,
                   SUM(CASE WHEN b.status = 'COMPLETED' THEN 1 ELSE 0 END) AS completed,
                   SUM(CASE WHEN b.status = 'CANCELLED' THEN 1 ELSE 0 END) AS cancelled,
-                  SUM(CASE WHEN b.status = 'COMPLETED' THEN COALESCE(ps.price, 0) ELSE 0 END) AS revenue
+                  SUM(CASE WHEN b.status = 'COMPLETED' THEN COALESCE(ps.originalPrice, 0) ELSE 0 END) AS revenue
            FROM Booking b
            JOIN b.service ps
            JOIN ps.business biz
@@ -57,7 +57,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                   COUNT(b) AS bookings,
                   SUM(CASE WHEN b.status = 'COMPLETED' THEN 1 ELSE 0 END) AS completed,
                   SUM(CASE WHEN b.status = 'CANCELLED' THEN 1 ELSE 0 END) AS cancelled,
-                  SUM(CASE WHEN b.status = 'COMPLETED' THEN COALESCE(ps.price, 0) ELSE 0 END) AS revenue
+                  SUM(CASE WHEN b.status = 'COMPLETED' THEN COALESCE(ps.originalPrice, 0) ELSE 0 END) AS revenue
            FROM Booking b
            JOIN b.service ps
            JOIN ps.business biz

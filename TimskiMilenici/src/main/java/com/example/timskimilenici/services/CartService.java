@@ -145,7 +145,7 @@ public class CartService {
                     order,
                     ci.getProduct(),
                     ci.getQuantity(),
-                    ci.getProduct().getEffectivePrice()
+                    ci.getProduct().getCurrentPrice()
             );
             order.addItem(oi);
         }

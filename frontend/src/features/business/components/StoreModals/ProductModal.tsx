@@ -33,8 +33,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ itemFormData, setItemFormDa
           </div>
           <div className={styles.formRow}>
             <div className={styles.formGroup}>
-              <label>Price ($)</label>
-              <input type="number" step="0.01" name="price" value={itemFormData.price} onChange={handleChange} required />
+              <label>Original Price ($)</label>
+              <input type="number" step="0.01" name="originalPrice" value={itemFormData.originalPrice} onChange={handleChange} required />
             </div>
             <div className={styles.formGroup}>
               <label>Stock Quantity</label>
@@ -43,7 +43,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ itemFormData, setItemFormDa
           </div>
           <div className={styles.formRow}>
             <div className={styles.formGroup}>
-              <label>Sale Price ($)</label>
+              <label>Special offer price ($)</label>
               <input
                 type="number"
                 step="0.01"

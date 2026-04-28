@@ -50,6 +50,13 @@
   color: var(--color-text-light, #6b7280);
 }
 
+.originalPrice {
+  margin-right: 0.35rem;
+  text-decoration: line-through;
+  color: var(--color-text-light, #9ca3af);
+  font-size: 0.8rem;
+}
+
 .quantityRow {
   display: inline-flex;
   align-items: center;

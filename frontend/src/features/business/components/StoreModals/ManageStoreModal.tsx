@@ -68,7 +68,7 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
   const [showItemModal, setShowItemModal] = useState(false);
   const [itemFormData, setItemFormData] = useState({
     name: '',
-    price: '',
+    originalPrice: '',
     description: '',
     type: 'product',
     stockQuantity: '',
@@ -288,7 +288,7 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
     if (item) {
       setItemFormData({
         name: item.name,
-        price: item.price.toString(),
+        originalPrice: item.originalPrice.toString(),
         description: item.description || '',
         type: type,
         stockQuantity: item.stockQuantity?.toString() || '',
@@ -301,7 +301,7 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
     } else {
       setItemFormData({
         name: '',
-        price: '',
+        originalPrice: '',
         description: '',
         type: type,
         stockQuantity: '',
@@ -318,13 +318,19 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
   const handleLocalSaveItem = (e: React.FormEvent) => {
     e.preventDefault();
     const typeKey = itemFormData.type === 'product' ? 'products' : 'services';
+    const originalPrice = parseFloat(itemFormData.originalPrice);
+    const promotionPrice = itemFormData.promotionPrice ? parseFloat(itemFormData.promotionPrice) : null;
+    const currentPrice =
+      promotionPrice != null && promotionPrice < originalPrice ? promotionPrice : originalPrice;
     const normalizedItem = {
       ...itemFormData,
-      price: parseFloat(itemFormData.price),
+      originalPrice,
+      currentPrice,
+      onSale: promotionPrice != null && promotionPrice < originalPrice,
       stockQuantity: itemFormData.stockQuantity ? parseInt(itemFormData.stockQuantity) : undefined,
       durationMinutes: itemFormData.durationMinutes ? parseInt(itemFormData.durationMinutes) : undefined,
       capacity: itemFormData.capacity ? parseInt(itemFormData.capacity) : undefined,
-      promotionPrice: itemFormData.promotionPrice ? parseFloat(itemFormData.promotionPrice) : null,
+      promotionPrice,
       promoted: !!itemFormData.promoted,
     };
     
@@ -579,7 +585,7 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
                   <div className={styles.itemInfo}>
                     <h4>{product.name}</h4>
                     <p>
-                      ${product.price}
+                      ${product.originalPrice}
                       {product.promotionPrice ? (
                         <span className={styles.saleInfo}> {'->'} ${product.promotionPrice} sale</span>
                       ) : null}
@@ -623,7 +629,7 @@ const ManageStoreModal: React.FC<ManageStoreModalProps> = ({
                   <div className={styles.itemInfo}>
                     <h4>{service.name}</h4>
                     <p>
-                      ${service.price}
+                      ${service.originalPrice}
                       {service.promotionPrice ? (
                         <span className={styles.saleInfo}> {'->'} ${service.promotionPrice} sale</span>
                       ) : null}

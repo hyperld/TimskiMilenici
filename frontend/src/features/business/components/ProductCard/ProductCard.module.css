@@ -104,6 +104,16 @@
   font-size: 0.9rem;
   font-weight: 700;
   color: var(--color-text);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.originalPrice {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+  text-decoration: line-through;
 }
 
 .stock {

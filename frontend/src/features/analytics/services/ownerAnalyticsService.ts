@@ -49,7 +49,9 @@ export interface SpecialOfferRow {
   itemType: 'service' | 'product';
   businessId: number;
   businessName: string;
-  basePrice: number;
+  /** Regular (non-discounted) price of the item. */
+  originalPrice: number;
+  /** Discounted price while the special offer is active. */
   promotionPrice: number;
   discountPercent: number | null;
   usageCount: number;

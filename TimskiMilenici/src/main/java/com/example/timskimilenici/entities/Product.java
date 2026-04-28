@@ -12,10 +12,10 @@ public class Product extends BaseItem {
 
     public Product() {}
 
-    public Product(String name, String description, BigDecimal price, Integer stockQuantity, Business business) {
+    public Product(String name, String description, BigDecimal originalPrice, Integer stockQuantity, Business business) {
         this.setName(name);
         this.setDescription(description);
-        this.setPrice(price);
+        this.setOriginalPrice(originalPrice);
         this.setBusiness(business);
         this.stockQuantity = stockQuantity;
     }

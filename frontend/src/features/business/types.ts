@@ -20,6 +20,10 @@ export interface Business {
   ownerId: number;
   services: PetService[];
   products: Product[];
+  /** Average review rating (0–5). Hydrated by the backend on listing endpoints. */
+  averageRating?: number;
+  /** Number of reviews backing {@link averageRating}. */
+  reviewCount?: number;
   /**
    * Primary type label used in older parts of the UI.
    * Prefer `types` for new code so a store can belong to multiple types.
@@ -52,9 +56,13 @@ export interface PetService {
   id: number;
   name: string;
   description: string;
-  price: number;
+  /** Regular (non-discounted) price of the service. */
+  originalPrice: number;
+  /** Price displayed and applied everywhere. Equals originalPrice unless a special offer discounts it. */
+  currentPrice: number;
+  /** Optional discounted price for an active special offer (used when editing). */
   promotionPrice?: number | null;
-  effectivePrice?: number;
+  /** True when currentPrice is lower than originalPrice because of a special offer. */
   onSale?: boolean;
   promoted?: boolean;
   duration?: number;
@@ -66,9 +74,13 @@ export interface Product {
   id: number;
   name: string;
   description: string;
-  price: number;
+  /** Regular (non-discounted) price of the product. */
+  originalPrice: number;
+  /** Price displayed and applied everywhere. Equals originalPrice unless a special offer discounts it. */
+  currentPrice: number;
+  /** Optional discounted price for an active special offer (used when editing). */
   promotionPrice?: number | null;
-  effectivePrice?: number;
+  /** True when currentPrice is lower than originalPrice because of a special offer. */
   onSale?: boolean;
   promoted?: boolean;
   stock?: number;

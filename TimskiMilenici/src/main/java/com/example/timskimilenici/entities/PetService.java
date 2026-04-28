@@ -15,10 +15,10 @@ public class PetService extends BaseItem {
 
     public PetService() {}
 
-    public PetService(String name, String description, BigDecimal price, Integer capacity, Business business) {
+    public PetService(String name, String description, BigDecimal originalPrice, Integer capacity, Business business) {
         this.setName(name);
         this.setDescription(description);
-        this.setPrice(price);
+        this.setOriginalPrice(originalPrice);
         this.setBusiness(business);
         this.capacity = capacity;
     }

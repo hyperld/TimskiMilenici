@@ -18,9 +18,19 @@ public abstract class BaseItem {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false)
-    private BigDecimal price;
+    /**
+     * The regular price of the item. Mapped to the legacy {@code price} column
+     * so existing rows keep working without a database migration.
+     */
+    @Column(name = "price", nullable = false)
+    private BigDecimal originalPrice;
 
+    /**
+     * Optional discounted price set when a special offer is active for this
+     * item. When present and lower than {@link #originalPrice}, it becomes the
+     * {@link #getCurrentPrice() current price} that is displayed and applied
+     * everywhere (cart, checkout, analytics, etc.).
+     */
     @Column(name = "promotion_price")
     private BigDecimal promotionPrice;
 
@@ -29,45 +39,55 @@ public abstract class BaseItem {
     @JsonBackReference
     private Business business;
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) {
-        if (price == null || price.signum() <= 0) {
-            throw new IllegalArgumentException("Price must be positive.");
+
+    public BigDecimal getOriginalPrice() { return originalPrice; }
+    public void setOriginalPrice(BigDecimal originalPrice) {
+        if (originalPrice == null || originalPrice.signum() <= 0) {
+            throw new IllegalArgumentException("Original price must be positive.");
         }
-        this.price = price;
-        validatePromotionPrice(this.promotionPrice, this.price);
+        this.originalPrice = originalPrice;
+        validatePromotionPrice(this.promotionPrice, this.originalPrice);
     }
+
     public BigDecimal getPromotionPrice() { return promotionPrice; }
     public void setPromotionPrice(BigDecimal promotionPrice) {
         if (promotionPrice != null && promotionPrice.signum() <= 0) {
             throw new IllegalArgumentException("Promotion price must be positive.");
         }
-        validatePromotionPrice(promotionPrice, this.price);
+        validatePromotionPrice(promotionPrice, this.originalPrice);
         this.promotionPrice = promotionPrice;
     }
+
     public Business getBusiness() { return business; }
     public void setBusiness(Business business) { this.business = business; }
 
-    @JsonProperty("effectivePrice")
-    public BigDecimal getEffectivePrice() {
-        return hasValidPromotion() ? promotionPrice : price;
+    /**
+     * The price that is displayed and applied everywhere. Equals
+     * {@link #originalPrice} unless an active special offer (a valid
+     * {@link #promotionPrice}) discounts it below the original.
+     */
+    @JsonProperty("currentPrice")
+    public BigDecimal getCurrentPrice() {
+        return hasSpecialOffer() ? promotionPrice : originalPrice;
     }
 
+    /** True when an active special offer makes {@link #getCurrentPrice()} lower than {@link #originalPrice}. */
     @JsonProperty("onSale")
-    public boolean hasValidPromotion() {
-        return promotionPrice != null && price != null && promotionPrice.compareTo(price) < 0;
+    public boolean hasSpecialOffer() {
+        return promotionPrice != null
+                && originalPrice != null
+                && promotionPrice.compareTo(originalPrice) < 0;
     }
 
     private void validatePromotionPrice(BigDecimal promo, BigDecimal basePrice) {
         if (promo != null && basePrice != null && promo.compareTo(basePrice) >= 0) {
-            throw new IllegalArgumentException("Promotion price must be lower than base price.");
+            throw new IllegalArgumentException("Promotion price must be lower than the original price.");
         }
     }
 

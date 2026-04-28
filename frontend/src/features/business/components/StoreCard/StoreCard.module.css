@@ -117,6 +117,49 @@
   overflow: hidden;
 }
 
+.ratingWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  line-height: 1;
+  color: var(--color-text-light);
+  white-space: nowrap;
+}
+
+.ratingStars {
+  display: inline-flex;
+  font-size: 0.78rem;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.starFull {
+  color: #f5b301;
+}
+
+.starHalf {
+  color: #f5b301;
+  opacity: 0.55;
+}
+
+.starEmpty {
+  color: #d8dde2;
+}
+
+.ratingValue {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.ratingCount {
+  color: var(--color-text-light);
+}
+
+.ratingEmpty {
+  font-style: italic;
+}
+
 .distanceBadge {
   position: absolute;
   top: 0.4rem;

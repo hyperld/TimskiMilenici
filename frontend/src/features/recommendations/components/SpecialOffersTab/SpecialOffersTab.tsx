@@ -7,8 +7,10 @@ export interface SpecialOfferItem {
   name: string;
   businessId: number;
   businessName: string;
-  price: number;
-  promotionPrice: number;
+  /** Regular (non-discounted) price. */
+  originalPrice: number;
+  /** Discounted price applied while the offer is active. */
+  currentPrice: number;
   promoted?: boolean;
 }
 
@@ -60,8 +62,8 @@ const SpecialOffersTab: React.FC<SpecialOffersTabProps> = ({ items, onRefresh, o
   const hasOffers = visibleItems.length > 0;
   const item = hasOffers ? visibleItems[activeIndex] : null;
   const discountPercent =
-    item && item.price > 0
-      ? Math.max(0, Math.round(((item.price - item.promotionPrice) / item.price) * 100))
+    item && item.originalPrice > 0
+      ? Math.max(0, Math.round(((item.originalPrice - item.currentPrice) / item.originalPrice) * 100))
       : 0;
 
   return (
@@ -102,8 +104,8 @@ const SpecialOffersTab: React.FC<SpecialOffersTabProps> = ({ items, onRefresh, o
               <h4 className={styles.offerName}>{item.name}</h4>
               <p className={styles.storeName}>{item.businessName}</p>
               <div className={styles.priceRow}>
-                <span className={styles.oldPrice}>${Number(item.price).toFixed(2)}</span>
-                <span className={styles.newPrice}>${Number(item.promotionPrice).toFixed(2)}</span>
+                <span className={styles.oldPrice}>${Number(item.originalPrice).toFixed(2)}</span>
+                <span className={styles.newPrice}>${Number(item.currentPrice).toFixed(2)}</span>
               </div>
             </article>
           </div>

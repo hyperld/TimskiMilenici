@@ -14,6 +14,21 @@ function formatDistance(km: number): string {
   return `${km.toFixed(km < 10 ? 1 : 0)} km`;
 }
 
+/** Render a 5-star bar with full / half / empty glyphs for the average rating. */
+function renderStars(value: number): React.ReactNode[] {
+  const stars: React.ReactNode[] = [];
+  for (let i = 1; i <= 5; i += 1) {
+    if (value >= i) {
+      stars.push(<span key={i} className={styles.starFull}>★</span>);
+    } else if (value >= i - 0.5) {
+      stars.push(<span key={i} className={styles.starHalf}>★</span>);
+    } else {
+      stars.push(<span key={i} className={styles.starEmpty}>☆</span>);
+    }
+  }
+  return stars;
+}
+
 const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
   const navigate = useNavigate();
 
@@ -60,6 +75,24 @@ const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
           </div>
           <div className={styles.locationWrap}>
             <span className={styles.storeLocation}>📍 {store.address}</span>
+            {typeof store.averageRating === 'number' && (store.reviewCount ?? 0) > 0 ? (
+              <span
+                className={styles.ratingWrap}
+                aria-label={`${store.averageRating.toFixed(1)} out of 5 from ${store.reviewCount} review${store.reviewCount === 1 ? '' : 's'}`}
+                title={`${store.averageRating.toFixed(1)} / 5 · ${store.reviewCount} review${store.reviewCount === 1 ? '' : 's'}`}
+              >
+                <span className={styles.ratingStars} aria-hidden>
+                  {renderStars(store.averageRating)}
+                </span>
+                <span className={styles.ratingValue}>{store.averageRating.toFixed(1)}</span>
+                <span className={styles.ratingCount}>({store.reviewCount})</span>
+              </span>
+            ) : (
+              <span className={styles.ratingWrap} aria-label="No reviews yet">
+                <span className={styles.ratingStars} aria-hidden>{renderStars(0)}</span>
+                <span className={styles.ratingEmpty}>No reviews</span>
+              </span>
+            )}
           </div>
         </div>
         <p className={styles.storeDescription}>{description}</p>

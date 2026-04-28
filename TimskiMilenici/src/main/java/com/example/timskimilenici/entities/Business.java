@@ -90,6 +90,19 @@ public class Business {
     @MapKeyEnumerated(EnumType.STRING)
     private Map<DayOfWeek, WorkingDaySlot> workingSchedule = new EnumMap<>(DayOfWeek.class);
 
+    /**
+     * Average review rating, hydrated by {@code BusinessService} via a single
+     * aggregate query. Not persisted — review data lives in the {@code reviews}
+     * table and is summarized on read so the listing payload always reflects
+     * the latest counts without N+1 queries.
+     */
+    @Transient
+    private Double averageRating;
+
+    /** Number of reviews backing {@link #averageRating}; hydrated alongside it. */
+    @Transient
+    private Long reviewCount;
+
     protected Business() {}
 
     public Business(String name, String description, String category, User owner) {
@@ -138,6 +151,11 @@ public class Business {
     public void setWorkingSchedule(Map<DayOfWeek, WorkingDaySlot> workingSchedule) {
         this.workingSchedule = workingSchedule != null ? workingSchedule : new EnumMap<>(DayOfWeek.class);
     }
+
+    public Double getAverageRating() { return averageRating; }
+    public void setAverageRating(Double averageRating) { this.averageRating = averageRating; }
+    public Long getReviewCount() { return reviewCount; }
+    public void setReviewCount(Long reviewCount) { this.reviewCount = reviewCount; }
 
     @PreUpdate
     public void preUpdate() {

@@ -5,6 +5,7 @@ import com.example.timskimilenici.entities.Business;
 import com.example.timskimilenici.entities.WorkingDaySlot;
 import com.example.timskimilenici.repositories.BookingRepository;
 import com.example.timskimilenici.repositories.BusinessRepository;
+import com.example.timskimilenici.repositories.ReviewRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,22 +32,87 @@ public class BusinessService {
 
     private final BusinessRepository businessRepository;
     private final BookingRepository bookingRepository;
+    private final ReviewRepository reviewRepository;
     private final MapboxGeocodingService geocoder;
 
     public BusinessService(BusinessRepository businessRepository,
                            BookingRepository bookingRepository,
+                           ReviewRepository reviewRepository,
                            MapboxGeocodingService geocoder) {
         this.businessRepository = businessRepository;
         this.bookingRepository = bookingRepository;
+        this.reviewRepository = reviewRepository;
         this.geocoder = geocoder;
     }
 
     public List<Business> getAllBusinesses() {
-        return businessRepository.findAll();
+        List<Business> all = businessRepository.findAll();
+        hydrateRatings(all);
+        return all;
     }
 
     public Optional<Business> getBusinessById(Long id) {
-        return businessRepository.findById(id);
+        Optional<Business> b = businessRepository.findById(id);
+        b.ifPresent(business -> hydrateRatings(List.of(business)));
+        return b;
+    }
+
+    /**
+     * Top businesses by average review rating. Reviews-light businesses keep
+     * their natural rating (no smoothing) but the tie-breaker pushes
+     * highly-rated stores with more reviews above ones with a single 5★.
+     * Businesses without any reviews are appended at the bottom so the
+     * "Top Stores" tile is never empty on a fresh deployment. The whole thing
+     * runs on top of the existing aggregate query (one DB call) plus an
+     * in-memory sort, so it stays cheap even when the catalogue grows.
+     */
+    public List<Business> getTopBusinesses(Integer limit) {
+        List<Business> all = businessRepository.findAll();
+        hydrateRatings(all);
+        all.sort((a, b) -> {
+            double ar = a.getAverageRating() != null ? a.getAverageRating() : -1;
+            double br = b.getAverageRating() != null ? b.getAverageRating() : -1;
+            int cmp = Double.compare(br, ar);
+            if (cmp != 0) return cmp;
+            long ac = a.getReviewCount() != null ? a.getReviewCount() : 0;
+            long bc = b.getReviewCount() != null ? b.getReviewCount() : 0;
+            cmp = Long.compare(bc, ac);
+            if (cmp != 0) return cmp;
+            String an = a.getName() != null ? a.getName() : "";
+            String bn = b.getName() != null ? b.getName() : "";
+            return an.compareToIgnoreCase(bn);
+        });
+        if (limit != null && limit > 0 && all.size() > limit) {
+            return new ArrayList<>(all.subList(0, limit));
+        }
+        return all;
+    }
+
+    /**
+     * Populate the transient {@code averageRating} / {@code reviewCount} fields
+     * on every supplied business in a single batch query. Cheaper than fetching
+     * reviews per business and avoids N+1 round trips on the listing screens.
+     */
+    public void hydrateRatings(Collection<Business> businesses) {
+        if (businesses == null || businesses.isEmpty()) return;
+        Map<Long, double[]> aggregates = new HashMap<>();
+        for (Object[] row : reviewRepository.aggregateRatingsByBusiness()) {
+            if (row == null || row.length < 3 || row[0] == null) continue;
+            Long id = ((Number) row[0]).longValue();
+            double avg = row[1] instanceof Number ? ((Number) row[1]).doubleValue() : 0.0;
+            long count = row[2] instanceof Number ? ((Number) row[2]).longValue() : 0L;
+            aggregates.put(id, new double[]{avg, count});
+        }
+        for (Business b : businesses) {
+            double[] agg = b.getId() != null ? aggregates.get(b.getId()) : null;
+            if (agg != null) {
+                b.setAverageRating(agg[0]);
+                b.setReviewCount((long) agg[1]);
+            } else {
+                b.setAverageRating(0.0);
+                b.setReviewCount(0L);
+            }
+        }
     }
 
     @Transactional
@@ -157,14 +225,17 @@ public class BusinessService {
         List<Business> candidates =
                 businessRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLng, maxLng);
 
+        List<Business> matchedBusinesses = new ArrayList<>();
         List<BusinessWithDistance> results = new ArrayList<>();
         for (Business b : candidates) {
             if (b.getLatitude() == null || b.getLongitude() == null) continue;
             double d = haversineKm(lat, lng, b.getLatitude(), b.getLongitude());
             if (d <= effectiveRadius) {
+                matchedBusinesses.add(b);
                 results.add(new BusinessWithDistance(b, d));
             }
         }
+        hydrateRatings(matchedBusinesses);
         results.sort(Comparator.comparingDouble(BusinessWithDistance::getDistanceKm));
         if (limit != null && limit > 0 && results.size() > limit) {
             return results.subList(0, limit);
@@ -226,36 +297,41 @@ public class BusinessService {
         List<Business> legacy = businessRepository.findByCategory(category);
         List<Business> multi = businessRepository.findByCategoriesContaining(category);
 
+        List<Business> combined;
         if (legacy.isEmpty()) {
-            return multi;
-        }
-        if (multi.isEmpty()) {
-            return legacy;
-        }
-
-        // Merge without duplicates (by id).
-        List<Business> combined = new java.util.ArrayList<>(legacy);
-        java.util.Set<Long> seenIds = new java.util.HashSet<>();
-        for (Business b : legacy) {
-            if (b.getId() != null) {
-                seenIds.add(b.getId());
+            combined = multi;
+        } else if (multi.isEmpty()) {
+            combined = legacy;
+        } else {
+            // Merge without duplicates (by id).
+            combined = new java.util.ArrayList<>(legacy);
+            java.util.Set<Long> seenIds = new java.util.HashSet<>();
+            for (Business b : legacy) {
+                if (b.getId() != null) {
+                    seenIds.add(b.getId());
+                }
+            }
+            for (Business b : multi) {
+                Long id = b.getId();
+                if (id == null || !seenIds.contains(id)) {
+                    combined.add(b);
+                }
             }
         }
-        for (Business b : multi) {
-            Long id = b.getId();
-            if (id == null || !seenIds.contains(id)) {
-                combined.add(b);
-            }
-        }
+        hydrateRatings(combined);
         return combined;
     }
 
     public List<Business> searchByAddress(String address) {
-        return businessRepository.findByAddressContainingIgnoreCase(address);
+        List<Business> results = businessRepository.findByAddressContainingIgnoreCase(address);
+        hydrateRatings(results);
+        return results;
     }
 
     public List<Business> getBusinessByOwnerId(Long ownerId) {
-        return businessRepository.findByOwnerId(ownerId);
+        List<Business> results = businessRepository.findByOwnerId(ownerId);
+        hydrateRatings(results);
+        return results;
     }
 
     @Transactional

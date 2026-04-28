@@ -243,7 +243,7 @@ export const businessService = {
 
     const payload = {
       name: serviceData.name,
-      price: parseFloat(serviceData.price),
+      originalPrice: parseFloat(serviceData.originalPrice),
       promotionPrice: serviceData.promotionPrice ? parseFloat(serviceData.promotionPrice) : null,
       description: serviceData.description || '',
       capacity: parseInt(serviceData.capacity || 10),
@@ -290,7 +290,7 @@ export const businessService = {
 
     const payload = {
       name: productData.name,
-      price: parseFloat(productData.price),
+      originalPrice: parseFloat(productData.originalPrice),
       promotionPrice: productData.promotionPrice ? parseFloat(productData.promotionPrice) : null,
       description: productData.description || '',
       stockQuantity: parseInt(productData.stockQuantity || 100),
@@ -355,6 +355,34 @@ export const businessService = {
   getPromotedServices: async (): Promise<PetServiceWithStore[]> => {
     const response = await fetch(`${API_URL}/services/promoted`);
     if (!response.ok) throw new Error('Failed to fetch promoted services');
+    return response.json();
+  },
+
+  /**
+   * Top stores ranked by average review rating. Backed by a single aggregate
+   * query on the server, so it stays cheap to call from listing screens.
+   */
+  getTopBusinesses: async (limit?: number): Promise<Business[]> => {
+    const qs = limit != null ? `?limit=${limit}` : '';
+    const response = await fetch(`${API_URL}/businesses/top${qs}`);
+    if (!response.ok) throw new Error('Failed to fetch top businesses');
+    const data = await response.json();
+    return data.map((business: any) => mapBusinessFromApi(business));
+  },
+
+  /** Top products ranked by total units sold across all orders. */
+  getTopProducts: async (limit?: number): Promise<ProductWithStore[]> => {
+    const qs = limit != null ? `?limit=${limit}` : '';
+    const response = await fetch(`${API_URL}/products/top${qs}`);
+    if (!response.ok) throw new Error('Failed to fetch top products');
+    return response.json();
+  },
+
+  /** Top services ranked by booking count (cancelled bookings excluded). */
+  getTopServices: async (limit?: number): Promise<PetServiceWithStore[]> => {
+    const qs = limit != null ? `?limit=${limit}` : '';
+    const response = await fetch(`${API_URL}/services/top${qs}`);
+    if (!response.ok) throw new Error('Failed to fetch top services');
     return response.json();
   },
 };

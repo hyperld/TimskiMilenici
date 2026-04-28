@@ -114,7 +114,7 @@ public class AiChatService {
             for (int i = 0; i < services.size(); i++) {
                 Map<String, Object> svc = services.get(i);
                 if (i > 0) sb.append(", ");
-                sb.append(svc.get("name")).append(" ($").append(svc.get("price")).append(")");
+                sb.append(svc.get("name")).append(" ($").append(svc.get("currentPrice")).append(")");
                 if (svc.get("durationMinutes") != null) {
                     sb.append(" [").append(svc.get("durationMinutes")).append(" min]");
                 }
@@ -128,7 +128,7 @@ public class AiChatService {
             for (int i = 0; i < products.size(); i++) {
                 Map<String, Object> prod = products.get(i);
                 if (i > 0) sb.append(", ");
-                sb.append(prod.get("name")).append(" ($").append(prod.get("price")).append(")");
+                sb.append(prod.get("name")).append(" ($").append(prod.get("currentPrice")).append(")");
             }
             sb.append(".");
         }

@@ -69,7 +69,9 @@ public class OwnerAnalyticsService {
             String itemType,
             Long businessId,
             String businessName,
-            BigDecimal basePrice,
+            /** Regular (non-discounted) price of the item. */
+            BigDecimal originalPrice,
+            /** Discounted price while the special offer is active. */
             BigDecimal promotionPrice,
             /** Current discount percent (0-100). */
             Double discountPercent,
