@@ -2,20 +2,27 @@ import React from 'react';
 import styles from './Modal.module.css';
 import Button from '../../../../shared/components/Button/Button';
 
+interface StoreOption {
+  id: number;
+  name: string;
+}
+
 interface ServiceModalProps {
   itemFormData: any;
   setItemFormData: (data: any) => void;
   onSave: (e: React.FormEvent) => void;
   onClose: () => void;
+  stores?: StoreOption[];
 }
 
-const ServiceModal: React.FC<ServiceModalProps> = ({ itemFormData, setItemFormData, onSave, onClose }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+const ServiceModal: React.FC<ServiceModalProps> = ({ itemFormData, setItemFormData, onSave, onClose, stores }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setItemFormData((prev: any) => ({ ...prev, [name]: value }));
   };
 
   const isEdit = itemFormData?.id && itemFormData.id.toString().indexOf('temp-') === -1;
+  const showStoreSelect = !isEdit && stores && stores.length > 0;
 
   if (!itemFormData) return null;
 
@@ -27,6 +34,17 @@ const ServiceModal: React.FC<ServiceModalProps> = ({ itemFormData, setItemFormDa
           <Button variant="ghost" onClick={onClose} className={styles.closeBtn}>&times;</Button>
         </header>
         <form onSubmit={onSave} className={styles.modalForm}>
+          {showStoreSelect && (
+            <div className={styles.formGroup}>
+              <label>Store</label>
+              <select name="businessId" value={itemFormData.businessId || ''} onChange={handleChange} required>
+                <option value="" disabled>Select a store</option>
+                {stores.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
           <div className={styles.formGroup}>
             <label>Name</label>
             <input name="name" value={itemFormData.name} onChange={handleChange} required />

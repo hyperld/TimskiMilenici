@@ -13,6 +13,21 @@
   border-radius: var(--radius-sm);
   padding: 0.48rem 0.58rem;
   border: 1px solid var(--color-border);
+  cursor: pointer;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.statItem:hover {
+  border-color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.06);
+}
+
+.statItemActive {
+  border-color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.10);
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.15);
 }
 
 .statIcon {

@@ -7,7 +7,7 @@ export interface Booking {
   businessId: number;
   serviceId: number;
   bookingDate: string;
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
   user?: User;
   service?: PetService;
   business?: Business;

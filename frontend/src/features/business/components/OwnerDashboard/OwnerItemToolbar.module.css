@@ -1,0 +1,47 @@
+.dateRangeSlot {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.dateInput {
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  min-height: 2.15rem;
+  height: 2.15rem;
+  padding: 0 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(36, 95, 130, 0.2);
+  background: #ffffff;
+  color: var(--color-primary-dark);
+  box-shadow: 0 1px 3px rgba(15, 60, 90, 0.08);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.dateInput:hover,
+.dateInput:focus {
+  border-color: rgba(36, 95, 130, 0.32);
+  box-shadow: 0 2px 8px rgba(15, 60, 90, 0.12);
+  outline: none;
+}
+
+.dateSep {
+  font-size: 0.82rem;
+  color: var(--color-text-light);
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .dateRangeSlot {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dateInput {
+    flex: 1;
+    min-width: 0;
+  }
+}
